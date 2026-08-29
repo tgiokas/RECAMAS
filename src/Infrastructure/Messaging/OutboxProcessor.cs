@@ -9,21 +9,33 @@ namespace RECAMAS.Infrastructure.Messaging;
 /// Polls OutboxMessage for pending rows and publishes each to Kafka, closing
 /// the loop the transactional-outbox pattern needs (both EntityChangeAuditInterceptor
 /// and OutboxDomainEventPublisher only ever write to the outbox table; this is
-/// the only thing that ever calls Kafka). Modeled directly on CivilianPortal's
-/// own OutboxProcessor — same IMessagePublisher dependency, same per-message
-/// error handling, same route-by-EventType routing — rather than holding a
-/// bare IProducer&lt;string, string&gt; the way this class used to.
+/// the only thing that ever calls Kafka). Uses CivilianPortal's IMessagePublisher/
+/// KafkaPublisher instead of holding a bare IProducer&lt;string, string&gt; directly,
+/// but deliberately does NOT copy its route-by-EventType call: every RECAMAS
+/// message publishes to one fixed topic instead, with EventType carried only
+/// as a header. Reasoning (see architecture decision log): RECAMAS's own
+/// EventType values are unbounded (a free-text "action" string, or
+/// typeof(TEvent).Name for any future domain event class) rather than
+/// CivilianPortal's single fixed, config-driven value — routing by EventType
+/// here would mean a new topic gets implied every time a developer adds a new
+/// action string or event class, with no catalog anywhere of what exists.
+/// That risks silent outbox failures if the broker doesn't auto-create topics,
+/// ungoverned topic sprawl if it does, and it breaks AuditLog's "subscribe once,
+/// get everything for compliance" requirement. One topic keyed by
+/// aggregate/correlation id also keeps one entity's full event history in a
+/// single ordered stream, which per-type topics would not.
 ///
-/// Two deliberate differences from CivilianPortal's version, kept because
-/// they're strict improvements and don't affect the shared KafkaPublisher/
-/// IMessagePublisher contract: GetPendingAsync filters out already-exhausted
-/// messages at the query level (maxAttempts passed straight to SQL) rather
-/// than only checking retry count after picking a message up, and IDs are
-/// long rather than int.
+/// Two further deliberate differences from CivilianPortal's version, kept
+/// because they're strict improvements and don't affect the shared
+/// KafkaPublisher/IMessagePublisher contract: GetPendingAsync filters out
+/// already-exhausted messages at the query level (maxAttempts passed straight
+/// to SQL) rather than only checking retry count after picking a message up,
+/// and IDs are long rather than int.
 ///
-/// Topic naming is provisional — see IDomainEventPublisher's own open item.
+/// PlaceholderTopic's real name is still provisional — see IDomainEventPublisher's own open item.
 public class OutboxProcessor : BackgroundService
 {
+    private const string PlaceholderTopic = "recamas.domain.events"; // TODO: confirm real topic name with AuditLog/Notifications owners
     private const int BatchSize = 20;
     private const int MaxAttempts = 5;
     private static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
@@ -85,7 +97,7 @@ public class OutboxProcessor : BackgroundService
                 };
 
                 await _publisher.PublishRawJsonAsync(
-                    route: message.EventType,
+                    route: PlaceholderTopic,
                     key: message.Key ?? message.EventId.ToString(),
                     jsonPayload: message.Payload,
                     headers: headers,

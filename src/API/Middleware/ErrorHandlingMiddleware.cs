@@ -30,6 +30,15 @@ public class ErrorHandlingMiddleware
         {
             _logger.LogError(ex, "Unhandled exception processing {Method} {Path}", context.Request.Method, context.Request.Path);
 
+            // If the response has already started streaming (a partial write happened
+            // before this exception hit), setting StatusCode below would itself throw
+            // InvalidOperationException — nothing we can do at that point but give up.
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+
+            context.Response.Clear();
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 

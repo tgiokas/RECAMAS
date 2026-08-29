@@ -2,13 +2,11 @@ using System.Text.Json;
 
 namespace RECAMAS.Application.Errors;
 
-/// <summary>
 /// Loads errors.json (flat {"RECAMAS-000": "message", ...} map, one entry per
 /// ErrorCodes constant) once at startup. Ported from CivilianPortal's
 /// ErrorCatalog, adapted to RECAMAS's IErrorCatalog shape (GetMessage/TryGetMessage
 /// rather than CivilianPortal's ErrorInfo/GetError) and its flat JSON shape
 /// rather than CivilianPortal's grouped-by-application-name array.
-/// </summary>
 public sealed class ErrorCatalog : IErrorCatalog
 {
     private readonly Dictionary<string, string> _messagesByCode;

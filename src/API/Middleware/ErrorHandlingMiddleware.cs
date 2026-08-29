@@ -5,12 +5,10 @@ using RECAMAS.Application.Errors;
 
 namespace RECAMAS.Api.Middleware;
 
-/// <summary>
 /// Catches any unhandled exception and returns a generic RECAMAS-000 result —
 /// mirrors the Authentication service's ErrorHandlingMiddleware exactly.
 /// Never rely on this for expected business failures; those should already
 /// be a failed Result&lt;T&gt; returned normally by the service, not an exception.
-/// </summary>
 public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;

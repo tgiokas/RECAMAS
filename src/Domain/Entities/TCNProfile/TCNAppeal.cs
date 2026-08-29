@@ -2,7 +2,7 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// <summary>Study Table 9 — "Each appeal is shown as a separate entry." Appeal type is to the Administrative Court of International Protection (ΔΔΔΠ).</summary>
+/// Study Table 9 — "Each appeal is shown as a separate entry." Appeal type is to the Administrative Court of International Protection (ΔΔΔΠ).
 public class TCNAppeal : BaseEntity
 {
     public long TCNProfileId { get; set; }

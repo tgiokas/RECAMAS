@@ -1,6 +1,6 @@
 namespace RECAMAS.Application.Dtos.ExternalClients;
 
-/// <summary>Study Table 164 (Arrivals/Departures Request Fields).</summary>
+/// Study Table 164 (Arrivals/Departures Request Fields).
 public sealed record ArrivalsDeparturesSearchRequest(
     string? Arc,
     string? Name,
@@ -9,11 +9,9 @@ public sealed record ArrivalsDeparturesSearchRequest(
     string? PassportNo,
     DateOnly? DateOfBirth);
 
-/// <summary>
 /// Study Table 165 (Arrivals/Departures Response Fields) — one record per
 /// crossing; a search can return several. See IArrivalsDeparturesClient
 /// remarks on the live-API-vs-batch-file contradiction (9.4 vs 12.3.6).
-/// </summary>
 public sealed record ArrivalsDeparturesRecord(
     ArrivalOrDeparture Direction,
     DateOnly Date,

@@ -6,7 +6,6 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// <summary>
 /// PROVISIONAL implementation of IArrivalsDeparturesClient as a live HTTP
 /// call, matching Study 9.4's field tables. See the interface's remarks:
 /// Study 12.3.6 says the real mechanism is batch file exchange over the
@@ -14,7 +13,6 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// scheduled file importer + repository query, not an HTTP client at all.
 /// Do not treat this as confirmed until the director resolves the
 /// contradiction (session log Section 3).
-/// </summary>
 public class ArrivalsDeparturesClient : ApiClientBase, IArrivalsDeparturesClient
 {
     private const string SearchEndpoint = "/arrivals-departures/api/v1/search";

@@ -2,7 +2,6 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// <summary>
 /// Study Table 10 — a profile-level rollup, sourced from ARS, CASS, or a
 /// RECAMAS Case (IssuingAuthority "rules to be established" per the Study
 /// itself). Note VoluntaryReturnDeadline is typed "Date" here, but the ARS/
@@ -11,12 +10,11 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// document between the profile view and the interface response, not a
 /// modeling choice made here. Kept as a date at this layer since that's what
 /// this table specifies; reconciling the two is Application-layer mapping work.
-/// </summary>
 public class TCNReturnDecision : BaseEntity
 {
     public long TCNProfileId { get; set; }
 
-    /// <summary>Master-data code — ARS/CASS/RECAMAS-Case, per Source column.</summary>
+    /// Master-data code — ARS/CASS/RECAMAS-Case, per Source column.
     public string? IssuingAuthority { get; set; }
 
     public DateOnly? DecisionDate { get; set; }

@@ -6,7 +6,6 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// <summary>
 /// CASS via the CY Connect gateway, consumed as a SOAP web service (Study
 /// 12.3.4) — the one external system here that isn't plain JSON/REST.
 ///
@@ -15,7 +14,6 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// determined during system design"). Real work needed once the WSDL exists:
 /// generate/hand-write the actual envelope shape, correct SOAPAction header,
 /// and a real response parser in place of the not-implemented one below.
-/// </summary>
 public class CassClient : ApiClientBase, ICassClient
 {
     // TODO: confirm real CY Connect route + SOAPAction for CASS once the WSDL is available.

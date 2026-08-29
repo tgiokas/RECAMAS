@@ -5,7 +5,6 @@ using RECAMAS.Domain.Interfaces;
 
 namespace RECAMAS.Infrastructure.Messaging;
 
-/// <summary>
 /// Single Kafka producer used by every module to publish domain events.
 /// Notifications (reused) and AuditLog (reused) both consume independently —
 /// this class knows nothing about either of them, it just publishes.
@@ -14,7 +13,6 @@ namespace RECAMAS.Infrastructure.Messaging;
 /// what AuditLog actually expects to consume, and whether we extend Notifications'
 /// existing notifications.email.{auth|backend|citizen} pattern or add a dedicated
 /// notifications.email.recamas / recamas.audit.events topic.
-/// </summary>
 public class KafkaDomainEventPublisher : IDomainEventPublisher, IDisposable
 {
     private const string PlaceholderTopic = "recamas.domain.events"; // TODO: confirm real topic name(s)

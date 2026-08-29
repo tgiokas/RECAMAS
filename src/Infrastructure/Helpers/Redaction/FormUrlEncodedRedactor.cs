@@ -1,6 +1,6 @@
 namespace RECAMAS.Infrastructure.Helpers.Redaction;
 
-/// <summary>Same intent as JsonRedactor but for application/x-www-form-urlencoded bodies (OAuth2 token requests, mainly).</summary>
+/// Same intent as JsonRedactor but for application/x-www-form-urlencoded bodies (OAuth2 token requests, mainly).
 public static class FormUrlEncodedRedactor
 {
     private const string RedactedValue = "***REDACTED***";

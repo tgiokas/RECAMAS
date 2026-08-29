@@ -3,7 +3,6 @@ using RECAMAS.Domain.Enums;
 
 namespace RECAMAS.Domain.Entities.Case;
 
-/// <summary>
 /// LIGHT SKELETON — enough shape for the team to build against in parallel,
 /// not a finished data model. Locks in the one decision that's already
 /// settled (architecture decision log): one Case table with shared columns,
@@ -16,26 +15,25 @@ namespace RECAMAS.Domain.Entities.Case;
 ///    strings, not the real fixed enums the architecture decision calls for).
 ///  - The AVR Counselling questionnaire (Study 4.4.2.2, ~40 conditional fields).
 ///  - Approval Items, Requests, Case History, flags (Study 4.3.4/4.3.7/4.3.8).
-/// </summary>
 public class Case : BaseEntity
 {
-    /// <summary>Human-facing case code, e.g. "AVR-2026-0117" per the Study's own mockup captions.</summary>
+    /// Human-facing case code, e.g. "AVR-2026-0117" per the Study's own mockup captions.
     public string? DisplayCode { get; set; }
 
     public CaseType CaseType { get; set; }
 
-    /// <summary>Master-data code (e.g. "AVR Cyprus", "EURP") — see TCNProfile remarks on "Enum" fields that are really admin-configurable lists.</summary>
+    /// Master-data code (e.g. "AVR Cyprus", "EURP") — see TCNProfile remarks on "Enum" fields that are really admin-configurable lists.
     public string? Program { get; set; }
 
-    /// <summary>TODO: replace with the real per-CaseType Stage enum once each workflow is designed.</summary>
+    /// TODO: replace with the real per-CaseType Stage enum once each workflow is designed.
     public string? Stage { get; set; }
 
-    /// <summary>TODO: replace with the real per-CaseType Status enum once each workflow is designed.</summary>
+    /// TODO: replace with the real per-CaseType Status enum once each workflow is designed.
     public string? Status { get; set; }
 
     public DateTimeOffset? InitiationDateTime { get; set; }
 
-    /// <summary>Master-data code: MD or a specific A&amp;IU office.</summary>
+    /// Master-data code: MD or a specific A&amp;IU office.
     public string? InitiationOffice { get; set; }
 
     public string? ImplementationOffice { get; set; }

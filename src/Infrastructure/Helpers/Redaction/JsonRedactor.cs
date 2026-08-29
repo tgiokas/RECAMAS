@@ -3,11 +3,9 @@ using System.Text.Json.Nodes;
 
 namespace RECAMAS.Infrastructure.Helpers.Redaction;
 
-/// <summary>
 /// Strips sensitive field values out of a JSON body before it's logged.
 /// Ported from CivilianPortal's Infrastructure.Helpers.Redaction — used by
 /// ApiClientBase so every outbound/inbound API log line is safe by default.
-/// </summary>
 public static class JsonRedactor
 {
     private const string RedactedValue = "***REDACTED***";

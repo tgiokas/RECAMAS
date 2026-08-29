@@ -4,7 +4,6 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Infrastructure.Persistence;
 
-/// <summary>
 /// Single PostgreSQL 18 instance, one schema per module:
 ///   tcn_profile | case | detention | return_impl | reports | rules
 ///
@@ -18,7 +17,6 @@ namespace RECAMAS.Infrastructure.Persistence;
 /// IsDeleted=true rows are invisible by default — repositories don't need
 /// to remember to filter them out manually. Use IgnoreQueryFilters() explicitly
 /// on the rare admin/audit query that needs to see deleted rows.
-/// </summary>
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

@@ -1,6 +1,5 @@
 namespace RECAMAS.Application.Errors;
 
-/// <summary>
 /// All error codes as RECAMAS-XXX constants, grouped by module.
 /// Never hardcode an error string in a service — add a constant here,
 /// add the matching message to errors.json, then call
@@ -9,7 +8,6 @@ namespace RECAMAS.Application.Errors;
 /// Numbering convention: each module gets its own block of 100 so codes
 /// never collide as modules grow (TCNProfile 001-099, Case 100-199, etc.)
 /// Empty for this skeleton commit — filled in module by module.
-/// </summary>
 public static class ErrorCodes
 {
     public static class Common

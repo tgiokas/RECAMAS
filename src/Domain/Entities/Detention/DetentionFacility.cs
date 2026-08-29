@@ -2,7 +2,7 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.Detention;
 
-/// <summary>LIGHT SKELETON. Real fields (wings, occupancy tracking) come from Study Section 5.2.2.</summary>
+/// LIGHT SKELETON. Real fields (wings, occupancy tracking) come from Study Section 5.2.2.
 public class DetentionFacility : BaseEntity
 {
     public required string Name { get; set; }

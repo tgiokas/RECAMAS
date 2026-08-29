@@ -5,7 +5,6 @@ using RECAMAS.Infrastructure.Helpers.Redaction;
 
 namespace RECAMAS.Infrastructure.ApiClients;
 
-/// <summary>
 /// Shared base for every outbound API client (reused platform services and the
 /// external government systems alike). Ported from CivilianPortal's
 /// Infrastructure.ApiClients.ApiClientBase — ADR: every concrete client calls
@@ -16,7 +15,6 @@ namespace RECAMAS.Infrastructure.ApiClients;
 /// Polly retry (transient-fault) is configured separately at HttpClient
 /// registration time in InfrastructureServiceRegistration — this class is the
 /// last thing in the pipeline, closest to the actual send.
-/// </summary>
 public abstract class ApiClientBase
 {
     protected readonly HttpClient _httpClient;
@@ -36,12 +34,10 @@ public abstract class ApiClientBase
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <summary>
     /// Sends the request and always returns an HttpResponseMessage — a transport-level
     /// exception (DNS failure, connection refused, timeout) is caught and turned into a
     /// synthetic 503 instead of propagating, so every caller has one code path
     /// (check IsSuccessStatusCode) instead of two (catch + check).
-    /// </summary>
     protected async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken = default)
     {
         string requestBody = await BuildSafeRequestBodyAsync(request, cancellationToken);

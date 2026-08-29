@@ -9,11 +9,9 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// <summary>
 /// JCC Trust Services SigningHub REST API (Study 9.6/12.3.9) — see
 /// IJccSigningClient and JccDtos remarks: shape is provisional pending real
 /// integration details from JCC. Endpoint paths below are placeholders.
-/// </summary>
 public class JccSigningClient : ApiClientBase, IJccSigningClient
 {
     private const string TokenEndpoint = "/oauth/token";

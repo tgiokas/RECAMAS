@@ -2,7 +2,6 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.Reports;
 
-/// <summary>
 /// One document template, keyed by CaseType — Study Table 20 lists 10 concrete
 /// templates today (7 AVR: Return Decision, Counselling Report, Declaration of
 /// Voluntary Departure, Certificate of Participation, Consent to Travel with
@@ -11,7 +10,6 @@ namespace RECAMAS.Domain.Entities.Reports;
 /// Rows aren't seeded by this skeleton — that's a data migration, not a schema
 /// concern. TemplateFileDocumentId points at the actual template file in the
 /// Storage service, not at bytes stored here.
-/// </summary>
 public class DocumentTemplate : BaseEntity
 {
     public Enums.CaseType CaseType { get; set; }

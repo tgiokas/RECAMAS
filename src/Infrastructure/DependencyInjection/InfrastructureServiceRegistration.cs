@@ -15,9 +15,8 @@ using RECAMAS.Infrastructure.Persistence;
 
 namespace RECAMAS.Infrastructure.DependencyInjection;
 
-/// <summary>
 /// Registers everything Infrastructure owns: EF Core + Postgres, typed HTTP
-/// clients (both the 3 reused microservices and the external government
+/// clients (both the reused Storage microservice and the external government
 /// systems), the Kafka producer used for domain events, the error catalog,
 /// and repository implementations as modules get built. Called once from
 /// API/Program.cs as services.AddInfrastructureServices(configuration).
@@ -29,7 +28,6 @@ namespace RECAMAS.Infrastructure.DependencyInjection;
 /// response logging and redaction — the two are complementary, not
 /// alternatives: Polly decides whether to retry, ApiClientBase logs whatever
 /// actually got sent.
-/// </summary>
 public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
@@ -39,9 +37,6 @@ public static class InfrastructureServiceRegistration
             options.UseNpgsql(configuration.GetConnectionString("RecamasDb")));
 
         // --- Typed settings for every outbound HTTP integration ---
-        var authenticationSettings = AuthenticationClientSettings.BindFromConfiguration(configuration);
-        services.AddSingleton(Options.Create(authenticationSettings));
-
         var storageSettings = StorageClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(storageSettings));
 
@@ -57,13 +52,7 @@ public static class InfrastructureServiceRegistration
         var jccSettings = JccClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(jccSettings));
 
-        // --- Reused microservice HTTP clients (Authentication, Storage) ---
-        services.AddHttpClient<IAuthenticationClient, AuthenticationClient>(client =>
-            {
-                client.BaseAddress = new Uri(authenticationSettings.BaseUrl);
-            })
-            .AddPolicyHandler(GetRetryPolicy());
-
+        // --- Reused microservice HTTP client (Storage) ---
         services.AddHttpClient<IStorageClient, StorageClient>(client =>
             {
                 client.BaseAddress = new Uri(storageSettings.BaseUrl);

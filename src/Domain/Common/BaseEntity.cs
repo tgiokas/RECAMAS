@@ -1,6 +1,5 @@
 namespace RECAMAS.Domain.Common;
 
-/// <summary>
 /// Base type for every entity across every module/schema.
 ///
 /// Key conventions (locked in during architecture design):
@@ -13,16 +12,13 @@ namespace RECAMAS.Domain.Common;
 ///    invisible by default without repositories having to remember to filter them.
 ///  - Audit columns are populated by a SaveChanges interceptor in Infrastructure,
 ///    not by callers — services should never set these manually.
-/// </summary>
 public abstract class BaseEntity
 {
     public long Id { get; set; }
 
-    /// <summary>
     /// Populate only on entities that cross a service/HTTP boundary
     /// (e.g. Case.PublicId, TCNProfile.PublicId). Internal-only entities
     /// (e.g. a join/history table nobody references externally) can leave this null.
-    /// </summary>
     public Guid? PublicId { get; set; }
 
     public bool IsDeleted { get; set; }
@@ -33,10 +29,8 @@ public abstract class BaseEntity
     public DateTimeOffset? UpdatedAt { get; set; }
     public string? UpdatedBy { get; set; }
 
-    /// <summary>
     /// EF Core concurrency token (Postgres "xmin" mapping is wired in
     /// ApplicationDbContext) — prevents silent overwrite when two officers
     /// edit the same case/rule at once.
-    /// </summary>
     public uint RowVersion { get; set; }
 }

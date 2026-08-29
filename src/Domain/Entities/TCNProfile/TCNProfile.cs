@@ -3,7 +3,6 @@ using RECAMAS.Domain.Enums;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// <summary>
 /// Aggregate root for the tcn_profile schema. Covers all 3 tabs of the TCN
 /// Profile screen: Overview (Personal Information, Table 3; Identity
 /// Information, Table 4, via <see cref="IdentityDocuments"/>), Residency/IP/
@@ -25,19 +24,16 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// would own that table doesn't exist yet. Only value sets that are
 /// structurally fixed by the domain itself (Gender, MdFileRelationship, the
 /// identity-document Source/Type) are modeled as real C# enums.
-/// </summary>
 public class TCNProfile : BaseEntity
 {
-    /// <summary>
     /// Human-facing "RECAMAS ID" shown in the UI (e.g. "TCN-00412" per the
     /// Study's own mockup caption) — distinct from <see cref="BaseEntity.PublicId"/>,
     /// which stays the opaque identifier used across API/HTTP boundaries.
     /// Generation (sequence, format) is an Application-layer concern once
     /// TCNProfileService exists — left null until then.
-    /// </summary>
     public string? DisplayCode { get; set; }
 
-    /// <summary>Alien Registration Card number. Sourced from ARS; drives most automatic interface refreshes (Study 9.2.1/9.3.1/9.4.1/9.5.1: "Only for TCN Profiles where ARC is available").</summary>
+    /// Alien Registration Card number. Sourced from ARS; drives most automatic interface refreshes (Study 9.2.1/9.3.1/9.4.1/9.5.1: "Only for TCN Profiles where ARC is available").
     public string? Arc { get; set; }
 
     public string? FirstNameEl { get; set; }
@@ -51,7 +47,7 @@ public class TCNProfile : BaseEntity
 
     public DateOnly? DateOfBirth { get; set; }
 
-    /// <summary>Master-data code, see class remarks. Sourced from ARS/Manual.</summary>
+    /// Master-data code, see class remarks. Sourced from ARS/Manual.
     public string? PlaceOfBirth { get; set; }
 
     public string? MdFileNo { get; set; }
@@ -81,10 +77,10 @@ public class TCNProfile : BaseEntity
     public List<TCNStoplistEntry> StoplistEntries { get; set; } = [];
     public List<TCNArrivalDeparture> ArrivalsDepartures { get; set; } = [];
 
-    /// <summary>Table 13. Findings are <see cref="SecurityFindings"/>, not columns here.</summary>
+    /// Table 13. Findings are <see cref="SecurityFindings"/>, not columns here.
     public bool NoCriminalRecordFound { get; set; }
 
-    /// <summary>Table 13.</summary>
+    /// Table 13.
     public bool NoRestrictiveActivitiesFound { get; set; }
 
     public List<TCNSecurityFinding> SecurityFindings { get; set; } = [];
@@ -92,7 +88,7 @@ public class TCNProfile : BaseEntity
     // --- Cases and Linked Profiles tab (Table 14) ---
     public List<TCNProfileLink> Links { get; set; } = [];
 
-    /// <summary>Table 3: "Age | Integer | RECAMAS | Calculated from date of birth." Never persisted.</summary>
+    /// Table 3: "Age | Integer | RECAMAS | Calculated from date of birth." Never persisted.
     public int? Age => DateOfBirth is null
         ? null
         : CalculateAge(DateOfBirth.Value, DateOnly.FromDateTime(DateTime.UtcNow));

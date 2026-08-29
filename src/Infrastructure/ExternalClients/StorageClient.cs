@@ -5,11 +5,9 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// <summary>
 /// Typed HttpClient for the reused Storage service. Stub only —
 /// real upload/download endpoint contracts to be confirmed against
 /// Storage's actual API before this is used for real case documents.
-/// </summary>
 public class StorageClient : ApiClientBase, IStorageClient
 {
     public StorageClient(HttpClient httpClient, ILogger<StorageClient> logger)

@@ -10,10 +10,10 @@ Convention (mirrors the `Authentication` service):
     Case Management and Detention through an interface, not a direct class reference,
     so it stays easy to extract into a real microservice later if that's ever needed.
 
-External-service API client interfaces (`IAuthenticationClient`, `IStorageClient`,
-`INotificationClient`, `IArsClient`, `ICassClient`, ...) live in
-`Application/Interfaces` instead, not here — Domain shouldn't need to know HTTP
-exists. They're implemented in `Infrastructure/ExternalClients`.
+External-service API client interfaces (`IStorageClient`, `INotificationClient`,
+`IArsClient`, `ICassClient`, ...) live in `Application/Interfaces` instead, not
+here — Domain shouldn't need to know HTTP exists. They're implemented in
+`Infrastructure/ExternalClients`.
 
 Rule: define the contract in Domain/Application first, implement in Infrastructure.
 Never let a Controller or Application service `new()` up an Infrastructure class directly.

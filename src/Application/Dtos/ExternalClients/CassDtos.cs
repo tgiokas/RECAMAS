@@ -1,6 +1,6 @@
 namespace RECAMAS.Application.Dtos.ExternalClients;
 
-/// <summary>Study Table 157 (CASS Request Fields).</summary>
+/// Study Table 157 (CASS Request Fields).
 public sealed record CassSearchRequest(
     string? Arc,
     string? Name,
@@ -10,7 +10,7 @@ public sealed record CassSearchRequest(
     DateOnly? DateOfBirth,
     string? CassFileNo);
 
-/// <summary>Study Tables 158-162 (CASS Response Fields).</summary>
+/// Study Tables 158-162 (CASS Response Fields).
 public sealed record CassSearchResult(
     CassTcnInformation TcnInformation,
     CassIpStatus? IpStatus,
@@ -18,7 +18,7 @@ public sealed record CassSearchResult(
     IReadOnlyList<CassAppeal> Appeals,
     CassReturnDecision? ReturnDecision);
 
-/// <summary>Table 158.</summary>
+/// Table 158.
 public sealed record CassTcnInformation(
     string? PassportNo,
     DateOnly? PassportExpirationDate,
@@ -26,7 +26,7 @@ public sealed record CassTcnInformation(
     string? PhoneNo,
     string? CassFileNo);
 
-/// <summary>Table 159.</summary>
+/// Table 159.
 public sealed record CassIpStatus(
     string? TypeOfStatus,
     DateOnly? DateOfGranting,
@@ -34,7 +34,7 @@ public sealed record CassIpStatus(
     DateOnly? DecisionDate,
     string? StatusDecision);
 
-/// <summary>Table 160.</summary>
+/// Table 160.
 public sealed record CassIpApplication(
     string? TypeOfApplication,
     DateOnly? SubmissionDate,
@@ -42,7 +42,7 @@ public sealed record CassIpApplication(
     DateOnly? DecisionDate,
     string? StatusDecision);
 
-/// <summary>Table 161.</summary>
+/// Table 161.
 public sealed record CassAppeal(
     string? TypeOfAppeal,
     string? AppealNumber,
@@ -50,7 +50,7 @@ public sealed record CassAppeal(
     DateOnly? DecisionDate,
     string? AppealStatusDecision);
 
-/// <summary>Table 162. See ArsReturnDecision remarks on the Number-typed deadline/ban fields.</summary>
+/// Table 162. See ArsReturnDecision remarks on the Number-typed deadline/ban fields.
 public sealed record CassReturnDecision(
     DateOnly? DecisionDate,
     string? DecisionText,

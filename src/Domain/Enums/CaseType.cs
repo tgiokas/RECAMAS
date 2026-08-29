@@ -1,12 +1,10 @@
 namespace RECAMAS.Domain.Enums;
 
-/// <summary>
 /// Fixed, stable set — decided during architecture design to be a code enum,
 /// NOT a lookup table, since these 3 values are procedurally/legally fixed
 /// and unlikely to ever gain a 4th member without a much larger scope change.
 /// Contrast with Programme (e.g. "AVR-Syria"), which IS a lookup table because
 /// new programmes get added by admins without a deploy.
-/// </summary>
 public enum CaseType
 {
     AssistedVoluntaryReturn = 1,

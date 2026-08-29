@@ -2,7 +2,6 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.Rules;
 
-/// <summary>
 /// One version of a Rule's condition/action logic. ConditionsJson is the
 /// "structured JSON tree, nested AND/OR groups of field-operator-value"
 /// locked in by the architecture decision log — stored as Postgres jsonb
@@ -11,7 +10,6 @@ namespace RECAMAS.Domain.Entities.Rules;
 /// treatment. Only one version per Rule should have IsActive=true at a time
 /// — enforcing that is Application-layer work (RuleService), not a DB
 /// constraint here.
-/// </summary>
 public class RuleVersion : BaseEntity
 {
     public long RuleId { get; set; }

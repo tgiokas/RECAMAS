@@ -6,13 +6,11 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// <summary>
 /// ARS via the CY Connect gateway (Study 12.3.5). Endpoint path below is a
 /// placeholder — the actual route ARS/CY Connect expose "shall be determined
 /// during system design" per the Study itself, not guessable from it.
 /// HttpClient.BaseAddress is CyConnectSettings.BaseUrl (see
 /// InfrastructureServiceRegistration), so this only needs the relative path.
-/// </summary>
 public class ArsClient : ApiClientBase, IArsClient
 {
     // TODO: confirm real CY Connect route for ARS search once available.

@@ -1,10 +1,8 @@
 namespace RECAMAS.Application.Common;
 
-/// <summary>
 /// Standard return type for every Application service method, across every module.
 /// Controllers check Success and map to an HTTP response — never throw raw exceptions
 /// for expected business failures (see Errors/ErrorCodes.cs and ErrorCatalogExtensions).
-/// </summary>
 public class Result<T>
 {
     public bool Success { get; protected init; }
@@ -29,10 +27,8 @@ public class Result<T>
     };
 }
 
-/// <summary>
 /// Non-generic variant for commands that don't return data (e.g. "approve item",
 /// "soft-delete case") but still need the same Success/ErrorCode contract.
-/// </summary>
 public sealed class Result : Result<object?>
 {
     public static Result Ok(string? message = null) => new()

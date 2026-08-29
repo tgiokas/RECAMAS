@@ -2,7 +2,7 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// <summary>Study Table 7 (from CASS). Same history-not-overwrite treatment as TCNResidencyStatus — see its remarks.</summary>
+/// Study Table 7 (from CASS). Same history-not-overwrite treatment as TCNResidencyStatus — see its remarks.
 public class TCNInternationalProtectionStatus : BaseEntity
 {
     public long TCNProfileId { get; set; }

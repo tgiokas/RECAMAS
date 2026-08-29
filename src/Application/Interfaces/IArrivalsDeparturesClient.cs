@@ -2,7 +2,6 @@ using RECAMAS.Application.Dtos.ExternalClients;
 
 namespace RECAMAS.Application.Interfaces;
 
-/// <summary>
 /// UNRESOLVED CONTRADICTION IN THE SOURCE REQUIREMENTS — flagged, not decided
 /// here: Study 9.4 describes a live, synchronous Request/Response interface
 /// (field tables given, Table 164/165) — this interface's shape assumes that.
@@ -18,7 +17,6 @@ namespace RECAMAS.Application.Interfaces;
 /// from an HTTP client (ArrivalsDeparturesClient, current placeholder) to a
 /// file-import-backed repository query. Needs a decision from the director
 /// before this is built for real — see session log Section 3.
-/// </summary>
 public interface IArrivalsDeparturesClient
 {
     Task<IReadOnlyList<ArrivalsDeparturesRecord>?> SearchAsync(ArrivalsDeparturesSearchRequest request, CancellationToken ct = default);

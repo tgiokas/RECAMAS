@@ -12,6 +12,7 @@ using RECAMAS.Domain.Interfaces;
 using RECAMAS.Infrastructure.ExternalClients;
 using RECAMAS.Infrastructure.Messaging;
 using RECAMAS.Infrastructure.Persistence;
+using RECAMAS.Infrastructure.Repositories;
 
 namespace RECAMAS.Infrastructure.DependencyInjection;
 
@@ -120,8 +121,8 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton(ErrorCatalog.LoadFromFile(errorsJsonPath));
 
         // --- Repository implementations, added module by module ---
+        services.AddScoped<ITCNProfileRepository, TCNProfileRepository>();
         // services.AddScoped<ICaseRepository, CaseRepository>();
-        // services.AddScoped<ITCNProfileRepository, TCNProfileRepository>();
         // services.AddScoped<IRuleRepository, RuleRepository>();
 
         return services;

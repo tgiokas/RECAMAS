@@ -1,3 +1,0 @@
-2026-08-29 20:12:44.721 +00:00 [ERR] An error occurred using the connection to database 'recamas_dev' on server 'tcp://localhost:5432'.
-2026-08-29 20:13:18.307 +00:00 [WRN] Failed to determine the https port for redirect.
-2026-08-29 20:13:18.818 +00:00 [INF] HTTP GET /health responded 200 in 516.8717 ms

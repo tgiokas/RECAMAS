@@ -10,7 +10,7 @@ using RECAMAS.Infrastructure.Helpers.Redaction;
 
 namespace RECAMAS.Infrastructure.Persistence.Interceptors;
 
-/// <summary>
+/// 
 /// Adapted from the CustomerAudit.Api prototype's AuditSaveChangesInterceptor,
 /// with its 3 flagged gaps fixed:
 ///  - Entity selection was hardcoded (`e.Entity is Customer`) — here it's the
@@ -45,7 +45,7 @@ namespace RECAMAS.Infrastructure.Persistence.Interceptors;
 /// showing the placeholder for CREATE events — a cosmetic gap, not
 /// re-serializing the payload to fix a display-only field isn't worth the
 /// added complexity.
-/// </summary>
+/// 
 public sealed class EntityChangeAuditInterceptor : SaveChangesInterceptor
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

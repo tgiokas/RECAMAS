@@ -8,7 +8,7 @@ public class Result<T>
     public bool Success { get; protected init; }
     public string? Message { get; protected init; }
     public string? ErrorCode { get; protected init; }
-    public T? Data { get; protected init; }
+    public T? Data { get; set; }
 
     protected Result() { }
 
@@ -27,20 +27,20 @@ public class Result<T>
     };
 }
 
-/// Non-generic variant for commands that don't return data (e.g. "approve item",
-/// "soft-delete case") but still need the same Success/ErrorCode contract.
-public sealed class Result : Result<object?>
-{
-    public static Result Ok(string? message = null) => new()
-    {
-        Success = true,
-        Message = message,
-    };
+///// Non-generic variant for commands that don't return data (e.g. "approve item",
+///// "soft-delete case") but still need the same Success/ErrorCode contract.
+//public sealed class Result : Result<object?>
+//{
+//    public static Result Ok(string? message = null) => new()
+//    {
+//        Success = true,
+//        Message = message,
+//    };
 
-    public static new Result Fail(string message, string errorCode) => new()
-    {
-        Success = false,
-        Message = message,
-        ErrorCode = errorCode,
-    };
-}
+//    public static new Result Fail(string message, string errorCode) => new()
+//    {
+//        Success = false,
+//        Message = message,
+//        ErrorCode = errorCode,
+//    };
+//}

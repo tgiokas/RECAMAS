@@ -60,13 +60,13 @@ public class TCNProfile : BaseEntity, IAuditable
     public string? MdAddress { get; set; }
     public string? MdPhone { get; set; }
 
-    /// <summary>
+    /// 
     /// TODO: this is a conservative starting set, not a reviewed PII policy —
     /// the team should decide the real list against Study 12.5.7 before
     /// treating it as complete. EurodacNumber (a biometric-linked identifier)
     /// is excluded from the audit trail; contact fields are not, on the view
     /// that "the address changed" is itself audit-relevant here.
-    /// </summary>
+    /// 
     [NotAudited]
     public string? EurodacNumber { get; set; }
 

@@ -13,10 +13,4 @@ public static class ErrorCatalogExtensions
         var message = catalog.GetMessage(errorCode);
         return Result<T>.Fail(message, errorCode);
     }
-
-    public static Result Fail(this IErrorCatalog catalog, string errorCode)
-    {
-        var message = catalog.GetMessage(errorCode);
-        return Result.Fail(message, errorCode);
-    }
 }

@@ -1,6 +1,6 @@
 namespace RECAMAS.Domain.Common;
 
-/// <summary>
+/// 
 /// Marker interface — entities implementing this have their Added/Modified/
 /// Deleted changes automatically diffed and staged for the audit trail by
 /// EntityChangeAuditInterceptor. Deliberately explicit opt-in per entity
@@ -11,7 +11,7 @@ namespace RECAMAS.Domain.Common;
 /// Fixes a known gap in the prototype this pattern is based on, which
 /// hardcoded a single entity type (`e.Entity is Customer`) directly in the
 /// interceptor — every module opts its own entities in here instead.
-/// </summary>
+/// 
 public interface IAuditable
 {
 }

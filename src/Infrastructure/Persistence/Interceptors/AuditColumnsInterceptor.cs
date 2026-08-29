@@ -6,12 +6,12 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Infrastructure.Persistence.Interceptors;
 
-/// <summary>
+/// 
 /// Fills the promise BaseEntity's own doc comment already made: "Audit columns
 /// are populated by a SaveChanges interceptor in Infrastructure, not by
 /// callers." Nothing implemented that promise until now — CreatedAt/CreatedBy
 /// are set once on insert, UpdatedAt/UpdatedBy on every subsequent save.
-/// </summary>
+/// 
 public sealed class AuditColumnsInterceptor : SaveChangesInterceptor
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

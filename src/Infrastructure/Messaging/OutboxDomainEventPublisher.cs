@@ -5,7 +5,7 @@ using RECAMAS.Domain.Interfaces;
 
 namespace RECAMAS.Infrastructure.Messaging;
 
-/// <summary>
+/// 
 /// Replaces the previous direct-to-Kafka implementation (KafkaDomainEventPublisher)
 /// with a transactional-outbox write — closing the reliability gap that class's
 /// own doc comment already flagged ("publishing failure should never fail the
@@ -24,7 +24,7 @@ namespace RECAMAS.Infrastructure.Messaging;
 ///
 /// OPEN ITEM (carried over): exact event-type naming/schema AuditLog and
 /// Notifications expect is still unconfirmed.
-/// </summary>
+/// 
 public class OutboxDomainEventPublisher : IDomainEventPublisher
 {
     private readonly IOutboxRepository _outboxRepository;

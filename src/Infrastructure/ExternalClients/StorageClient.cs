@@ -1,4 +1,7 @@
-using RECAMAS.Domain.Interfaces;
+using System.Net.Http.Headers;
+using Microsoft.Extensions.Logging;
+using RECAMAS.Application.Interfaces;
+using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
@@ -7,22 +10,25 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// real upload/download endpoint contracts to be confirmed against
 /// Storage's actual API before this is used for real case documents.
 /// </summary>
-public class StorageClient : IStorageClient
+public class StorageClient : ApiClientBase, IStorageClient
 {
-    private readonly HttpClient _httpClient;
-
-    public StorageClient(HttpClient httpClient)
+    public StorageClient(HttpClient httpClient, ILogger<StorageClient> logger)
+        : base(httpClient, logger)
     {
-        _httpClient = httpClient;
     }
 
     public async Task<string> UploadAsync(string bucketKey, Stream content, string contentType, CancellationToken ct = default)
     {
         using var streamContent = new StreamContent(content);
-        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
         // TODO: confirm actual Storage upload endpoint + response shape.
-        var response = await _httpClient.PostAsync($"/api/storage/{Uri.EscapeDataString(bucketKey)}", streamContent, ct);
+        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/storage/{Uri.EscapeDataString(bucketKey)}")
+        {
+            Content = streamContent,
+        };
+
+        var response = await SendRequestAsync(request, ct);
         response.EnsureSuccessStatusCode();
         return bucketKey;
     }
@@ -30,13 +36,17 @@ public class StorageClient : IStorageClient
     public async Task<Stream> DownloadAsync(string bucketKey, CancellationToken ct = default)
     {
         // TODO: confirm actual Storage download endpoint.
-        return await _httpClient.GetStreamAsync($"/api/storage/{Uri.EscapeDataString(bucketKey)}", ct);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/storage/{Uri.EscapeDataString(bucketKey)}");
+        var response = await SendRequestAsync(request, ct);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStreamAsync(ct);
     }
 
     public async Task DeleteAsync(string bucketKey, CancellationToken ct = default)
     {
         // TODO: confirm actual Storage delete endpoint.
-        var response = await _httpClient.DeleteAsync($"/api/storage/{Uri.EscapeDataString(bucketKey)}", ct);
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/storage/{Uri.EscapeDataString(bucketKey)}");
+        var response = await SendRequestAsync(request, ct);
         response.EnsureSuccessStatusCode();
     }
 }

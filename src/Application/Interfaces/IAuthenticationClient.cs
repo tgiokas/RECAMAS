@@ -1,4 +1,4 @@
-namespace RECAMAS.Domain.Interfaces;
+namespace RECAMAS.Application.Interfaces;
 
 /// <summary>
 /// Contract for talking to the reused Authentication microservice.
@@ -7,6 +7,10 @@ namespace RECAMAS.Domain.Interfaces;
 /// RECAMAS needs to actively call Authentication, e.g. looking up a user's
 /// display name/role for an audit entry or notification recipient list.
 /// Implemented in Infrastructure/ExternalClients/AuthenticationClient.cs.
+///
+/// Lives here rather than Domain/Interfaces — this is an application-layer
+/// port to an external system, not a domain concept; Domain shouldn't know
+/// HTTP exists.
 /// </summary>
 public interface IAuthenticationClient
 {

@@ -1,29 +1,34 @@
 using System.Net.Http.Json;
-using RECAMAS.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
+using RECAMAS.Application.Interfaces;
+using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
 /// <summary>
 /// Typed HttpClient for the reused Authentication service, registered with a
 /// named/typed client + Polly retry policy in InfrastructureServiceRegistration
-/// (same pattern as Authentication's own Keycloak clients).
+/// (same pattern as Authentication's own Keycloak clients), on top of
+/// ApiClientBase for structured request/response logging and redaction.
 /// Stub only — real endpoint paths to be confirmed once we integrate for real.
 /// </summary>
-public class AuthenticationClient : IAuthenticationClient
+public class AuthenticationClient : ApiClientBase, IAuthenticationClient
 {
-    private readonly HttpClient _httpClient;
-
-    public AuthenticationClient(HttpClient httpClient)
+    public AuthenticationClient(HttpClient httpClient, ILogger<AuthenticationClient> logger)
+        : base(httpClient, logger)
     {
-        _httpClient = httpClient;
     }
 
     public async Task<UserSummary?> GetUserAsync(string userId, CancellationToken ct = default)
     {
         // TODO: confirm actual Authentication endpoint shape.
-        var response = await _httpClient.GetAsync($"/api/users/{userId}", ct);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/users/{userId}");
+        var response = await SendRequestAsync(request, ct);
+
         if (!response.IsSuccessStatusCode)
+        {
             return null;
+        }
 
         return await response.Content.ReadFromJsonAsync<UserSummary>(cancellationToken: ct);
     }

@@ -1,0 +1,13 @@
+using RECAMAS.Application.Dtos.ExternalClients;
+
+namespace RECAMAS.Application.Interfaces;
+
+/// <summary>
+/// Same unresolved live-API-vs-batch-file contradiction as
+/// IArrivalsDeparturesClient (Study 9.5 vs 12.3.7) — see its remarks. Written
+/// transport-agnostic for the same reason.
+/// </summary>
+public interface IStoplistClient
+{
+    Task<StoplistCheckResult?> CheckAsync(StoplistSearchRequest request, CancellationToken ct = default);
+}

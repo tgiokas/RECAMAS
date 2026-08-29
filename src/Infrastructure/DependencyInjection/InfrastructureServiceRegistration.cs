@@ -2,8 +2,12 @@ using Confluent.Kafka;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
+using RECAMAS.Application.Configuration;
+using RECAMAS.Application.Errors;
+using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Interfaces;
 using RECAMAS.Infrastructure.ExternalClients;
 using RECAMAS.Infrastructure.Messaging;
@@ -13,11 +17,18 @@ namespace RECAMAS.Infrastructure.DependencyInjection;
 
 /// <summary>
 /// Registers everything Infrastructure owns: EF Core + Postgres, typed HTTP
-/// clients to the 3 reused HTTP-based microservices (Authentication, Storage —
-/// Notifications has no HTTP client, see INotificationClient), the Kafka
-/// producer used for domain events, and repository implementations as
-/// modules get built. Called once from API/Program.cs as
-/// services.AddInfrastructureServices(configuration).
+/// clients (both the 3 reused microservices and the external government
+/// systems), the Kafka producer used for domain events, the error catalog,
+/// and repository implementations as modules get built. Called once from
+/// API/Program.cs as services.AddInfrastructureServices(configuration).
+///
+/// Every HTTP client here is registered the same way: bind its typed settings,
+/// AddHttpClient&lt;TInterface, TImplementation&gt; with that BaseUrl, then
+/// AddPolicyHandler(GetRetryPolicy()) for transient-fault retry. The
+/// concrete client itself extends ApiClientBase for structured request/
+/// response logging and redaction — the two are complementary, not
+/// alternatives: Polly decides whether to retry, ApiClientBase logs whatever
+/// actually got sent.
 /// </summary>
 public static class InfrastructureServiceRegistration
 {
@@ -27,22 +38,76 @@ public static class InfrastructureServiceRegistration
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("RecamasDb")));
 
+        // --- Typed settings for every outbound HTTP integration ---
+        var authenticationSettings = AuthenticationClientSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(authenticationSettings));
+
+        var storageSettings = StorageClientSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(storageSettings));
+
+        var cyConnectSettings = CyConnectSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(cyConnectSettings));
+
+        var arrivalsDeparturesSettings = ArrivalsDeparturesClientSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(arrivalsDeparturesSettings));
+
+        var stoplistSettings = StoplistClientSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(stoplistSettings));
+
+        var jccSettings = JccClientSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(jccSettings));
+
         // --- Reused microservice HTTP clients (Authentication, Storage) ---
         services.AddHttpClient<IAuthenticationClient, AuthenticationClient>(client =>
             {
-                client.BaseAddress = new Uri(configuration["Services:Authentication:BaseUrl"]
-                    ?? throw new InvalidOperationException("Services:Authentication:BaseUrl not configured"));
+                client.BaseAddress = new Uri(authenticationSettings.BaseUrl);
             })
             .AddPolicyHandler(GetRetryPolicy());
 
         services.AddHttpClient<IStorageClient, StorageClient>(client =>
             {
-                client.BaseAddress = new Uri(configuration["Services:Storage:BaseUrl"]
-                    ?? throw new InvalidOperationException("Services:Storage:BaseUrl not configured"));
+                client.BaseAddress = new Uri(storageSettings.BaseUrl);
             })
             .AddPolicyHandler(GetRetryPolicy());
 
         // Notifications: no HTTP client registered on purpose — it's Kafka-only, see INotificationClient.
+
+        // --- External government systems ---
+        // ARS and CASS share the CY Connect gateway (Study 12.3.3) — same BaseUrl, different relative paths.
+        services.AddHttpClient<IArsClient, ArsClient>(client =>
+            {
+                client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
+            })
+            .AddPolicyHandler(GetRetryPolicy());
+
+        services.AddHttpClient<ICassClient, CassClient>(client =>
+            {
+                client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
+            })
+            .AddPolicyHandler(GetRetryPolicy());
+
+        // PROVISIONAL — see IArrivalsDeparturesClient/IStoplistClient remarks on the
+        // live-API-vs-batch-file contradiction (Study 9.4/9.5 vs 12.3.6/12.3.7).
+        services.AddHttpClient<IArrivalsDeparturesClient, ArrivalsDeparturesClient>(client =>
+            {
+                client.BaseAddress = new Uri(arrivalsDeparturesSettings.BaseUrl);
+            })
+            .AddPolicyHandler(GetRetryPolicy());
+
+        services.AddHttpClient<IStoplistClient, StoplistClient>(client =>
+            {
+                client.BaseAddress = new Uri(stoplistSettings.BaseUrl);
+            })
+            .AddPolicyHandler(GetRetryPolicy());
+
+        services.AddHttpClient<IJccSigningClient, JccSigningClient>(client =>
+            {
+                client.BaseAddress = new Uri(jccSettings.BaseUrl);
+            })
+            .AddPolicyHandler(GetRetryPolicy());
+
+        // FAR: no endpoint exists yet — plain registration, no HttpClient. See IFarClient/FarClient remarks.
+        services.AddSingleton<IFarClient, FarClient>();
 
         // --- Kafka producer, shared by every module via IDomainEventPublisher ---
         services.AddSingleton<IProducer<string, string>>(_ =>
@@ -55,6 +120,15 @@ public static class InfrastructureServiceRegistration
             return new ProducerBuilder<string, string>(kafkaConfig).Build();
         });
         services.AddSingleton<IDomainEventPublisher, KafkaDomainEventPublisher>();
+
+        // --- Error catalog, loaded once from errors.json at startup (fail fast if missing) ---
+        var errorsJsonPath = Path.Combine(AppContext.BaseDirectory, "errors.json");
+        if (!File.Exists(errorsJsonPath))
+        {
+            throw new FileNotFoundException($"errors.json not found at: {errorsJsonPath}");
+        }
+
+        services.AddSingleton(ErrorCatalog.LoadFromFile(errorsJsonPath));
 
         // --- Repository implementations, added module by module ---
         // services.AddScoped<ICaseRepository, CaseRepository>();

@@ -1,4 +1,4 @@
-namespace RECAMAS.Domain.Interfaces;
+namespace RECAMAS.Application.Interfaces;
 
 /// <summary>
 /// Contract for the reused Storage microservice — every RECAMAS document
@@ -10,6 +10,8 @@ namespace RECAMAS.Domain.Interfaces;
 ///   "{caseId}/{documentType}/v{n}.pdf"
 /// so re-issued/re-signed documents don't collide with Storage's
 /// duplicate-key rejection on upload.
+///
+/// Lives here rather than Domain/Interfaces — see IAuthenticationClient remarks.
 /// </summary>
 public interface IStorageClient
 {

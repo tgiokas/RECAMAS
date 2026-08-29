@@ -29,10 +29,23 @@ public class ApplicationDbContext : DbContext
     public DbSet<Domain.Entities.TCNProfile.TCNProfile> TCNProfiles => Set<Domain.Entities.TCNProfile.TCNProfile>();
     public DbSet<Domain.Entities.TCNProfile.TCNNationality> TCNNationalities => Set<Domain.Entities.TCNProfile.TCNNationality>();
     public DbSet<Domain.Entities.TCNProfile.TCNIdentityDocument> TCNIdentityDocuments => Set<Domain.Entities.TCNProfile.TCNIdentityDocument>();
-    // Further DbSets are added module-by-module as entities are defined, e.g.:
-    // public DbSet<Case> Cases => Set<Case>();
-    // public DbSet<Rule> Rules => Set<Rule>();
-    // public DbSet<RuleVersion> RuleVersions => Set<RuleVersion>();
+
+    public DbSet<Domain.Entities.Case.Case> Cases => Set<Domain.Entities.Case.Case>();
+    public DbSet<Domain.Entities.Case.CaseTcnProfile> CaseTcnProfiles => Set<Domain.Entities.Case.CaseTcnProfile>();
+    public DbSet<Domain.Entities.Case.AvrCaseDetail> AvrCaseDetails => Set<Domain.Entities.Case.AvrCaseDetail>();
+    public DbSet<Domain.Entities.Case.ForcedReturnCaseDetail> ForcedReturnCaseDetails => Set<Domain.Entities.Case.ForcedReturnCaseDetail>();
+    public DbSet<Domain.Entities.Case.VoluntaryReturnOwnMeansCaseDetail> VoluntaryReturnOwnMeansCaseDetails => Set<Domain.Entities.Case.VoluntaryReturnOwnMeansCaseDetail>();
+
+    public DbSet<Domain.Entities.Detention.DetentionFacility> DetentionFacilities => Set<Domain.Entities.Detention.DetentionFacility>();
+    public DbSet<Domain.Entities.Detention.DetentionOrder> DetentionOrders => Set<Domain.Entities.Detention.DetentionOrder>();
+    public DbSet<Domain.Entities.Detention.DetentionReassessment> DetentionReassessments => Set<Domain.Entities.Detention.DetentionReassessment>();
+
+    public DbSet<Domain.Entities.ReturnImplementation.ReturnImplementation> ReturnImplementations => Set<Domain.Entities.ReturnImplementation.ReturnImplementation>();
+
+    public DbSet<Domain.Entities.Rules.Rule> Rules => Set<Domain.Entities.Rules.Rule>();
+    public DbSet<Domain.Entities.Rules.RuleVersion> RuleVersions => Set<Domain.Entities.Rules.RuleVersion>();
+
+    public DbSet<Domain.Entities.Reports.DocumentTemplate> DocumentTemplates => Set<Domain.Entities.Reports.DocumentTemplate>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

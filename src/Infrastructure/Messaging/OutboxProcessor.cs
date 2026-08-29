@@ -1,38 +1,41 @@
-using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Interfaces;
 
 namespace RECAMAS.Infrastructure.Messaging;
 
-/// <summary>
 /// Polls OutboxMessage for pending rows and publishes each to Kafka, closing
 /// the loop the transactional-outbox pattern needs (both EntityChangeAuditInterceptor
 /// and OutboxDomainEventPublisher only ever write to the outbox table; this is
-/// the only thing that ever calls Kafka). Modeled on CivilianPortal's own
-/// OutboxProcessor, including its retry-cap behavior — a message that exhausts
-/// MaxAttempts stops being retried and is logged at Error for manual follow-up
-/// (a real dead-letter table/topic is future work, not built here, but "stop
-/// retrying forever" — the prototype's flagged gap — is fixed).
+/// the only thing that ever calls Kafka). Modeled directly on CivilianPortal's
+/// own OutboxProcessor — same IMessagePublisher dependency, same per-message
+/// error handling, same route-by-EventType routing — rather than holding a
+/// bare IProducer&lt;string, string&gt; the way this class used to.
 ///
-/// Topic is a placeholder — see IDomainEventPublisher's own open item.
-/// </summary>
+/// Two deliberate differences from CivilianPortal's version, kept because
+/// they're strict improvements and don't affect the shared KafkaPublisher/
+/// IMessagePublisher contract: GetPendingAsync filters out already-exhausted
+/// messages at the query level (maxAttempts passed straight to SQL) rather
+/// than only checking retry count after picking a message up, and IDs are
+/// long rather than int.
+///
+/// Topic naming is provisional — see IDomainEventPublisher's own open item.
 public class OutboxProcessor : BackgroundService
 {
-    private const string PlaceholderTopic = "recamas.domain.events"; // TODO: confirm real topic name(s)
     private const int BatchSize = 20;
     private const int MaxAttempts = 5;
     private static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
 
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IProducer<string, string> _producer;
+    private readonly IMessagePublisher _publisher;
     private readonly ILogger<OutboxProcessor> _logger;
 
-    public OutboxProcessor(IServiceScopeFactory scopeFactory, IProducer<string, string> producer, ILogger<OutboxProcessor> logger)
+    public OutboxProcessor(IServiceScopeFactory scopeFactory, IMessagePublisher publisher, ILogger<OutboxProcessor> logger)
     {
         _scopeFactory = scopeFactory;
-        _producer = producer;
+        _publisher = publisher;
         _logger = logger;
     }
 
@@ -74,18 +77,20 @@ public class OutboxProcessor : BackgroundService
         {
             try
             {
-                var kafkaMessage = new Message<string, string>
+                var headers = new[]
                 {
-                    Key = message.Key ?? message.EventId.ToString(),
-                    Value = message.Payload,
-                    Headers = new Headers
-                    {
-                        { "x-event-id", System.Text.Encoding.UTF8.GetBytes(message.EventId.ToString()) },
-                        { "x-event-type", System.Text.Encoding.UTF8.GetBytes(message.EventType) },
-                    },
+                    new KeyValuePair<string, string>("content-type", "application/json"),
+                    new KeyValuePair<string, string>("x-event-id", message.EventId.ToString()),
+                    new KeyValuePair<string, string>("x-event-type", message.EventType),
                 };
 
-                await _producer.ProduceAsync(PlaceholderTopic, kafkaMessage, ct);
+                await _publisher.PublishRawJsonAsync(
+                    route: message.EventType,
+                    key: message.Key ?? message.EventId.ToString(),
+                    jsonPayload: message.Payload,
+                    headers: headers,
+                    cancellationToken: ct);
+
                 await outboxRepository.MarkAsProcessedAsync(message.Id, ct);
             }
             catch (Exception ex)

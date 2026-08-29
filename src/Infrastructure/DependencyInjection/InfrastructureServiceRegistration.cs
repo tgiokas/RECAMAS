@@ -1,4 +1,3 @@
-using Confluent.Kafka;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -119,22 +118,10 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IFarClient, FarClient>();
 
         // --- Kafka producer, shared by every module via IDomainEventPublisher ---
-        // Explicit short timeouts (confirmed missing by testing OutboxProcessor
-        // against an unreachable broker: librdkafka's own default MessageTimeoutMs
-        // is 300000ms, so ProduceAsync would hang for 5 minutes per message on an
-        // outage instead of failing fast into the outbox's own retry/backoff loop).
-        services.AddSingleton<IProducer<string, string>>(_ =>
-        {
-            var kafkaConfig = new ProducerConfig
-            {
-                BootstrapServers = kafkaSettings.BootstrapServers,
-                SocketConnectionSetupTimeoutMs = kafkaSettings.SocketConnectionSetupTimeoutMs,
-                SocketTimeoutMs = kafkaSettings.SocketTimeoutMs,
-                MessageTimeoutMs = kafkaSettings.MessageTimeoutMs,
-                RequestTimeoutMs = kafkaSettings.RequestTimeoutMs,
-            };
-            return new ProducerBuilder<string, string>(kafkaConfig).Build();
-        });
+        // Same IMessagePublisher/KafkaPublisher pattern as CivilianPortal (see
+        // KafkaPublisher's own remarks) instead of callers holding a bare
+        // IProducer&lt;string, string&gt; directly.
+        services.AddSingleton<IMessagePublisher, KafkaPublisher>();
         // Scoped, not Singleton: OutboxDomainEventPublisher depends (via IOutboxRepository)
         // on the scoped ApplicationDbContext.
         services.AddScoped<IDomainEventPublisher, OutboxDomainEventPublisher>();

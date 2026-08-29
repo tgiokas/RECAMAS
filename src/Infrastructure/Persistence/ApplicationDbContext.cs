@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Infrastructure.Persistence;
 
@@ -24,8 +26,10 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    // DbSets are added module-by-module as entities are defined, e.g.:
-    // public DbSet<TCNProfile> TCNProfiles => Set<TCNProfile>();
+    public DbSet<Domain.Entities.TCNProfile.TCNProfile> TCNProfiles => Set<Domain.Entities.TCNProfile.TCNProfile>();
+    public DbSet<Domain.Entities.TCNProfile.TCNNationality> TCNNationalities => Set<Domain.Entities.TCNProfile.TCNNationality>();
+    public DbSet<Domain.Entities.TCNProfile.TCNIdentityDocument> TCNIdentityDocuments => Set<Domain.Entities.TCNProfile.TCNIdentityDocument>();
+    // Further DbSets are added module-by-module as entities are defined, e.g.:
     // public DbSet<Case> Cases => Set<Case>();
     // public DbSet<Rule> Rules => Set<Rule>();
     // public DbSet<RuleVersion> RuleVersions => Set<RuleVersion>();
@@ -34,17 +38,39 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // pg_trgm backs the GIN fuzzy-search indexes used for TCN name/ARC search
+        // (architecture diagram: "+ GIN (TCN name/ARC fuzzy search)"). Trusted
+        // extension since Postgres 13 — installable by the database owner, no
+        // superuser required.
+        modelBuilder.HasPostgresExtension("pg_trgm");
+
         // Applies every IEntityTypeConfiguration<T> found in this assembly —
         // each module adds its own configuration class instead of editing this file.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        // TODO once entities exist: loop all BaseEntity-derived types and apply
-        //   modelBuilder.Entity(type).HasQueryFilter(e => !e.IsDeleted)
-        // via reflection here, so soft delete is automatic for every entity
-        // without repeating HasQueryFilter in every single configuration class.
+        // Soft delete (IsDeleted) and optimistic concurrency (RowVersion -> Postgres'
+        // native "xmin" system column) apply the same way to every entity, so they're
+        // wired once here via reflection instead of being repeated per configuration.
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (!typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                continue;
+            }
 
-        // TODO: configure RowVersion to map onto Postgres' native "xmin" system
-        // column for optimistic concurrency, e.g.:
-        //   modelBuilder.Entity<Case>().Property(e => e.RowVersion).IsRowVersion();
+            var parameter = Expression.Parameter(entityType.ClrType, "e");
+            var isDeletedProperty = Expression.Call(
+                typeof(EF), nameof(EF.Property), [typeof(bool)],
+                parameter, Expression.Constant(nameof(BaseEntity.IsDeleted)));
+            var notDeleted = Expression.Lambda(Expression.Not(isDeletedProperty), parameter);
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(notDeleted);
+
+            modelBuilder.Entity(entityType.ClrType)
+                .Property(nameof(BaseEntity.RowVersion))
+                .HasColumnName("xmin")
+                .HasColumnType("xid")
+                .ValueGeneratedOnAddOrUpdate()
+                .IsRowVersion();
+        }
     }
 }

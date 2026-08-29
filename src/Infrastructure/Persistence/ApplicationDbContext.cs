@@ -55,6 +55,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Domain.Entities.Reports.DocumentTemplate> DocumentTemplates => Set<Domain.Entities.Reports.DocumentTemplate>();
 
+    public DbSet<Domain.Entities.Outbox.OutboxMessage> OutboxMessages => Set<Domain.Entities.Outbox.OutboxMessage>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

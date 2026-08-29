@@ -7,7 +7,10 @@ namespace RECAMAS.Domain.Interfaces;
 /// indexes every event into Elasticsearch for compliance/audit trail.
 ///
 /// RECAMAS never calls either of those services directly for this — it only
-/// ever writes to Kafka. Implemented in Infrastructure/Messaging/KafkaDomainEventPublisher.cs.
+/// ever writes to Kafka, via a transactional outbox rather than a direct
+/// produce call (a Kafka outage would otherwise silently drop the event).
+/// Implemented in Infrastructure/Messaging/OutboxDomainEventPublisher.cs;
+/// delivery itself happens in OutboxProcessor.
 ///
 /// OPEN ITEM: exact topic name/event schema AuditLog expects is still pending
 /// (see architecture decision log) — this interface's shape may need to change

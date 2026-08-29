@@ -24,7 +24,7 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// would own that table doesn't exist yet. Only value sets that are
 /// structurally fixed by the domain itself (Gender, MdFileRelationship, the
 /// identity-document Source/Type) are modeled as real C# enums.
-public class TCNProfile : BaseEntity
+public class TCNProfile : BaseEntity, IAuditable
 {
     /// Human-facing "RECAMAS ID" shown in the UI (e.g. "TCN-00412" per the
     /// Study's own mockup caption) — distinct from <see cref="BaseEntity.PublicId"/>,
@@ -60,6 +60,14 @@ public class TCNProfile : BaseEntity
     public string? MdAddress { get; set; }
     public string? MdPhone { get; set; }
 
+    /// <summary>
+    /// TODO: this is a conservative starting set, not a reviewed PII policy —
+    /// the team should decide the real list against Study 12.5.7 before
+    /// treating it as complete. EurodacNumber (a biometric-linked identifier)
+    /// is excluded from the audit trail; contact fields are not, on the view
+    /// that "the address changed" is itself audit-relevant here.
+    /// </summary>
+    [NotAudited]
     public string? EurodacNumber { get; set; }
 
     public List<TCNNationality> Nationalities { get; set; } = [];

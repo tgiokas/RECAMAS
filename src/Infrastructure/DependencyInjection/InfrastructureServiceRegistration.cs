@@ -12,6 +12,7 @@ using RECAMAS.Domain.Interfaces;
 using RECAMAS.Infrastructure.ExternalClients;
 using RECAMAS.Infrastructure.Messaging;
 using RECAMAS.Infrastructure.Persistence;
+using RECAMAS.Infrastructure.Persistence.Interceptors;
 using RECAMAS.Infrastructure.Repositories;
 
 namespace RECAMAS.Infrastructure.DependencyInjection;
@@ -34,8 +35,17 @@ public static class InfrastructureServiceRegistration
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         // --- PostgreSQL 18, single instance, schema-per-module ---
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("RecamasDb")));
+        // Interceptors resolved from DI (not `new`'d directly) since both need
+        // IHttpContextAccessor for the current user/correlation id.
+        services.AddHttpContextAccessor();
+        services.AddScoped<AuditColumnsInterceptor>();
+        services.AddScoped<EntityChangeAuditInterceptor>();
+
+        services.AddDbContext<ApplicationDbContext>((sp, options) =>
+            options.UseNpgsql(configuration.GetConnectionString("RecamasDb"))
+                .AddInterceptors(
+                    sp.GetRequiredService<AuditColumnsInterceptor>(),
+                    sp.GetRequiredService<EntityChangeAuditInterceptor>()));
 
         // --- Typed settings for every outbound HTTP integration ---
         var storageSettings = StorageClientSettings.BindFromConfiguration(configuration);
@@ -100,16 +110,28 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IFarClient, FarClient>();
 
         // --- Kafka producer, shared by every module via IDomainEventPublisher ---
+        // Explicit short timeouts (confirmed missing by testing OutboxProcessor
+        // against an unreachable broker: librdkafka's own default MessageTimeoutMs
+        // is 300000ms, so ProduceAsync would hang for 5 minutes per message on an
+        // outage instead of failing fast into the outbox's own retry/backoff loop).
         services.AddSingleton<IProducer<string, string>>(_ =>
         {
             var kafkaConfig = new ProducerConfig
             {
                 BootstrapServers = configuration["Kafka:BootstrapServers"]
                     ?? throw new InvalidOperationException("Kafka:BootstrapServers not configured"),
+                SocketConnectionSetupTimeoutMs = 10000,
+                SocketTimeoutMs = 10000,
+                MessageTimeoutMs = 10000,
+                RequestTimeoutMs = 10000,
             };
             return new ProducerBuilder<string, string>(kafkaConfig).Build();
         });
-        services.AddSingleton<IDomainEventPublisher, KafkaDomainEventPublisher>();
+        // Scoped, not Singleton: OutboxDomainEventPublisher depends (via IOutboxRepository)
+        // on the scoped ApplicationDbContext.
+        services.AddScoped<IDomainEventPublisher, OutboxDomainEventPublisher>();
+        services.AddScoped<IAuditActionService, AuditActionService>();
+        services.AddHostedService<OutboxProcessor>();
 
         // --- Error catalog, loaded once from errors.json at startup (fail fast if missing) ---
         var errorsJsonPath = Path.Combine(AppContext.BaseDirectory, "errors.json");
@@ -122,6 +144,7 @@ public static class InfrastructureServiceRegistration
 
         // --- Repository implementations, added module by module ---
         services.AddScoped<ITCNProfileRepository, TCNProfileRepository>();
+        services.AddScoped<IOutboxRepository, OutboxRepository>();
         // services.AddScoped<ICaseRepository, CaseRepository>();
         // services.AddScoped<IRuleRepository, RuleRepository>();
 

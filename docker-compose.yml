@@ -1,0 +1,47 @@
+version: "3.9"
+
+# Stub for this skeleton commit — only RECAMAS's own API + DB.
+# The 4 reused microservices (Authentication, Storage, Notifications, AuditLog)
+# each have their own docker-compose.yml in their own repos. Once we're ready
+# to run everything together, either:
+#   (a) `docker compose -f docker-compose.yml -f ../authentication/docker-compose.yml ...`, or
+#   (b) a top-level "platform" compose file that includes all repos via `include:`
+# Not decided yet — open item.
+
+services:
+  recamas-db:
+    image: postgres:18
+    container_name: recamas-db
+    environment:
+      POSTGRES_DB: recamas_dev
+      POSTGRES_USER: recamas_app
+      POSTGRES_PASSWORD: dev_password_only
+    ports:
+      - "5433:5432" # offset from default so it doesn't collide with Authentication's own Postgres locally
+    volumes:
+      - recamas_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recamas_app -d recamas_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  recamas-api:
+    build:
+      context: .
+      dockerfile: src/API/Dockerfile
+    container_name: recamas-api
+    depends_on:
+      recamas-db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__RecamasDb: "Host=recamas-db;Port=5432;Database=recamas_dev;Username=recamas_app;Password=dev_password_only"
+      # Services__Authentication__BaseUrl / Services__Storage__BaseUrl / Kafka__BootstrapServers
+      # / Keycloak__Authority intentionally left unset here — point these at the
+      # reused services' own compose network once composed together.
+    ports:
+      - "5040:8080"
+
+volumes:
+  recamas_db_data:

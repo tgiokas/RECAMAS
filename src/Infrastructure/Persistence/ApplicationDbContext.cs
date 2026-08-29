@@ -29,6 +29,16 @@ public class ApplicationDbContext : DbContext
     public DbSet<Domain.Entities.TCNProfile.TCNProfile> TCNProfiles => Set<Domain.Entities.TCNProfile.TCNProfile>();
     public DbSet<Domain.Entities.TCNProfile.TCNNationality> TCNNationalities => Set<Domain.Entities.TCNProfile.TCNNationality>();
     public DbSet<Domain.Entities.TCNProfile.TCNIdentityDocument> TCNIdentityDocuments => Set<Domain.Entities.TCNProfile.TCNIdentityDocument>();
+    public DbSet<Domain.Entities.TCNProfile.TCNResidencyStatus> TCNResidencyStatuses => Set<Domain.Entities.TCNProfile.TCNResidencyStatus>();
+    public DbSet<Domain.Entities.TCNProfile.TCNResidencyApplication> TCNResidencyApplications => Set<Domain.Entities.TCNProfile.TCNResidencyApplication>();
+    public DbSet<Domain.Entities.TCNProfile.TCNInternationalProtectionStatus> TCNInternationalProtectionStatuses => Set<Domain.Entities.TCNProfile.TCNInternationalProtectionStatus>();
+    public DbSet<Domain.Entities.TCNProfile.TCNInternationalProtectionApplication> TCNInternationalProtectionApplications => Set<Domain.Entities.TCNProfile.TCNInternationalProtectionApplication>();
+    public DbSet<Domain.Entities.TCNProfile.TCNAppeal> TCNAppeals => Set<Domain.Entities.TCNProfile.TCNAppeal>();
+    public DbSet<Domain.Entities.TCNProfile.TCNReturnDecision> TCNReturnDecisions => Set<Domain.Entities.TCNProfile.TCNReturnDecision>();
+    public DbSet<Domain.Entities.TCNProfile.TCNStoplistEntry> TCNStoplistEntries => Set<Domain.Entities.TCNProfile.TCNStoplistEntry>();
+    public DbSet<Domain.Entities.TCNProfile.TCNArrivalDeparture> TCNArrivalsDepartures => Set<Domain.Entities.TCNProfile.TCNArrivalDeparture>();
+    public DbSet<Domain.Entities.TCNProfile.TCNSecurityFinding> TCNSecurityFindings => Set<Domain.Entities.TCNProfile.TCNSecurityFinding>();
+    public DbSet<Domain.Entities.TCNProfile.TCNProfileLink> TCNProfileLinks => Set<Domain.Entities.TCNProfile.TCNProfileLink>();
 
     public DbSet<Domain.Entities.Case.Case> Cases => Set<Domain.Entities.Case.Case>();
     public DbSet<Domain.Entities.Case.CaseTcnProfile> CaseTcnProfiles => Set<Domain.Entities.Case.CaseTcnProfile>();

@@ -4,9 +4,13 @@ using RECAMAS.Domain.Enums;
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
 /// <summary>
-/// Aggregate root for the tcn_profile schema. Covers the "Overview" tab of the
-/// TCN Profile screen — Personal Information (Implementation Study Table 3) and
-/// Identity Information (Table 4, via <see cref="IdentityDocuments"/>).
+/// Aggregate root for the tcn_profile schema. Covers all 3 tabs of the TCN
+/// Profile screen: Overview (Personal Information, Table 3; Identity
+/// Information, Table 4, via <see cref="IdentityDocuments"/>), Residency/IP/
+/// Decisions (Tables 5-10), Security and Arrival History (Tables 11-13), and
+/// Cases and Linked Profiles (Table 14, via <see cref="Links"/> — the "Cases"
+/// part of that tab, Table 15, is a read view into the Case module's own
+/// Case/CaseTcnProfile entities, not modeled here).
 ///
 /// Deliberately excluded from this pass: Photograph and Fingerprints (Table 3).
 /// Both are optional (Req.=No) file attachments; fingerprints in particular
@@ -64,6 +68,29 @@ public class TCNProfile : BaseEntity
 
     public List<TCNNationality> Nationalities { get; set; } = [];
     public List<TCNIdentityDocument> IdentityDocuments { get; set; } = [];
+
+    // --- Residency, IP, and Decisions tab (Tables 5-10) ---
+    public List<TCNResidencyStatus> ResidencyStatuses { get; set; } = [];
+    public List<TCNResidencyApplication> ResidencyApplications { get; set; } = [];
+    public List<TCNInternationalProtectionStatus> InternationalProtectionStatuses { get; set; } = [];
+    public List<TCNInternationalProtectionApplication> InternationalProtectionApplications { get; set; } = [];
+    public List<TCNAppeal> Appeals { get; set; } = [];
+    public List<TCNReturnDecision> ReturnDecisions { get; set; } = [];
+
+    // --- Security and Arrival History tab (Tables 11-13) ---
+    public List<TCNStoplistEntry> StoplistEntries { get; set; } = [];
+    public List<TCNArrivalDeparture> ArrivalsDepartures { get; set; } = [];
+
+    /// <summary>Table 13. Findings are <see cref="SecurityFindings"/>, not columns here.</summary>
+    public bool NoCriminalRecordFound { get; set; }
+
+    /// <summary>Table 13.</summary>
+    public bool NoRestrictiveActivitiesFound { get; set; }
+
+    public List<TCNSecurityFinding> SecurityFindings { get; set; } = [];
+
+    // --- Cases and Linked Profiles tab (Table 14) ---
+    public List<TCNProfileLink> Links { get; set; } = [];
 
     /// <summary>Table 3: "Age | Integer | RECAMAS | Calculated from date of birth." Never persisted.</summary>
     public int? Age => DateOfBirth is null

@@ -39,6 +39,58 @@ public class TCNProfileConfiguration : IEntityTypeConfiguration<TCNProfileEntity
             .HasForeignKey(e => e.TCNProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(e => e.ResidencyStatuses)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.ResidencyApplications)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.InternationalProtectionStatuses)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.InternationalProtectionApplications)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.Appeals)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.ReturnDecisions)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.StoplistEntries)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.ArrivalsDepartures)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.SecurityFindings)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Only the owning side (TCNProfileId) cascades — see TCNProfileLinkConfiguration
+        // for why the LinkedProfileId side is Restrict instead.
+        builder.HasMany(e => e.Links)
+            .WithOne()
+            .HasForeignKey(e => e.TCNProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Age is computed from DateOfBirth, never persisted.
         builder.Ignore(e => e.Age);
     }

@@ -1,18 +1,30 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /src
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+USER $APP_UID
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
 
+
+# This stage is used to build the service project
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
 COPY ["src/API/RECAMAS.Api.csproj", "src/API/"]
 COPY ["src/Application/RECAMAS.Application.csproj", "src/Application/"]
 COPY ["src/Infrastructure/RECAMAS.Infrastructure.csproj", "src/Infrastructure/"]
 COPY ["src/Domain/RECAMAS.Domain.csproj", "src/Domain/"]
-RUN dotnet restore "src/API/RECAMAS.Api.csproj"
 
+RUN dotnet restore "./src/API/RECAMAS.Api.csproj"
 COPY . .
-RUN dotnet publish "src/API/RECAMAS.Api.csproj" -c Release -o /app/publish
+WORKDIR "/src/src/API"
+RUN dotnet build "./RECAMAS.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./RECAMAS.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+
+FROM base AS final
 WORKDIR /app
-COPY --from=build /app/publish .
-COPY errors.json /app/errors.json
-EXPOSE 8080
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "RECAMAS.Api.dll"]

@@ -10,8 +10,8 @@ public class StorageClientSettings
     {
         return new StorageClientSettings
         {
-            BaseUrl = configuration["Services:Storage:BaseUrl"]
-                ?? throw new InvalidOperationException("Services:Storage:BaseUrl is not configured."),
+            BaseUrl = configuration["STORAGE_BASE_URL"]
+                ?? throw new InvalidOperationException("STORAGE_BASE_URL is not configured."),
         };
     }
 }

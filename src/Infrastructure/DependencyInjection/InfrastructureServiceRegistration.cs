@@ -41,13 +41,22 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<AuditColumnsInterceptor>();
         services.AddScoped<EntityChangeAuditInterceptor>();
 
+        var databaseSettings = DatabaseSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(databaseSettings));
+
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
-            options.UseNpgsql(configuration.GetConnectionString("RecamasDb"))
+            options.UseNpgsql(databaseSettings.ConnectionString)
                 .AddInterceptors(
                     sp.GetRequiredService<AuditColumnsInterceptor>(),
                     sp.GetRequiredService<EntityChangeAuditInterceptor>()));
 
         // --- Typed settings for every outbound HTTP integration ---
+        var keycloakSettings = KeycloakSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(keycloakSettings));
+
+        var kafkaSettings = KafkaSettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(kafkaSettings));
+
         var storageSettings = StorageClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(storageSettings));
 
@@ -118,12 +127,11 @@ public static class InfrastructureServiceRegistration
         {
             var kafkaConfig = new ProducerConfig
             {
-                BootstrapServers = configuration["Kafka:BootstrapServers"]
-                    ?? throw new InvalidOperationException("Kafka:BootstrapServers not configured"),
-                SocketConnectionSetupTimeoutMs = 10000,
-                SocketTimeoutMs = 10000,
-                MessageTimeoutMs = 10000,
-                RequestTimeoutMs = 10000,
+                BootstrapServers = kafkaSettings.BootstrapServers,
+                SocketConnectionSetupTimeoutMs = kafkaSettings.SocketConnectionSetupTimeoutMs,
+                SocketTimeoutMs = kafkaSettings.SocketTimeoutMs,
+                MessageTimeoutMs = kafkaSettings.MessageTimeoutMs,
+                RequestTimeoutMs = kafkaSettings.RequestTimeoutMs,
             };
             return new ProducerBuilder<string, string>(kafkaConfig).Build();
         });

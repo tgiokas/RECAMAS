@@ -16,6 +16,8 @@ services:
       POSTGRES_DB: recamas_dev
       POSTGRES_USER: recamas_app
       POSTGRES_PASSWORD: dev_password_only
+    # Uses fixed values above rather than .env's RECAMAS_DB_CONNECTION (a full
+    # connection string, not discrete POSTGRES_* vars) — keep the two in sync by hand.
     ports:
       - "5433:5432" # offset from default so it doesn't collide with Authentication's own Postgres locally
     volumes:
@@ -34,12 +36,15 @@ services:
     depends_on:
       recamas-db:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__RecamasDb: "Host=recamas-db;Port=5432;Database=recamas_dev;Username=recamas_app;Password=dev_password_only"
-      # Services__Authentication__BaseUrl / Services__Storage__BaseUrl / Kafka__BootstrapServers
-      # / Keycloak__Authority intentionally left unset here — point these at the
-      # reused services' own compose network once composed together.
+      # Overrides .env's RECAMAS_DB_CONNECTION host/port for the compose network
+      # (host machine's .env points at localhost, not the recamas-db container).
+      RECAMAS_DB_CONNECTION: "Host=recamas-db;Port=5432;Database=recamas_dev;Username=recamas_app;Password=dev_password_only"
+      # KEYCLOAK_AUTHORITY / STORAGE_BASE_URL / KAFKA_BOOTSTRAP_SERVERS and the rest
+      # come from .env — point them at the reused services' own compose network
+      # once composed together.
     ports:
       - "5040:8080"
 

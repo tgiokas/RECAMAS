@@ -15,8 +15,8 @@ public class ArrivalsDeparturesClientSettings
     {
         return new ArrivalsDeparturesClientSettings
         {
-            BaseUrl = configuration["Services:ArrivalsDepartures:BaseUrl"]
-                ?? throw new InvalidOperationException("Services:ArrivalsDepartures:BaseUrl is not configured."),
+            BaseUrl = configuration["ARRIVALS_DEPARTURES_BASE_URL"]
+                ?? throw new InvalidOperationException("ARRIVALS_DEPARTURES_BASE_URL is not configured."),
         };
     }
 }

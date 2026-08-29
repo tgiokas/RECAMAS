@@ -20,10 +20,10 @@ public class CyConnectSettings
     {
         return new CyConnectSettings
         {
-            BaseUrl = configuration["Services:CyConnect:BaseUrl"]
-                ?? throw new InvalidOperationException("Services:CyConnect:BaseUrl is not configured."),
-            ClientId = configuration["Services:CyConnect:ClientId"],
-            ClientSecret = configuration["Services:CyConnect:ClientSecret"],
+            BaseUrl = configuration["CYCONNECT_BASE_URL"]
+                ?? throw new InvalidOperationException("CYCONNECT_BASE_URL is not configured."),
+            ClientId = configuration["CYCONNECT_CLIENT_ID"],
+            ClientSecret = configuration["CYCONNECT_CLIENT_SECRET"],
         };
     }
 }

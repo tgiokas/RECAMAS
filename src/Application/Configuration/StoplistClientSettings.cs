@@ -11,8 +11,8 @@ public class StoplistClientSettings
     {
         return new StoplistClientSettings
         {
-            BaseUrl = configuration["Services:Stoplist:BaseUrl"]
-                ?? throw new InvalidOperationException("Services:Stoplist:BaseUrl is not configured."),
+            BaseUrl = configuration["STOPLIST_BASE_URL"]
+                ?? throw new InvalidOperationException("STOPLIST_BASE_URL is not configured."),
         };
     }
 }

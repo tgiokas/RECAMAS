@@ -12,6 +12,9 @@ obj/
 ## Docker
 docker-compose.override.yml
 
+## Local environment values — see .env.example for the template
+.env
+
 ## IDE
 .idea/
 .vscode/

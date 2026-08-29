@@ -1,9 +1,18 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using RECAMAS.Api.Middleware;
+using RECAMAS.Application.Configuration;
 using RECAMAS.Application.DependencyInjection;
 using RECAMAS.Infrastructure.DependencyInjection;
 using RECAMAS.Infrastructure.Persistence;
 using Serilog;
+
+// --- Load .env into real process environment variables before anything reads config ---
+// Only affects local (non-Docker) runs: in docker-compose, env_file already injects
+// these directly. TraversePath() walks up from the working directory to find the
+// repo-root .env regardless of whether the process is launched from src/API or the
+// repo root; it silently no-ops when no .env file is found anywhere up the tree.
+Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,12 +29,14 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 // (standard OIDC pattern) even though login itself goes through Authentication.
 // RBAC (role -> allowed action) enforcement is a separate concern, added once the
 // field-level/stage-level permission model is designed (Reports & Admin module).
+var keycloakSettings = KeycloakSettings.BindFromConfiguration(builder.Configuration);
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration["Keycloak:Authority"];
-        options.Audience = builder.Configuration["Keycloak:Audience"];
+        options.Authority = keycloakSettings.Authority;
+        options.Audience = keycloakSettings.Audience;
         options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
     });
 builder.Services.AddAuthorization();
@@ -34,9 +45,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var databaseSettings = DatabaseSettings.BindFromConfiguration(builder.Configuration);
+
 builder.Services
     .AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("RecamasDb")!, name: "postgres")
+    .AddNpgSql(databaseSettings.ConnectionString, name: "postgres")
     // TODO once clients are finalized: add HTTP health checks pinging
     // Authentication, Storage, and a Kafka broker-connectivity check.
     ;

@@ -19,11 +19,11 @@ public class JccClientSettings
     {
         return new JccClientSettings
         {
-            BaseUrl = configuration["Services:Jcc:BaseUrl"]
-                ?? throw new InvalidOperationException("Services:Jcc:BaseUrl is not configured."),
-            ClientId = configuration["Services:Jcc:ClientId"],
-            ClientSecret = configuration["Services:Jcc:ClientSecret"],
-            CallbackUrl = configuration["Services:Jcc:CallbackUrl"],
+            BaseUrl = configuration["JCC_BASE_URL"]
+                ?? throw new InvalidOperationException("JCC_BASE_URL is not configured."),
+            ClientId = configuration["JCC_CLIENT_ID"],
+            ClientSecret = configuration["JCC_CLIENT_SECRET"],
+            CallbackUrl = configuration["JCC_CALLBACK_URL"],
         };
     }
 }

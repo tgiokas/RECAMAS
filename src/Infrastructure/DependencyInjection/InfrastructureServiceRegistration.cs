@@ -34,8 +34,7 @@ public static class InfrastructureServiceRegistration
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         // --- PostgreSQL 18, single instance, schema-per-module ---
-        // Interceptors resolved from DI (not `new`'d directly) since both need
-        // IHttpContextAccessor for the current user/correlation id.
+        // Interceptors resolved from DI 
         services.AddHttpContextAccessor();
         services.AddScoped<AuditColumnsInterceptor>();
         services.AddScoped<EntityChangeAuditInterceptor>();
@@ -76,9 +75,7 @@ public static class InfrastructureServiceRegistration
             {
                 client.BaseAddress = new Uri(storageSettings.BaseUrl);
             })
-            .AddPolicyHandler(GetRetryPolicy());
-
-        // Notifications: no HTTP client registered on purpose — it's Kafka-only, see INotificationClient.
+            .AddPolicyHandler(GetRetryPolicy()); 
 
         // --- External government systems ---
         // ARS and CASS share the CY Connect gateway (Specs 12.3.3) — same BaseUrl, different relative paths.

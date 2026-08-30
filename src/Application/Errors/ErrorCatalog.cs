@@ -25,7 +25,7 @@ public sealed class ErrorCatalog : IErrorCatalog
         return new ErrorCatalog(new Dictionary<string, string>(messagesByCode, StringComparer.OrdinalIgnoreCase));
     }
 
-    public string GetMessage(string errorCode)
+    public string GetError(string errorCode)
     {
         return TryGetMessage(errorCode, out var message)
             ? message

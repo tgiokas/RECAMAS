@@ -3,7 +3,7 @@ using RECAMAS.Domain.Enums;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// Study Table 12 — "Each arrival/departure is shown as a separate entry," sourced from the Police Database.
+/// Specs Table 12 — "Each arrival/departure is shown as a separate entry," sourced from the Police Database.
 public class TCNArrivalDeparture : BaseEntity
 {
     public long TCNProfileId { get; set; }

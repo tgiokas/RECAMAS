@@ -2,7 +2,7 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// Study Table 8 — "Each application is shown as a separate entry."
+/// Specs Table 8 — "Each application is shown as a separate entry."
 public class TCNInternationalProtectionApplication : BaseEntity
 {
     public long TCNProfileId { get; set; }

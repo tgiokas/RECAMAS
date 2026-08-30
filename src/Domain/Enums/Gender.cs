@@ -1,6 +1,6 @@
 namespace RECAMAS.Domain.Enums;
 
-/// Fixed 3-value set per Implementation Study Table 3 (Profile fields - Personal
+/// Fixed 3-value set per Implementation Specs Table 3 (Profile fields - Personal
 /// Information): "Gender | Enum (M/F/U)".
 public enum Gender
 {

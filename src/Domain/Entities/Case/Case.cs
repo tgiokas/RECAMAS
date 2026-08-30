@@ -10,14 +10,14 @@ namespace RECAMAS.Domain.Entities.Case;
 /// <see cref="ForcedReturnCaseDetail"/>, <see cref="VoluntaryReturnOwnMeansCaseDetail"/>).
 ///
 /// NOT modeled here yet — real design work, each a separate pass:
-///  - Per-CaseType Stage/Status state machines (Study 4.4.1/4.5.1/4.6.1 give
+///  - Per-CaseType Stage/Status state machines (Specs 4.4.1/4.5.1/4.6.1 give
 ///    the full stage/status tables per type; Stage/Status below are placeholder
 ///    strings, not the real fixed enums the architecture decision calls for).
-///  - The AVR Counselling questionnaire (Study 4.4.2.2, ~40 conditional fields).
-///  - Approval Items, Requests, Case History, flags (Study 4.3.4/4.3.7/4.3.8).
+///  - The AVR Counselling questionnaire (Specs 4.4.2.2, ~40 conditional fields).
+///  - Approval Items, Requests, Case History, flags (Specs 4.3.4/4.3.7/4.3.8).
 public class Case : BaseEntity
 {
-    /// Human-facing case code, e.g. "AVR-2026-0117" per the Study's own mockup captions.
+    /// Human-facing case code, e.g. "AVR-2026-0117" per the Specs's own mockup captions.
     public string? DisplayCode { get; set; }
 
     public CaseType CaseType { get; set; }

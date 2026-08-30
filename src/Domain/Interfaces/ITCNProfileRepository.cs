@@ -11,14 +11,14 @@ namespace RECAMAS.Domain.Interfaces;
 /// 
 public interface ITCNProfileRepository
 {
-    /// Full graph, read-only — for the "Profile Details" screen (Study 3.2.2), all 3 tabs at once.
+    /// Full graph, read-only — for the "Profile Details" screen (Specs 3.2.2), all 3 tabs at once.
     Task<TCNProfile?> GetByIdWithDetailsAsync(long id, CancellationToken ct = default);
 
     /// Same as <see cref="GetByIdWithDetailsAsync"/> but by the API-facing PublicId.
     Task<TCNProfile?> GetByPublicIdWithDetailsAsync(Guid publicId, CancellationToken ct = default);
 
     /// 
-    /// Full graph, tracked — for edit flows (Study 3.2.2 "Manual Profile Updates").
+    /// Full graph, tracked — for edit flows (Specs 3.2.2 "Manual Profile Updates").
     /// Loaded whole rather than per-tab because the aggregate boundary is the
     /// whole profile: every child collection commits together in one SaveChanges.
     /// 
@@ -26,25 +26,25 @@ public interface ITCNProfileRepository
 
     /// 
     /// Lightweight, no includes — used by the automatic interface-refresh
-    /// triggers (Study 9.2.1/9.3.1/9.4.1/9.5.1: "Only for TCN Profiles where
+    /// triggers (Specs 9.2.1/9.3.1/9.4.1/9.5.1: "Only for TCN Profiles where
     /// ARC is available") and basic existence checks, not for display.
     /// 
     Task<TCNProfile?> GetByArcAsync(string arc, CancellationToken ct = default);
 
     /// 
-    /// Study 2.2.2 (Duplicate Detection): "raises an alert when key fields
+    /// Specs 2.2.2 (Duplicate Detection): "raises an alert when key fields
     /// match across profiles/sources (e.g. ARC, passport number, name &amp;
     /// surname)". ARC and passport number are exact matches; first/last name
     /// use the GIN trigram index (TCNProfileConfiguration) via
     /// EF.Functions.TrigramsAreSimilar so near-matches surface too, per the
-    /// Study's own "a name mismatch shall not preclude identifying related
+    /// Specs's own "a name mismatch shall not preclude identifying related
     /// records" requirement (12.3.1).
     /// 
     Task<IReadOnlyList<TCNProfile>> SearchForDuplicatesAsync(
         string? arc, string? passportNumber, string? firstName, string? lastName, CancellationToken ct = default);
 
     /// 
-    /// Study 3.2.1 (Profiles list) "Quick search" only — column-chooser/
+    /// Specs 3.2.1 (Profiles list) "Quick search" only — column-chooser/
     /// advanced-search filtering is a screen-specific read model for later,
     /// not part of this repository.
     /// 

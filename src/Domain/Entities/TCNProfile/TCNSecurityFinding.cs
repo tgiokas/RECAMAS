@@ -3,7 +3,7 @@ using RECAMAS.Domain.Enums;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// Study Table 13's "Finding | Multiple" item, shaped after the equivalent
+/// Specs Table 13's "Finding | Multiple" item, shaped after the equivalent
 /// case-level Security Checks item (Table 36) since Table 13 itself doesn't
 /// spell out the sub-fields. The two overview booleans (NoCriminalRecordFound,
 /// NoRestrictiveActivitiesFound) live directly on TCNProfile — no separate

@@ -2,8 +2,8 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// Study Table 10 — a profile-level rollup, sourced from ARS, CASS, or a
-/// RECAMAS Case (IssuingAuthority "rules to be established" per the Study
+/// Specs Table 10 — a profile-level rollup, sourced from ARS, CASS, or a
+/// RECAMAS Case (IssuingAuthority "rules to be established" per the Specs
 /// itself). Note VoluntaryReturnDeadline is typed "Date" here, but the ARS/
 /// CASS interface DTOs (ArsReturnDecision/CassReturnDecision) type the same
 /// concept as "Number" (a day count) — a real inconsistency in the source

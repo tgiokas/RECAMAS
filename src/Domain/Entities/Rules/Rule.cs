@@ -7,7 +7,7 @@ namespace RECAMAS.Domain.Entities.Rules;
 /// version and inserts a new one — never mutates a version in place, so the
 /// audit trail the original separate-microservice design was meant to
 /// protect survives even though Rule Engine is now an in-process module).
-/// Field-eligibility and IF/THEN syntax are specified in Study 8.4.2/8.4.3 —
+/// Field-eligibility and IF/THEN syntax are specified in Specs 8.4.2/8.4.3 —
 /// not modeled in this skeleton pass.
 public class Rule : BaseEntity
 {

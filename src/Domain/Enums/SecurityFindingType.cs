@@ -1,6 +1,6 @@
 namespace RECAMAS.Domain.Enums;
 
-/// Study Table 36 (Case-level Security Checks) — reused here for the profile-level equivalent (Table 13).
+/// Specs Table 36 (Case-level Security Checks) — reused here for the profile-level equivalent (Table 13).
 public enum SecurityFindingType
 {
     CriminalRecord = 1,

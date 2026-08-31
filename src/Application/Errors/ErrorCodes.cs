@@ -19,7 +19,7 @@ public static class ErrorCodes
 
     public static class TCNProfile
     {
-        // e.g. public const string DuplicateProfileDetected = "RECAMAS-001";
+        public const string DuplicateProfileDetected = "RECAMAS-001";
     }
 
     public static class Case

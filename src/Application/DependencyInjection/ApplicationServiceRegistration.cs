@@ -1,5 +1,7 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using RECAMAS.Application.Interfaces;
+using RECAMAS.Application.Services;
 
 namespace RECAMAS.Application.DependencyInjection;
 
@@ -15,7 +17,7 @@ public static class ApplicationServiceRegistration
         services.AddValidatorsFromAssemblyContaining(typeof(ApplicationServiceRegistration));
 
         // --- TCNProfile module ---
-        // services.AddScoped<ITCNProfileService, TCNProfileService>();
+        services.AddScoped<ITCNProfileService, TCNProfileService>();
 
         // --- Case module ---
         // services.AddScoped<ICaseService, CaseService>();

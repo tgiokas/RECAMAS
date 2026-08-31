@@ -1,3 +1,4 @@
 {
-  "RECAMAS-000": "An unexpected error occurred."
+  "RECAMAS-000": "An unexpected error occurred.",
+  "RECAMAS-001": "A profile with a matching ARC, passport number, or name already exists."
 }

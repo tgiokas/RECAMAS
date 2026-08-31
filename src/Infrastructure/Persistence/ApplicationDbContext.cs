@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Infrastructure.Persistence;
@@ -17,7 +18,7 @@ namespace RECAMAS.Infrastructure.Persistence;
 /// IsDeleted=true rows are invisible by default — repositories don't need
 /// to remember to filter them out manually. Use IgnoreQueryFilters() explicitly
 /// on the rare admin/audit query that needs to see deleted rows.
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)

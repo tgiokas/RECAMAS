@@ -49,6 +49,10 @@ public static class InfrastructureServiceRegistration
                     sp.GetRequiredService<AuditColumnsInterceptor>(),
                     sp.GetRequiredService<EntityChangeAuditInterceptor>()));
 
+        // Lets an Application service call SaveChangesAsync without depending on
+        // Infrastructure directly — see IApplicationDbContext remarks.
+        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
+
         // --- Typed settings for every outbound HTTP integration ---
         var keycloakSettings = KeycloakSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(keycloakSettings));

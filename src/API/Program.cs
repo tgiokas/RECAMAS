@@ -1,10 +1,9 @@
-using Cbs.Audit.AspNetCore; // AddHttpContextActor — an extension on CbsAuditBuilder, not part of the base DependencyInjection package
-using Cbs.Audit.DependencyInjection; // AddCbsAudit, CbsAuditBuilder, AddEntityAuditing/AddLabelResolver/ValidateEntityActionsIn
-using Cbs.Audit.Policy; // Mask
-using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
+using Cbs.Audit.AspNetCore;
+using Cbs.Audit.DependencyInjection; 
+using Cbs.Audit.Policy; 
+using DotNetEnv;
 using Serilog;
 
 using RECAMAS.Api.Middleware;
@@ -13,7 +12,7 @@ using RECAMAS.Application.DependencyInjection;
 using RECAMAS.Infrastructure.Audit;
 using RECAMAS.Infrastructure.DependencyInjection;
 using RECAMAS.Infrastructure.Persistence;
-
+using System.Text.Json.Serialization;
 
 Env.TraversePath().Load();
 
@@ -34,14 +33,10 @@ builder.Host.UseSerilog();
 // Add Application services
 builder.Services.AddApplicationServices();
 
-// Infrastructure (Settings, DB, Repos, HttpClients)
+// Add Infrastructure services (Settings, DB, Repos, HttpClients)
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-// Cbs.Audit: call shape verified against the real Cbs.Audit source
-// (AuditOptions.cs, ServiceCollectionExtensions.cs, CbsAuditBuilder.cs,
-// AspNetCoreAuditExtensions.cs) — reads from AuditSettings instead of
-// builder.Configuration[...] inline, to stay consistent with this project's
-// .env conversion.
+// Auditing 
 var auditSettings = AuditSettings.BindFromConfiguration(builder.Configuration);
 
 builder.Services.AddCbsAudit(o =>
@@ -72,22 +67,31 @@ builder.Services.AddCbsAudit(o =>
     };
     o.ActorPrivacy.DisplayName = actorMask;
     o.ActorPrivacy.Username = actorMask;
-})
-    .AddHttpContextActor()
-    .AddEntityAuditing<ApplicationDbContext>()
-    .AddLabelResolver<TCNProfileLabelResolver>()
-    .ValidateEntityActionsIn(typeof(RECAMAS.Domain.Entities.TCNProfile.TCNProfile).Assembly);
+}).AddHttpContextActor()
+.AddEntityAuditing<ApplicationDbContext>()
+.AddLabelResolver<TCNProfileLabelResolver>()
+.ValidateEntityActionsIn(typeof(RECAMAS.Domain.Entities.TCNProfile.TCNProfile).Assembly);
 
-var keycloakSettings = KeycloakSettings.BindFromConfiguration(builder.Configuration);
+//var keycloakSettings = KeycloakSettings.BindFromConfiguration(builder.Configuration);
 
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Serialize enums (e.g. ApplicationStatus) as their string names so the SPA can
+        // index lookup tables by `"Submitted" | "Registered" | ...` instead of numeric values.
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
-var databaseSettings = DatabaseSettings.BindFromConfiguration(builder.Configuration);
+var shouldEnableSwagger = builder.Environment.IsDevelopment() || builder.Environment.IsStaging();
+if (shouldEnableSwagger)
+{
+    builder.Services.AddSwaggerGen();
+}
+//var databaseSettings = DatabaseSettings.BindFromConfiguration(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (shouldEnableSwagger)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -102,18 +106,10 @@ Log.Information("Database migrations applied (if any).");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 //app.UseSerilogRequestLogging();
 //app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
-
-// --- DB migrations run automatically on startup, per CLAUDE.md convention ---
-// (kept commented until the first module's migrations actually exist)
-// using (var scope = app.Services.CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//     dbContext.Database.Migrate();
-// }
 
 app.Run();

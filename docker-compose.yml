@@ -20,6 +20,8 @@ services:
     build:
       context: .
       dockerfile: src/API/Dockerfile
+      secrets:
+        - nuget_token
     container_name: recamas-api
     depends_on:
       recamas-db:
@@ -130,7 +132,16 @@ services:
 volumes:
   recamas-db-data:
   #keycloak-db-data:
-  kafka1-data:  
+  kafka1-data:
+
+# Backs recamas-api's build.secrets above — export NUGET_TOKEN before
+# `docker compose build`/`up --build` locally (a GitHub PAT with read:packages,
+# authorized for cosmos-business-systems if SSO is enforced); CI passes its
+# own GITHUB_TOKEN into the same NUGET_TOKEN name instead. Without it the
+# build fails with "the 'nuget_token' build secret is empty".
+secrets:
+  nuget_token:
+    environment: NUGET_TOKEN
 
 networks:
  recamas-network:

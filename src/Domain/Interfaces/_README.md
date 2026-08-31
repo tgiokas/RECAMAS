@@ -1,12 +1,7 @@
 # Repository interfaces
 
-Convention (mirrors the `Authentication` service):
   - Repository interfaces live here (e.g. `ICaseRepository`, `ITCNProfileRepository`),
-    implemented in `Infrastructure/Persistence`.
-  - There is no `IDomainEventPublisher` here. The audit trail is handled by
-    Cbs.Audit, which is audit-only, not a general pub/sub — a cross-module
-    domain-event mechanism (for Notifications reacting to business events, say)
-    will need its own design if one is ever needed; nothing currently provides it.
+    implemented in `Infrastructure/Persistence`. 
   - The Rule Engine's `IRuleEvaluator` also lives here — even though Rule Engine is
     an in-process module (not a separate microservice), it's still consumed by
     Case Management and Detention through an interface, not a direct class reference,

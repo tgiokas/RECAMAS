@@ -37,9 +37,8 @@ builder.Services.AddApplicationServices();
 // Infrastructure (Settings, DB, Repos, HttpClients)
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-// Cbs.Audit: replaces this project's own outbox/Kafka audit pipeline (see
-// architecture decision log). Call shape verified against the real Cbs.Audit
-// source (AuditOptions.cs, ServiceCollectionExtensions.cs, CbsAuditBuilder.cs,
+// Cbs.Audit: call shape verified against the real Cbs.Audit source
+// (AuditOptions.cs, ServiceCollectionExtensions.cs, CbsAuditBuilder.cs,
 // AspNetCoreAuditExtensions.cs) — reads from AuditSettings instead of
 // builder.Configuration[...] inline, to stay consistent with this project's
 // .env conversion.

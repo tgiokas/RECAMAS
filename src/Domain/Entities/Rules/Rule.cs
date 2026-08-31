@@ -3,11 +3,9 @@ using RECAMAS.Domain.Common;
 namespace RECAMAS.Domain.Entities.Rules;
 
 /// A named rule; the actual condition/action logic lives in its current
-/// <see cref="RuleVersion"/> (architecture decision: "update" closes the old
-/// version and inserts a new one — never mutates a version in place, so the
-/// audit trail the original separate-microservice design was meant to
-/// protect survives even though Rule Engine is now an in-process module).
-/// Field-eligibility and IF/THEN syntax are specified in Specs 8.4.2/8.4.3 —
+/// <see cref="RuleVersion"/> — "update" closes the old version and inserts a
+/// new one, never mutates a version in place, so the audit trail stays intact.
+/// Field-eligibility and IF/THEN syntax are specified in Specs 8.4.2/8.4.3.
 
 public class Rule : BaseEntity
 {

@@ -26,15 +26,14 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// structurally fixed by the domain itself (Gender, MdFileRelationship, the
 /// identity-document Source/Type) are modeled as real C# enums.
 /// [Audited]/[MaskedAudit] (Cbs.Audit.Policy — verified against the real package
-/// source) replace this project's own IAuditable/[NotAudited] (see architecture
-/// decision log on adopting Cbs.Audit) — the SaveChanges interceptor that
-/// watches for these is wired via AddEntityAuditing<ApplicationDbContext>() in
-/// Program.cs, not here. Type="TCNProfile" makes the auto-generated action
-/// codes TCNPROFILE.CREATED/UPDATED/DELETED (AuditedAttribute.ActionPrefix
-/// defaults to Type upper-cased) — matches actions.yaml. BusinessKey uses Arc
-/// even though it's nullable for undocumented TCNs (no better always-populated
+/// source) are watched by the SaveChanges interceptor wired via
+/// AddEntityAuditing<ApplicationDbContext>() in Program.cs, not here.
+/// Type="TCNProfile" makes the auto-generated action codes
+/// TCNPROFILE.CREATED/UPDATED/DELETED (AuditedAttribute.ActionPrefix defaults
+/// to Type upper-cased) — matches actions.yaml. BusinessKey uses Arc even
+/// though it's nullable for undocumented TCNs (no better always-populated
 /// natural key exists yet; DisplayCode is not populated anywhere in the
-/// codebase either as of this commit) — revisit once DisplayCode generation is built.
+/// codebase yet) — revisit once DisplayCode generation is built.
 [Audited(Type = "TCNProfile", BusinessKey = nameof(Arc))]
 public class TCNProfile : BaseEntity
 {

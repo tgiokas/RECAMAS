@@ -71,9 +71,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         // each module adds its own configuration class instead of editing this file.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        // Cbs.Audit's own outbox table, replacing this project's hand-rolled
-        // OutboxMessage/IOutboxRepository (see architecture decision log on
-        // adopting Cbs.Audit as a package). Signature verified against the real
+        // Cbs.Audit's own outbox table. Signature verified against the real
         // source (Cbs.Audit.DependencyInjection.AuditDbContextExtensions):
         // ApplyAuditOutbox(this ModelBuilder, string table = "AUDIT_OUTBOX",
         // string? payloadColumnType = null) — no schema parameter exists, so

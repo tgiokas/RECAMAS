@@ -3,15 +3,14 @@ using RECAMAS.Domain.Enums;
 
 namespace RECAMAS.Domain.Entities.Case;
 
-/// LIGHT SKELETON  not a finished data model. Locks in the one decision that's already
-/// settled (architecture decision log): one Case table with shared columns,
+/// LIGHT SKELETON  not a finished data model. One Case table with shared columns,
 /// plus a 1:1 detail table per CaseType (<see cref="AvrCaseDetail"/>,
 /// <see cref="ForcedReturnCaseDetail"/>, <see cref="VoluntaryReturnOwnMeansCaseDetail"/>).
 ///
 /// NOT modeled here yet — real design work, each a separate pass:
 ///  - Per-CaseType Stage/Status state machines (Specs 4.4.1/4.5.1/4.6.1 give
 ///    the full stage/status tables per type; Stage/Status below are placeholder
-///    strings, not the real fixed enums the architecture decision calls for).
+///    strings, not yet the real fixed enums each workflow needs).
 ///  - The AVR Counselling questionnaire (Specs 4.4.2.2, ~40 conditional fields).
 ///  - Approval Items, Requests, Case History, flags (Specs 4.3.4/4.3.7/4.3.8).
 public class Case : BaseEntity

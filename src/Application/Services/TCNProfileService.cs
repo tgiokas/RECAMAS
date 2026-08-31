@@ -9,18 +9,16 @@ using TCNProfileEntity = RECAMAS.Domain.Entities.TCNProfile.TCNProfile;
 namespace RECAMAS.Application.Services;
 
 /// Reference implementation for the full Controller -> Service -> Repository ->
-/// Postgres -> Cbs.Audit flow (see architecture decision log on adopting
-/// Cbs.Audit as a package). Simpler than the version this replaced: creating
-/// the profile is all this method does — TCNProfile's [Audited] attribute
-/// (see its own remarks) makes AddEntityAuditing<ApplicationDbContext>'s
-/// interceptor capture the TCNPROFILE.CREATED audit event automatically the
-/// moment SaveChangesAsync runs, with no manual outbox write needed here.
+/// Postgres -> Cbs.Audit flow. Creating the profile is all this method does —
+/// TCNProfile's [Audited] attribute (see its own remarks) makes
+/// AddEntityAuditing<ApplicationDbContext>'s interceptor capture the
+/// TCNPROFILE.CREATED audit event automatically the moment SaveChangesAsync
+/// runs, with no manual outbox write needed here.
 ///
 /// OPEN ITEM: Cbs.Audit is an audit-trail mechanism, not a general pub/sub —
 /// it has no facility for notifying other consumers (e.g. Notifications
-/// reacting to "a profile was created") the way this project's removed
-/// IDomainEventPublisher/Kafka pipeline did. If/when a module needs that,
-/// a separate mechanism will need to be introduced; nothing here provides it.
+/// reacting to "a profile was created"). If/when a module needs that, a
+/// separate mechanism will need to be introduced; nothing here provides it.
 public class TCNProfileService : ITCNProfileService
 {
     private readonly ITCNProfileRepository _tcnProfileRepository;

@@ -50,7 +50,6 @@ public static class InfrastructureServiceRegistration
         // runs "after" AddInfrastructureServices() textually — this lambda only
         // actually executes the first time a scope resolves ApplicationDbContext,
         // by which point every registration in Program.cs has already run.
-        // Replaces this project's own removed EntityChangeAuditInterceptor.
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
             options.UseNpgsql(databaseSettings.ConnectionString)
                 .AddInterceptors(sp.GetRequiredService<AuditColumnsInterceptor>())

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using RECAMAS.Application.Dtos.ExternalClients;
 using RECAMAS.Application.Interfaces;
@@ -47,22 +48,23 @@ public class CassClient : ApiClientBase, ICassClient
     private static string BuildSearchEnvelope(CassSearchRequest request)
     {
         // Placeholder shape only — real element names/namespaces come from CASS's WSDL.
-        return $"""
-            <?xml version="1.0" encoding="utf-8"?>
-            <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-              <soap:Body>
-                <TcnSearch>
-                  <Arc>{request.Arc}</Arc>
-                  <Name>{request.Name}</Name>
-                  <Surname>{request.Surname}</Surname>
-                  <Nationality>{request.Nationality}</Nationality>
-                  <PassportNo>{request.PassportNo}</PassportNo>
-                  <DateOfBirth>{request.DateOfBirth:yyyy-MM-dd}</DateOfBirth>
-                  <CassFileNo>{request.CassFileNo}</CassFileNo>
-                </TcnSearch>
-              </soap:Body>
-            </soap:Envelope>
-            """;
+        // Built with XElement (not string interpolation) so field values are XML-escaped
+        // rather than dropped into the envelope raw.
+        XNamespace soap = "http://schemas.xmlsoap.org/soap/envelope/";
+
+        var envelope = new XElement(soap + "Envelope",
+            new XAttribute(XNamespace.Xmlns + "soap", soap),
+            new XElement(soap + "Body",
+                new XElement("TcnSearch",
+                    new XElement("Arc", request.Arc),
+                    new XElement("Name", request.Name),
+                    new XElement("Surname", request.Surname),
+                    new XElement("Nationality", request.Nationality),
+                    new XElement("PassportNo", request.PassportNo),
+                    new XElement("DateOfBirth", request.DateOfBirth?.ToString("yyyy-MM-dd")),
+                    new XElement("CassFileNo", request.CassFileNo))));
+
+        return new XDocument(new XDeclaration("1.0", "utf-8", null), envelope).ToString();
     }
 
     private CassSearchResult? ParseSearchResponse(string xml)

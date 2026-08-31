@@ -3,9 +3,7 @@ using RECAMAS.Domain.Common;
 namespace RECAMAS.Domain.Entities.Detention;
 
 /// One scheduled re-assessment milestone for a detention order. Specs 1.3.2
-/// names 2, 6, and 18-month milestones (the session log's own earlier design
-/// notes only had 2 and 6 — the 18-month milestone is a correction this
-/// skeleton catches that the log missed). MilestoneMonths is a plain int
+/// names 2, 6, and 18-month milestones. MilestoneMonths is a plain int
 /// rather than an enum so a policy change in the number of months doesn't
 /// need a code change — the scheduling logic that creates these rows is
 /// Application-layer work, not modeled here.

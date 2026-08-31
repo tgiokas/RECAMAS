@@ -75,11 +75,8 @@ services:
   #   volumes:
   #     - keycloak-db-data:/var/lib/postgresql/data
   #   networks:
-  #     - portal-network
-      
-
-
-
+  #     - portal-network    
+  
 volumes:
   recamas-db-data:
   #keycloak-db-data:

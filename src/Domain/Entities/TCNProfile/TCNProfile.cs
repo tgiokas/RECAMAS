@@ -1,3 +1,4 @@
+using Cbs.Audit.Contract;
 using RECAMAS.Domain.Common;
 using RECAMAS.Domain.Enums;
 
@@ -24,7 +25,15 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// would own that table doesn't exist yet. Only value sets that are
 /// structurally fixed by the domain itself (Gender, MdFileRelationship, the
 /// identity-document Source/Type) are modeled as real C# enums.
-public class TCNProfile : BaseEntity, IAuditable
+/// [Audited]/[MaskedAudit] replace this project's own IAuditable/[NotAudited]
+/// (see architecture decision log on adopting Cbs.Audit) — the SaveChanges
+/// interceptor that watches for these is wired via AddEntityAuditing<ApplicationDbContext>()
+/// in Program.cs, not here. BusinessKey uses Arc even though it's nullable for
+/// undocumented TCNs (no better always-populated natural key exists yet;
+/// DisplayCode is not populated anywhere in the codebase either as of this
+/// commit) — revisit once DisplayCode generation is built.
+[Audited(Type = "TCNProfile", BusinessKey = nameof(Arc))]
+public class TCNProfile : BaseEntity
 {
     /// Human-facing "RECAMAS ID" shown in the UI (e.g. "TCN-00412" per the
     /// Specs's own mockup caption) — distinct from <see cref="BaseEntity.PublicId"/>,
@@ -60,14 +69,20 @@ public class TCNProfile : BaseEntity, IAuditable
     public string? MdAddress { get; set; }
     public string? MdPhone { get; set; }
 
-    /// 
+    ///
     /// TODO: this is a conservative starting set, not a reviewed PII policy —
     /// the team should decide the real list against Specs 12.5.7 before
     /// treating it as complete. EurodacNumber (a biometric-linked identifier)
-    /// is excluded from the audit trail; contact fields are not, on the view
+    /// is masked in the audit trail; contact fields are not, on the view
     /// that "the address changed" is itself audit-relevant here.
-    /// 
-    [NotAudited]
+    ///
+    /// Mask.Full is the closest equivalent to this project's old [NotAudited]
+    /// (which omitted the value but still recorded that the field changed) —
+    /// unconfirmed against the real package whether Mask.Full behaves exactly
+    /// that way or redacts to a fixed placeholder some other way; check before
+    /// relying on it for a biometric identifier specifically.
+    ///
+    [MaskedAudit(Mask.Full)]
     public string? EurodacNumber { get; set; }
 
     public List<TCNNationality> Nationalities { get; set; } = [];

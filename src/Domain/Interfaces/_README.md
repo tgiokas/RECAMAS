@@ -3,8 +3,12 @@
 Convention (mirrors the `Authentication` service):
   - Repository interfaces live here (e.g. `ICaseRepository`, `ITCNProfileRepository`),
     implemented in `Infrastructure/Persistence`.
-  - `IDomainEventPublisher` lives here too — domain entities/services raise domain
-    events, so the port belongs with them even though Kafka implements it.
+  - There is no `IDomainEventPublisher` here anymore — the outbox/Kafka pipeline
+    it fronted was removed when the project switched to Cbs.Audit (a package)
+    for the audit trail (see architecture decision log). Cbs.Audit is audit-only,
+    not a general pub/sub, so a cross-module domain-event mechanism (for
+    Notifications reacting to business events, say) will need a new design if
+    one is ever needed again — nothing currently provides it.
   - The Rule Engine's `IRuleEvaluator` also lives here — even though Rule Engine is
     an in-process module (not a separate microservice), it's still consumed by
     Case Management and Detention through an interface, not a direct class reference,

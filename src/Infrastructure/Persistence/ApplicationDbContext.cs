@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Cbs.Audit.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Common;
@@ -56,8 +57,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Domain.Entities.Reports.DocumentTemplate> DocumentTemplates => Set<Domain.Entities.Reports.DocumentTemplate>();
 
-    public DbSet<Domain.Entities.Outbox.OutboxMessage> OutboxMessages => Set<Domain.Entities.Outbox.OutboxMessage>();
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -71,6 +70,17 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         // Applies every IEntityTypeConfiguration<T> found in this assembly —
         // each module adds its own configuration class instead of editing this file.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        // Cbs.Audit's own outbox table, replacing this project's hand-rolled
+        // OutboxMessage/IOutboxRepository (see architecture decision log on
+        // adopting Cbs.Audit as a package). UNVERIFIED SIGNATURE: the
+        // auditing doc's only shown call is
+        // modelBuilder.ApplyAuditOutbox("AuditOutbox", payloadColumnType: "NCLOB")
+        // (ekee_v2's Oracle NCLOB) — "jsonb" is this project's Postgres-appropriate
+        // guess for the equivalent large-JSON column type, and it's unconfirmed
+        // whether the real overload also accepts a schema parameter to keep this
+        // out of the public schema like every other table here.
+        modelBuilder.ApplyAuditOutbox("audit_outbox", payloadColumnType: "jsonb");
 
         // Soft delete (IsDeleted) and optimistic concurrency (RowVersion -> Postgres'
         // native "xmin" system column) apply the same way to every entity, so they're

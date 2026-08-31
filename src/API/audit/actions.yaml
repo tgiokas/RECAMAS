@@ -1,0 +1,29 @@
+# RECAMAS action code catalog for Cbs.Audit (see architecture decision log on
+# adopting Cbs.Audit as a package). Append-only per the convention documented
+# for ekee_v2's own actions.yaml: codes are never renamed or reused once shipped.
+#
+# UNVERIFIED SCHEMA: the field names (category/severity/requiresTarget/retention)
+# and the exact code format ValidateEntityActionsIn expects for the
+# auto-generated .CREATED/.UPDATED/.DELETED codes (uppercase "TCNPROFILE" here,
+# guessed from the catalog's other all-uppercase examples like
+# AUTH.LOGIN.SUCCEEDED) are inferred from the auditing doc's prose description,
+# not the real package's schema validation. Confirm both before relying on
+# this passing startup.
+
+TCNPROFILE.CREATED:
+  category: Entity
+  severity: Info
+  requiresTarget: true
+  retention: standard
+
+TCNPROFILE.UPDATED:
+  category: Entity
+  severity: Info
+  requiresTarget: true
+  retention: standard
+
+TCNPROFILE.DELETED:
+  category: Entity
+  severity: Warning
+  requiresTarget: true
+  retention: standard

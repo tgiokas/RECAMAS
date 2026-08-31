@@ -31,10 +31,23 @@
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
   </ItemGroup>
 
+  <!-- Cbs.Audit.AspNetCore is the one direct reference the auditing doc shows
+       for ekee_v2's own API project (AddCbsAudit/AddHttpContextActor/etc. are
+       presumably exposed here, pulling Cbs.Audit.DependencyInjection and
+       Cbs.Audit.Policy transitively — unconfirmed). PLACEHOLDER VERSION —
+       replace with the real published version once this restores against the
+       private feed (blocked from this sandbox's network policy; see chat). -->
+  <ItemGroup>
+    <PackageReference Include="Cbs.Audit.AspNetCore" Version="1.0.0" />
+  </ItemGroup>
+
   <ItemGroup>
     <Content Include="..\..\errors.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>errors.json</Link>
+    </Content>
+    <Content Include="audit\actions.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

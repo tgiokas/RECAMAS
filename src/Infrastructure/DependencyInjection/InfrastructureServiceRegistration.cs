@@ -9,7 +9,6 @@ using RECAMAS.Application.Errors;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Interfaces;
 using RECAMAS.Infrastructure.ExternalClients;
-using RECAMAS.Infrastructure.Messaging;
 using RECAMAS.Infrastructure.Persistence;
 using RECAMAS.Infrastructure.Persistence.Interceptors;
 using RECAMAS.Infrastructure.Repositories;
@@ -18,9 +17,11 @@ namespace RECAMAS.Infrastructure.DependencyInjection;
 
 /// Registers everything Infrastructure owns: EF Core + Postgres, typed HTTP
 /// clients (both the reused Storage microservice and the external government
-/// systems), the Kafka producer used for domain events, the error catalog,
-/// and repository implementations as modules get built. Called once from
-/// API/Program.cs as services.AddInfrastructureServices(configuration).
+/// systems), the error catalog, and repository implementations as modules get
+/// built. Called once from API/Program.cs as
+/// services.AddInfrastructureServices(configuration). Cbs.Audit's own DI
+/// registration (AddCbsAudit/AddEntityAuditing/etc.) is wired directly in
+/// Program.cs instead of here, matching the auditing doc's own placement.
 ///
 /// Every HTTP client here is registered the same way: bind its typed settings,
 /// AddHttpClient&lt;TInterface, TImplementation&gt; with that BaseUrl, then
@@ -34,19 +35,19 @@ public static class InfrastructureServiceRegistration
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         // --- PostgreSQL 18, single instance, schema-per-module ---
-        // Interceptors resolved from DI 
+        // Interceptors resolved from DI
         services.AddHttpContextAccessor();
         services.AddScoped<AuditColumnsInterceptor>();
-        services.AddScoped<EntityChangeAuditInterceptor>();
 
         var databaseSettings = DatabaseSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(databaseSettings));
 
+        // Cbs.Audit's own SaveChanges interceptor is added by
+        // AddEntityAuditing<ApplicationDbContext>() in Program.cs, not here —
+        // it replaced this project's own EntityChangeAuditInterceptor.
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
             options.UseNpgsql(databaseSettings.ConnectionString)
-                .AddInterceptors(
-                    sp.GetRequiredService<AuditColumnsInterceptor>(),
-                    sp.GetRequiredService<EntityChangeAuditInterceptor>()));
+                .AddInterceptors(sp.GetRequiredService<AuditColumnsInterceptor>()));
 
         // Lets an Application service call SaveChangesAsync without depending on
         // Infrastructure directly — see IApplicationDbContext remarks.
@@ -55,9 +56,6 @@ public static class InfrastructureServiceRegistration
         // --- Typed settings for every outbound HTTP integration ---
         var keycloakSettings = KeycloakSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(keycloakSettings));
-
-        var kafkaSettings = KafkaSettings.BindFromConfiguration(configuration);
-        services.AddSingleton(Options.Create(kafkaSettings));
 
         var storageSettings = StorageClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(storageSettings));
@@ -118,17 +116,6 @@ public static class InfrastructureServiceRegistration
         // FAR: no endpoint exists yet — plain registration, no HttpClient. See IFarClient/FarClient remarks.
         services.AddSingleton<IFarClient, FarClient>();
 
-        // --- Kafka producer, shared by every module via IDomainEventPublisher ---
-        // Same IMessagePublisher/KafkaPublisher pattern as CivilianPortal (see
-        // KafkaPublisher's own remarks) instead of callers holding a bare
-        // IProducer&lt;string, string&gt; directly.
-        services.AddSingleton<IMessagePublisher, KafkaPublisher>();
-        // Scoped, not Singleton: OutboxDomainEventPublisher depends (via IOutboxRepository)
-        // on the scoped ApplicationDbContext.
-        services.AddScoped<IDomainEventPublisher, OutboxDomainEventPublisher>();
-        services.AddScoped<IAuditActionService, AuditActionService>();
-        services.AddHostedService<OutboxProcessor>();
-
         // --- Error catalog, loaded once from errors.json at startup (fail fast if missing) ---
         var errorsJsonPath = Path.Combine(AppContext.BaseDirectory, "errors.json");
         if (!File.Exists(errorsJsonPath))
@@ -140,7 +127,6 @@ public static class InfrastructureServiceRegistration
 
         // --- Repository implementations, added module by module ---
         services.AddScoped<ITCNProfileRepository, TCNProfileRepository>();
-        services.AddScoped<IOutboxRepository, OutboxRepository>();
         // services.AddScoped<ICaseRepository, CaseRepository>();
         // services.AddScoped<IRuleRepository, RuleRepository>();
 

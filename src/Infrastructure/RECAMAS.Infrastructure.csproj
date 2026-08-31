@@ -23,9 +23,20 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.0" />
-    <PackageReference Include="Confluent.Kafka" Version="2.6.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+  <!-- Cbs.Audit.EntityFramework (ApplyAuditOutbox) and Cbs.Audit.Abstractions
+       (IAuditLabelResolver) — see architecture decision log on adopting
+       Cbs.Audit as a package, replacing this project's own outbox/Kafka
+       audit pipeline (Confluent.Kafka reference removed above). PLACEHOLDER
+       VERSIONS — replace with the real published versions once this restores
+       against the private feed (blocked from this sandbox's network policy;
+       see chat). -->
+  <ItemGroup>
+    <PackageReference Include="Cbs.Audit.EntityFramework" Version="1.0.0" />
+    <PackageReference Include="Cbs.Audit.Abstractions" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,5 @@
+using Cbs.Audit.Contract;
+using Cbs.Audit.DependencyInjection; // UNVERIFIED: AddCbsAudit's real namespace might be Cbs.Audit.AspNetCore instead — confirm against the package.
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,7 @@ using Serilog;
 using RECAMAS.Api.Middleware;
 using RECAMAS.Application.Configuration;
 using RECAMAS.Application.DependencyInjection;
+using RECAMAS.Infrastructure.Audit;
 using RECAMAS.Infrastructure.DependencyInjection;
 using RECAMAS.Infrastructure.Persistence;
 
@@ -30,8 +33,52 @@ builder.Host.UseSerilog();
 // Add Application services
 builder.Services.AddApplicationServices();
 
-// Infrastructure (Settings, DB, Repos, Kafka, HttpClients)
+// Infrastructure (Settings, DB, Repos, HttpClients)
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Cbs.Audit: replaces this project's own outbox/Kafka audit pipeline (see
+// architecture decision log). UNVERIFIED API SURFACE beyond what the
+// adc6c866-auditing.md doc shows literally — this call shape mirrors that
+// doc's own Program.cs snippet, adapted to read from AuditSettings instead of
+// builder.Configuration[...] inline, to stay consistent with this project's
+// .env conversion. Confirm every member referenced here (AddCbsAudit's option
+// object shape, AddHttpContextActor, AddEntityAuditing<T>, AddLabelResolver<T>,
+// ValidateEntityActionsIn) against the real package before trusting this builds.
+var auditSettings = AuditSettings.BindFromConfiguration(builder.Configuration);
+
+builder.Services.AddCbsAudit(o =>
+{
+    o.Project = "recamas";
+    o.Env = auditSettings.Env ?? builder.Environment.EnvironmentName;
+    o.ActionCatalogPath = Path.Combine(builder.Environment.ContentRootPath, "audit", "actions.yaml");
+    o.Elasticsearch.Uri = auditSettings.ElasticsearchUri;
+    o.Elasticsearch.Index = auditSettings.Index;
+    o.Relay.Enabled = auditSettings.RelayEnabled;
+
+    if (auditSettings.RelayMaxAttempts is int maxAttempts)
+    {
+        o.Relay.MaxAttempts = maxAttempts;
+    }
+
+    if (auditSettings.OutboxKeepDays is int keepDays)
+    {
+        o.Relay.KeepDelivered = TimeSpan.FromDays(keepDays);
+    }
+
+    var actorMask = auditSettings.ActorMask switch
+    {
+        "none" => (Mask?)null,
+        "full" => Mask.Full,
+        "initials" => Mask.Name,
+        _ => Mask.Identity,
+    };
+    o.ActorPrivacy.DisplayName = actorMask;
+    o.ActorPrivacy.Username = actorMask;
+})
+    .AddHttpContextActor()
+    .AddEntityAuditing<ApplicationDbContext>()
+    .AddLabelResolver<TCNProfileLabelResolver>()
+    .ValidateEntityActionsIn(typeof(RECAMAS.Domain.Entities.TCNProfile.TCNProfile).Assembly);
 
 var keycloakSettings = KeycloakSettings.BindFromConfiguration(builder.Configuration);
 

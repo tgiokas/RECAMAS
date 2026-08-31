@@ -1,46 +1,40 @@
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RECAMAS.Application.Common;
 using RECAMAS.Application.Dtos.TCNProfile;
 using RECAMAS.Application.Errors;
-using RECAMAS.Application.Events;
 using RECAMAS.Application.Interfaces;
-using RECAMAS.Domain.Entities.Outbox;
 using RECAMAS.Domain.Interfaces;
 using TCNProfileEntity = RECAMAS.Domain.Entities.TCNProfile.TCNProfile;
 
 namespace RECAMAS.Application.Services;
 
 /// Reference implementation for the full Controller -> Service -> Repository ->
-/// Postgres -> Outbox -> Kafka flow (see architecture decision log). CreateAsync
-/// writes two outbox rows directly via IOutboxRepository.AddWithoutSaveAsync,
-/// deliberately bypassing IAuditActionService/IDomainEventPublisher: both of
-/// those commit on their own (their own doc comments flag this as a scope
-/// limit), which would mean "profile created" could get recorded without the
-/// profile actually existing, or vice versa, if the process died between two
-/// separate commits. Writing directly here keeps the profile insert and both
-/// outbox rows inside the single transaction SaveChangesAsync opens — the
-/// actual guarantee the outbox pattern exists for. Those two abstractions
-/// remain the right choice for events that AREN'T tied to a specific entity
-/// write in the same operation (e.g. a standalone access-log entry with
-/// nothing else to commit alongside).
+/// Postgres -> Cbs.Audit flow (see architecture decision log on adopting
+/// Cbs.Audit as a package). Simpler than the version this replaced: creating
+/// the profile is all this method does — TCNProfile's [Audited] attribute
+/// (see its own remarks) makes AddEntityAuditing<ApplicationDbContext>'s
+/// interceptor capture the TCNPROFILE.CREATED audit event automatically the
+/// moment SaveChangesAsync runs, with no manual outbox write needed here.
+///
+/// OPEN ITEM: Cbs.Audit is an audit-trail mechanism, not a general pub/sub —
+/// it has no facility for notifying other consumers (e.g. Notifications
+/// reacting to "a profile was created") the way this project's removed
+/// IDomainEventPublisher/Kafka pipeline did. If/when a module needs that,
+/// a separate mechanism will need to be introduced; nothing here provides it.
 public class TCNProfileService : ITCNProfileService
 {
     private readonly ITCNProfileRepository _tcnProfileRepository;
-    private readonly IOutboxRepository _outboxRepository;
     private readonly IApplicationDbContext _dbContext;
     private readonly IErrorCatalog _errors;
     private readonly ILogger<TCNProfileService> _logger;
 
     public TCNProfileService(
         ITCNProfileRepository tcnProfileRepository,
-        IOutboxRepository outboxRepository,
         IApplicationDbContext dbContext,
         IErrorCatalog errors,
         ILogger<TCNProfileService> logger)
     {
         _tcnProfileRepository = tcnProfileRepository;
-        _outboxRepository = outboxRepository;
         _dbContext = dbContext;
         _errors = errors;
         _logger = logger;
@@ -74,32 +68,7 @@ public class TCNProfileService : ITCNProfileService
 
         await _tcnProfileRepository.AddWithoutSaveAsync(profile, ct);
 
-        // Explicit business-action audit entry — same transaction as the profile insert.
-        var actionMessage = new OutboxMessage
-        {
-            EventType = "audit.action.tcn.profile.registered",
-            Category = "Business",
-            Payload = JsonSerializer.Serialize(new { profile.Arc, profile.FirstNameEn, profile.LastNameEn }),
-            EntityType = "TCNProfile", // nameof(TCNProfileEntity) would give the local alias name, not the entity's actual type name
-            EntityId = profile.PublicId.ToString(),
-        };
-        await _outboxRepository.AddWithoutSaveAsync(actionMessage, ct);
-
-        // Explicit integration event for other consumers (Notifications/AuditLog) — same transaction.
-        var domainEvent = new TCNProfileCreatedEvent(profile.PublicId!.Value, profile.Arc, profile.FirstNameEn, profile.LastNameEn);
-        var eventMessage = new OutboxMessage
-        {
-            EventType = nameof(TCNProfileCreatedEvent),
-            Key = profile.PublicId.ToString(),
-            Payload = JsonSerializer.Serialize(domainEvent),
-            EntityType = "TCNProfile", // nameof(TCNProfileEntity) would give the local alias name, not the entity's actual type name
-            EntityId = profile.PublicId.ToString(),
-        };
-        await _outboxRepository.AddWithoutSaveAsync(eventMessage, ct);
-
-        // Commits the profile insert and both outbox rows together. EntityChangeAuditInterceptor
-        // also fires here automatically, adding a third outbox row (audit.entity.changed) to the
-        // same SaveChanges call — nothing in this method has to ask for that one.
+        // Cbs.Audit's SaveChanges interceptor captures TCNPROFILE.CREATED here automatically.
         await _dbContext.SaveChangesAsync(ct);
 
         _logger.LogInformation("TCN Profile {PublicId} created", profile.PublicId);

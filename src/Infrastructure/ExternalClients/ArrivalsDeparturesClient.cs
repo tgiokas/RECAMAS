@@ -7,8 +7,8 @@ using RECAMAS.Infrastructure.ApiClients;
 namespace RECAMAS.Infrastructure.ExternalClients;
 
 /// PROVISIONAL implementation of IArrivalsDeparturesClient as a live HTTP
-/// call, matching Study 9.4's field tables. See the interface's remarks:
-/// Study 12.3.6 says the real mechanism is batch file exchange over the
+/// call, matching Specs 9.4's field tables. See the interface's remarks:
+/// Specs 12.3.6 says the real mechanism is batch file exchange over the
 /// Police Public Zone instead, which would replace this entire class with a
 /// scheduled file importer + repository query, not an HTTP client at all.
 /// Do not treat this as confirmed until the director resolves the

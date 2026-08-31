@@ -13,27 +13,27 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 ///
 /// Deliberately excluded from this pass: Photograph and Fingerprints (Table 3).
 /// Both are optional (Req.=No) file attachments; fingerprints in particular
-/// belong to the broader ANSI/NIST-ITL biometric capability (Study 12.1.1),
+/// belong to the broader ANSI/NIST-ITL biometric capability (Specs 12.1.1),
 /// which needs its own design pass and is tracked as a separate open item —
 /// not modeled here at all.
 ///
-/// Fields the Study types as "Enum" but which are really admin-configurable
+/// Fields the Specs types as "Enum" but which are really admin-configurable
 /// reference data (Nationality, PlaceOfBirth, IssuingCountry, IssuingAuthority,
 /// etc.) are stored as plain string codes for now, not as a foreign key to a
-/// master-data table — the Admin "Lists" capability (Study Section 8.1) that
+/// master-data table — the Admin "Lists" capability (Specs Section 8.1) that
 /// would own that table doesn't exist yet. Only value sets that are
 /// structurally fixed by the domain itself (Gender, MdFileRelationship, the
 /// identity-document Source/Type) are modeled as real C# enums.
 public class TCNProfile : BaseEntity, IAuditable
 {
     /// Human-facing "RECAMAS ID" shown in the UI (e.g. "TCN-00412" per the
-    /// Study's own mockup caption) — distinct from <see cref="BaseEntity.PublicId"/>,
+    /// Specs's own mockup caption) — distinct from <see cref="BaseEntity.PublicId"/>,
     /// which stays the opaque identifier used across API/HTTP boundaries.
     /// Generation (sequence, format) is an Application-layer concern once
     /// TCNProfileService exists — left null until then.
     public string? DisplayCode { get; set; }
 
-    /// Alien Registration Card number. Sourced from ARS; drives most automatic interface refreshes (Study 9.2.1/9.3.1/9.4.1/9.5.1: "Only for TCN Profiles where ARC is available").
+    /// Alien Registration Card number. Sourced from ARS; drives most automatic interface refreshes (Specs 9.2.1/9.3.1/9.4.1/9.5.1: "Only for TCN Profiles where ARC is available").
     public string? Arc { get; set; }
 
     public string? FirstNameEl { get; set; }
@@ -60,13 +60,13 @@ public class TCNProfile : BaseEntity, IAuditable
     public string? MdAddress { get; set; }
     public string? MdPhone { get; set; }
 
-    /// <summary>
+    /// 
     /// TODO: this is a conservative starting set, not a reviewed PII policy —
-    /// the team should decide the real list against Study 12.5.7 before
+    /// the team should decide the real list against Specs 12.5.7 before
     /// treating it as complete. EurodacNumber (a biometric-linked identifier)
     /// is excluded from the audit trail; contact fields are not, on the view
     /// that "the address changed" is itself audit-relevant here.
-    /// </summary>
+    /// 
     [NotAudited]
     public string? EurodacNumber { get; set; }
 

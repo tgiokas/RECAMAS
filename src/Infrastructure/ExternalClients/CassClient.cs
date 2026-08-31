@@ -6,7 +6,7 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// CASS via the CY Connect gateway, consumed as a SOAP web service (Study
+/// CASS via the CY Connect gateway, consumed as a SOAP web service (Specs
 /// 12.3.4) — the one external system here that isn't plain JSON/REST.
 ///
 /// The envelope built below is a structural placeholder, not a real CASS

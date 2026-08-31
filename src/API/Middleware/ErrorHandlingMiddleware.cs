@@ -1,26 +1,24 @@
 using System.Net;
 using System.Text.Json;
+
 using RECAMAS.Application.Common;
 using RECAMAS.Application.Errors;
 
 namespace RECAMAS.Api.Middleware;
 
-/// Catches any unhandled exception and returns a generic RECAMAS-000 result —
-/// mirrors the Authentication service's ErrorHandlingMiddleware exactly.
+/// Catches any unhandled exception and returns a generic RECAMAS-000 result
 /// Never rely on this for expected business failures; those should already
-/// be a failed Result&lt;T&gt; returned normally by the service, not an exception.
+/// be a failed Result returned normally by the service, not an exception.
 public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+    public ErrorHandlingMiddleware(RequestDelegate next)
     {
         _next = next;
-        _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task Invoke(HttpContext context, ILogger<ErrorHandlingMiddleware> logger)
     {
         try
         {
@@ -28,22 +26,25 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception processing {Method} {Path}", context.Request.Method, context.Request.Path);
-
-            // If the response has already started streaming (a partial write happened
-            // before this exception hit), setting StatusCode below would itself throw
-            // InvalidOperationException — nothing we can do at that point but give up.
-            if (context.Response.HasStarted)
-            {
-                return;
-            }
-
-            context.Response.Clear();
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            var result = Result.Fail("An unexpected error occurred.", ErrorCodes.Common.UnhandledException);
-            await context.Response.WriteAsync(JsonSerializer.Serialize(result));
+            logger.LogError(ex, "An unhandled exception occurred");
+            await HandleExceptionAsync(context, ex);
         }
     }
+
+    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+        if (context.Response.HasStarted)
+            return Task.CompletedTask;
+
+        context.Response.Clear();
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        var result = Result<string>.Fail(errorCode: ErrorCodes.Common.UnhandledException, message: "An unexpected error occurred");
+        result.Data = exception.Message;
+
+        var json = JsonSerializer.Serialize(result);
+        return context.Response.WriteAsync(json);
+    }
 }
+

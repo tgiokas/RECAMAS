@@ -3,9 +3,9 @@ using RECAMAS.Domain.Enums;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// One identity/travel document for a TCN — Implementation Study Table 4
+/// One identity/travel document for a TCN — Implementation Specs Table 4
 /// ("Identity Information"). Each document is shown as a separate entry in
-/// the Overview tab and is reused by Case Management (Study 4.4.2.3.3) as
+/// the Overview tab and is reused by Case Management (Specs 4.4.2.3.3) as
 /// the source of a case's travel documents.
 public class TCNIdentityDocument : BaseEntity
 {

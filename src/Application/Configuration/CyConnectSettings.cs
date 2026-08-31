@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace RECAMAS.Application.Configuration;
 
-/// Study 12.3.3: ARS and CASS are both consumed through the single CY Connect
+/// Specs 12.3.3: ARS and CASS are both consumed through the single CY Connect
 /// API gateway, not point-to-point — so one BaseUrl/credential set here backs
 /// both ArsClient and CassClient, each hitting a different relative path.
 ///

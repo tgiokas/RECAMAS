@@ -1,6 +1,6 @@
 namespace RECAMAS.Application.Dtos.ExternalClients;
 
-/// Study Table 151 (ARS Request Fields).
+/// Specs Table 151 (ARS Request Fields).
 public sealed record ArsSearchRequest(
     string? Arc,
     string? Name,
@@ -10,7 +10,7 @@ public sealed record ArsSearchRequest(
     DateOnly? DateOfBirth,
     string? MdFileNumber);
 
-/// Study Tables 152-155 (ARS Response Fields) — one search call returns all four blocks.
+/// Specs Tables 152-155 (ARS Response Fields) — one search call returns all four blocks.
 public sealed record ArsSearchResult(
     ArsTcnInformation TcnInformation,
     ArsResidencyStatus? ResidencyStatus,
@@ -54,7 +54,7 @@ public sealed record ArsResidencyApplication(
     string? Status);
 
 /// Table 155. VoluntaryReturnDeadline/EntryBanDuration are typed "Number" in the
-/// Study rather than "Date" (unlike the equivalent Table 3/10 profile-level
+/// Specs rather than "Date" (unlike the equivalent Table 3/10 profile-level
 /// fields, which are dates) — kept as int? here to match the interface's own
 /// wire type; likely a day-count the Application layer turns into a real date.
 public sealed record ArsReturnDecision(

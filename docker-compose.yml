@@ -1,32 +1,20 @@
-version: "3.9"
-
-# Stub for this skeleton commit — only RECAMAS's own API + DB.
-# The 4 reused microservices (Authentication, Storage, Notifications, AuditLog)
-# each have their own docker-compose.yml in their own repos. Once we're ready
-# to run everything together, either:
-#   (a) `docker compose -f docker-compose.yml -f ../authentication/docker-compose.yml ...`, or
-#   (b) a top-level "platform" compose file that includes all repos via `include:`
-# Not decided yet — open item.
-
 services:
   recamas-db:
-    image: postgres:18
-    container_name: recamas-db
-    environment:
-      POSTGRES_DB: recamas_dev
-      POSTGRES_USER: recamas_app
-      POSTGRES_PASSWORD: dev_password_only
-    # Uses fixed values above rather than .env's RECAMAS_DB_CONNECTION (a full
-    # connection string, not discrete POSTGRES_* vars) — keep the two in sync by hand.
-    ports:
-      - "5433:5432" # offset from default so it doesn't collide with Authentication's own Postgres locally
-    volumes:
-      - recamas_db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U recamas_app -d recamas_dev"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+   image: postgres:18
+   container_name: recamas-db
+   environment:
+    POSTGRES_DB: recamas-dev
+    POSTGRES_USER: recamas-app
+    POSTGRES_PASSWORD: dev_password_only
+   ports:
+    - "5433:5432"
+   volumes:
+    - recamas-db-data:/var/lib/postgresql
+   healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U recamas-app -d recamas-dev"]
+    interval: 5s
+    timeout: 5s
+    retries: 5
 
   recamas-api:
     build:
@@ -38,15 +26,112 @@ services:
         condition: service_healthy
     env_file:
       - .env
-    environment:
-      # Overrides .env's RECAMAS_DB_CONNECTION host/port for the compose network
-      # (host machine's .env points at localhost, not the recamas-db container).
-      RECAMAS_DB_CONNECTION: "Host=recamas-db;Port=5432;Database=recamas_dev;Username=recamas_app;Password=dev_password_only"
-      # KEYCLOAK_AUTHORITY / STORAGE_BASE_URL / KAFKA_BOOTSTRAP_SERVERS and the rest
-      # come from .env — point them at the reused services' own compose network
-      # once composed together.
     ports:
-      - "5040:8080"
+      - "5041:8080"
+
+  # ==================== Keycloak  ====================   
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:26.5.6
+  #   container_name: keycloak
+  #   env_file:
+  #     - .env
+  #   command:
+  #     - start  
+  #     - --import-realm   
+  #     - --https-certificate-file=/opt/keycloak/certs/keycloak.crt
+  #     - --https-certificate-key-file=/opt/keycloak/certs/keycloak.key
+  #     - --https-port=8443
+  #     - --hostname-strict=false 
+  #     - --log-level=INFO,org.keycloak.broker:DEBUG,org.keycloak.events:DEBUG
+
+  #   depends_on:
+  #     - keycloak-db
+  #   #dev only
+  #   ports:
+  #     - "8443:8443"     
+  #   networks:
+  #     - recamas-network   
+  #   volumes:
+  #     - ./recamas-backend-service/exports/realm-export.json:/opt/keycloak/data/import/realm-export.json
+  #     # - ./recamas-backend-service/keycloak-providers/keycloak-gsis-provider_gunet.jar:/opt/keycloak/providers/keycloak-gsis-provider.jar
+  #     - ./certs:/opt/keycloak/certs
+  #   labels:
+  #     - "traefik.enable=true"
+
+  # keycloak-db:
+  #   image: postgres:15.2
+  #   container_name: keycloak-db
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     POSTGRES_USER: ${KC_DB_USERNAME}
+  #     POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+  #     POSTGRES_DB: ${KC_DB_POSTGRES_DB}
+  #   #dev only
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - keycloak-db-data:/var/lib/postgresql/data
+  #   networks:
+  #     - portal-network
+      
+  # ==================== Kafka  ====================   
+  
+  kafka1:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka1
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:29093"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,DOCKER://0.0.0.0:19092,CONTROLLER://0.0.0.0:29093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,DOCKER://kafka1:19092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "DOCKER"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_LOG_DIRS: "/tmp/kraft-combined-logs"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+    networks:
+      - recamas-network
+    healthcheck:
+      test: [ "CMD",  "kafka-topics",   "--bootstrap-server", "localhost:9092",  "--list", ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - kafka1-data:/var/lib/kafka/data
+      
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8081:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:19092
+      - SERVER_PORT=8080
+    depends_on:
+      - kafka1     
+    networks:
+      - recamas-network
+    restart: always 
 
 volumes:
-  recamas_db_data:
+  recamas-db-data:
+  #keycloak-db-data:
+  kafka1-data:  
+
+networks:
+ recamas-network:
+    driver: bridge

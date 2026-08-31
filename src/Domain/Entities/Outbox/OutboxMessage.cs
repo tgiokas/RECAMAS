@@ -1,12 +1,10 @@
 namespace RECAMAS.Domain.Entities.Outbox;
 
-/// <summary>
 /// Transactional outbox: written to in the same DbContext/transaction as the
 /// business change it describes (or the entity-change diff that produced it),
 /// then delivered to Kafka by OutboxProcessor on its own schedule. Guarantees
 /// the audit/event record and the underlying change commit or roll back
-/// together — the actual point of the pattern (CivilianPortal's own
-/// OutboxMessage/OutboxProcessor already does this for its domain events;
+/// together 
 /// this is the same mechanism, shared with the automatic entity-change audit
 /// trail via the EventType/Category distinction below rather than two
 /// parallel delivery pipelines).
@@ -18,23 +16,23 @@ namespace RECAMAS.Domain.Entities.Outbox;
 /// Elasticsearch index once Kafka delivery succeeds), no PublicId (never
 /// exposed across an API boundary), no RowVersion (only OutboxProcessor
 /// ever updates a row, so there's no concurrent-edit scenario to guard against).
-/// </summary>
+ 
 public class OutboxMessage
 {
     public long Id { get; set; }
 
     public Guid EventId { get; set; } = Guid.NewGuid();
 
-    /// <summary>e.g. "audit.entity.changed" for auto-captured diffs, or a named business event like "case.created".</summary>
+    /// e.g. "audit.entity.changed" for auto-captured diffs, or a named business event like "case.created".
     public required string EventType { get; set; }
 
-    /// <summary>"Entity" for auto-captured diffs, "Business" for explicit AuditActionService calls, or null for a plain domain event.</summary>
+    /// "Entity" for auto-captured diffs, "Business" for explicit AuditActionService calls, or null for a plain domain event.
     public string? Category { get; set; }
 
-    /// <summary>JSON payload published to Kafka as-is (the entity diff, or the explicit event body).</summary>
+    /// JSON payload published to Kafka as-is (the entity diff, or the explicit event body).
     public required string Payload { get; set; }
 
-    /// <summary>Kafka partition key. Defaults to EventId if the producer isn't given one, so ordering isn't accidentally undefined.</summary>
+    /// Kafka partition key. Defaults to EventId if the producer isn't given one, so ordering isn't accidentally undefined.
     public string? Key { get; set; }
 
     public string? UserId { get; set; }
@@ -51,6 +49,6 @@ public class OutboxMessage
     public DateTimeOffset? LastAttemptAt { get; set; }
     public int AttemptCount { get; set; }
 
-    /// <summary>Truncated on write — see OutboxProcessor. Cleared on a successful publish.</summary>
+    /// Truncated on write — see OutboxProcessor. Cleared on a successful publish.
     public string? LastError { get; set; }
 }

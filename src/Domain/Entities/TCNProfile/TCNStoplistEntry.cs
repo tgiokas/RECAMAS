@@ -2,9 +2,9 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// Study Table 11 — "Each entry to the stoplist is shown as a separate entry."
+/// Specs Table 11 — "Each entry to the stoplist is shown as a separate entry."
 /// EntryBanDuration/EntryBanExpirationDate are sourced from Case/Implementation
-/// per the Study's own Source column, not from the Stoplist system itself —
+/// per the Specs's own Source column, not from the Stoplist system itself —
 /// kept on this entity anyway since the profile view rolls them up together
 /// with the Stoplist-sourced fields.
 public class TCNStoplistEntry : BaseEntity

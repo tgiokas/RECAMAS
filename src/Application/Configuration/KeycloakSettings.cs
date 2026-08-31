@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace RECAMAS.Application.Configuration;
 
-/// <summary>Used for JWT Bearer validation in Program.cs — see its own remarks on the RequireHttpsMetadata/Authority relationship.</summary>
+/// Used for JWT Bearer validation in Program.cs — see its own remarks on the RequireHttpsMetadata/Authority relationship.
 public class KeycloakSettings
 {
     public required string Authority { get; init; }

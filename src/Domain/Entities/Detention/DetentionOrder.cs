@@ -3,7 +3,7 @@ using RECAMAS.Domain.Common;
 namespace RECAMAS.Domain.Entities.Detention;
 
 /// LIGHT SKELETON. Real fields (order type, legal basis, alternative measures)
-/// come from Study 4.5.2.4/4.5.2.5. Re-assessment scheduling is
+/// come from Specs 4.5.2.4/4.5.2.5. Re-assessment scheduling is
 /// <see cref="DetentionReassessment"/>, not columns here.
 public class DetentionOrder : BaseEntity
 {

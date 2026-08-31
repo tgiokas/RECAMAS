@@ -4,7 +4,7 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 
 /// One declared nationality for a TCN. Table 3 notes a profile can have
 /// "Multiple declared, with identification status" — the exact identification-status
-/// value set isn't given in the Study, so <see cref="IdentificationStatus"/> is a
+/// value set isn't given in the Specs, so <see cref="IdentificationStatus"/> is a
 /// free-form code for now (provisional, pending the Master Data list for it).
 public class TCNNationality : BaseEntity
 {

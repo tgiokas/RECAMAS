@@ -1,6 +1,6 @@
 namespace RECAMAS.Domain.Enums;
 
-/// Per Implementation Study Table 4 (Profile fields - Identity Information):
+/// Per Implementation Specs Table 4 (Profile fields - Identity Information):
 /// "Document Type | Enum | ... | Passport, Country Issued ID, Other".
 public enum IdentityDocumentType
 {

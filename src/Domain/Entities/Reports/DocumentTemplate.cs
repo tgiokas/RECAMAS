@@ -2,7 +2,7 @@ using RECAMAS.Domain.Common;
 
 namespace RECAMAS.Domain.Entities.Reports;
 
-/// One document template, keyed by CaseType — Study Table 20 lists 10 concrete
+/// One document template, keyed by CaseType — Specs Table 20 lists 10 concrete
 /// templates today (7 AVR: Return Decision, Counselling Report, Declaration of
 /// Voluntary Departure, Certificate of Participation, Consent to Travel with
 /// One Parent, Consent to Monetary Incentive Deduction, Affidavit for Appeals;

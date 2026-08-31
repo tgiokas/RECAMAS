@@ -1,6 +1,6 @@
 namespace RECAMAS.Application.Dtos.ExternalClients;
 
-/// Study Table 157 (CASS Request Fields).
+/// Specs Table 157 (CASS Request Fields).
 public sealed record CassSearchRequest(
     string? Arc,
     string? Name,
@@ -10,7 +10,7 @@ public sealed record CassSearchRequest(
     DateOnly? DateOfBirth,
     string? CassFileNo);
 
-/// Study Tables 158-162 (CASS Response Fields).
+/// Specs Tables 158-162 (CASS Response Fields).
 public sealed record CassSearchResult(
     CassTcnInformation TcnInformation,
     CassIpStatus? IpStatus,

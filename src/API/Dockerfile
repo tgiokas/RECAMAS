@@ -27,7 +27,7 @@ COPY ["src/Domain/RECAMAS.Domain.csproj", "src/Domain/"]
 # intermediate layer is unavoidable on Linux, not a mistake in this approach.
 RUN --mount=type=secret,id=nuget_token \
     dotnet nuget update source cbs-github \
-        --username x-access-token \
+        --username tgiokas \
         --password "$(cat /run/secrets/nuget_token)" \
         --store-password-in-clear-text \
         --configfile ./nuget.config && \

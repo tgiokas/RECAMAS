@@ -3,8 +3,7 @@ using RECAMAS.Domain.Enums;
 
 namespace RECAMAS.Domain.Entities.Case;
 
-/// LIGHT SKELETON — enough shape for the team to build against in parallel,
-/// not a finished data model. Locks in the one decision that's already
+/// LIGHT SKELETON  not a finished data model. Locks in the one decision that's already
 /// settled (architecture decision log): one Case table with shared columns,
 /// plus a 1:1 detail table per CaseType (<see cref="AvrCaseDetail"/>,
 /// <see cref="ForcedReturnCaseDetail"/>, <see cref="VoluntaryReturnOwnMeansCaseDetail"/>).

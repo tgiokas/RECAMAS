@@ -4,8 +4,7 @@ namespace RECAMAS.Domain.Entities.Outbox;
 /// business change it describes (or the entity-change diff that produced it),
 /// then delivered to Kafka by OutboxProcessor on its own schedule. Guarantees
 /// the audit/event record and the underlying change commit or roll back
-/// together — the actual point of the pattern (CivilianPortal's own
-/// OutboxMessage/OutboxProcessor already does this for its domain events;
+/// together 
 /// this is the same mechanism, shared with the automatic entity-change audit
 /// trail via the EventType/Category distinction below rather than two
 /// parallel delivery pipelines).

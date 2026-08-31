@@ -1,12 +1,11 @@
 # Auditing (Cbs.Audit)
 
-RECAMAS's business audit trail is not custom code — it's the `Cbs.Audit` /
+RECAMAS's business audit trail uses the `Cbs.Audit` /
 `Cbs.Audit.AspNetCore` package (private feed, `cosmos-business-systems/cbs-audit`).
 This project only wires it up and annotates entities; the capture/outbox/relay
 mechanism itself lives in the package.
 
-This is separate from Serilog (technical logs — "what did the app do"). Cbs.Audit
-answers "what did a user do" and ends up in Elasticsearch (`recamas-audit-events`
+Cbs.Audit answers "what did a user do" and ends up in Elasticsearch (`recamas-audit-events`
 index by default).
 
 ## How it works
@@ -83,9 +82,6 @@ Add `REPORT.EXPORTED` to `actions.yaml` first, same rules as above.
 
 - **Action codes are append-only.** Never rename or reuse one — old events in
   Elasticsearch still reference it.
-- **The actor comes from the ambient HTTP request** (Keycloak claims) automatically
-  — nothing to do per-action unless you're overriding it (e.g. a failed login has
-  no authenticated principal yet).
 - `audit_outbox` lives in the default (`public`) schema, unlike every other table
   in this project — the package's own table-mapping call takes no schema parameter.
 - Retention (`standard` = 2 years, `legal` = 7 years) and masking level are policy

@@ -38,7 +38,7 @@
        replace with the real published version once this restores against the
        private feed (blocked from this sandbox's network policy; see chat). -->
   <ItemGroup>
-    <PackageReference Include="Cbs.Audit.AspNetCore" Version="1.0.0" />
+    <PackageReference Include="Cbs.Audit.AspNetCore" Version="0.1.8" />
   </ItemGroup>
 
   <ItemGroup>

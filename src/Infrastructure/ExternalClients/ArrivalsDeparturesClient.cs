@@ -8,11 +8,6 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 
 /// PROVISIONAL implementation of IArrivalsDeparturesClient as a live HTTP
 /// call, matching Specs 9.4's field tables. See the interface's remarks:
-/// Specs 12.3.6 says the real mechanism is batch file exchange over the
-/// Police Public Zone instead, which would replace this entire class with a
-/// scheduled file importer + repository query, not an HTTP client at all.
-/// Do not treat this as confirmed until the director resolves the
-/// contradiction (session log Section 3).
 public class ArrivalsDeparturesClient : ApiClientBase, IArrivalsDeparturesClient
 {
     private const string SearchEndpoint = "/arrivals-departures/api/v1/search";

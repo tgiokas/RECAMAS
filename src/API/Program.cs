@@ -1,4 +1,4 @@
-using Cbs.Audit.Contract;
+using Cbs.Audit.Policy;
 using Cbs.Audit.DependencyInjection; // UNVERIFIED: AddCbsAudit's real namespace might be Cbs.Audit.AspNetCore instead — confirm against the package.
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

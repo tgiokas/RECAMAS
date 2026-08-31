@@ -35,8 +35,8 @@
        against the private feed (blocked from this sandbox's network policy;
        see chat). -->
   <ItemGroup>
-    <PackageReference Include="Cbs.Audit.EntityFramework" Version="1.0.0" />
-    <PackageReference Include="Cbs.Audit.Abstractions" Version="1.0.0" />
+    <PackageReference Include="Cbs.Audit.AspNetCore" Version="0.1.8" />
+    <PackageReference Include="Cbs.Audit" Version="0.1.8" />
   </ItemGroup>
 
 </Project>

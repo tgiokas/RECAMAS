@@ -1,4 +1,4 @@
-using Cbs.Audit.Contract;
+using Cbs.Audit.Policy;
 using RECAMAS.Domain.Common;
 using RECAMAS.Domain.Enums;
 

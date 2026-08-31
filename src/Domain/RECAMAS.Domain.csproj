@@ -21,7 +21,7 @@
     policy; see chat).
   -->
   <ItemGroup>
-    <PackageReference Include="Cbs.Audit.Contract" Version="1.0.0" />
+    <PackageReference Include="Cbs.Audit" Version="0.1.8" />
   </ItemGroup>
 
 </Project>

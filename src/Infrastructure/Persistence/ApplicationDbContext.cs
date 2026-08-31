@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Cbs.Audit.EntityFramework;
+using Cbs.Audit.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Common;
@@ -73,13 +73,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         // Cbs.Audit's own outbox table, replacing this project's hand-rolled
         // OutboxMessage/IOutboxRepository (see architecture decision log on
-        // adopting Cbs.Audit as a package). UNVERIFIED SIGNATURE: the
-        // auditing doc's only shown call is
-        // modelBuilder.ApplyAuditOutbox("AuditOutbox", payloadColumnType: "NCLOB")
-        // (ekee_v2's Oracle NCLOB) — "jsonb" is this project's Postgres-appropriate
-        // guess for the equivalent large-JSON column type, and it's unconfirmed
-        // whether the real overload also accepts a schema parameter to keep this
-        // out of the public schema like every other table here.
+        // adopting Cbs.Audit as a package). Signature verified against the real
+        // source (Cbs.Audit.DependencyInjection.AuditDbContextExtensions):
+        // ApplyAuditOutbox(this ModelBuilder, string table = "AUDIT_OUTBOX",
+        // string? payloadColumnType = null) — no schema parameter exists, so
+        // unlike every other table here this one lands in the default (public)
+        // schema; "jsonb" for the Payload column is fine since Postgres's
+        // unbounded text/jsonb columns don't have Oracle NVARCHAR2(2000)'s
+        // truncation problem the parameter exists to work around.
         modelBuilder.ApplyAuditOutbox("audit_outbox", payloadColumnType: "jsonb");
 
         // Soft delete (IsDeleted) and optimistic concurrency (RowVersion -> Postgres'

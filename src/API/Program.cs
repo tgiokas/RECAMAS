@@ -1,5 +1,6 @@
-using Cbs.Audit.Contract;
-using Cbs.Audit.DependencyInjection; // UNVERIFIED: AddCbsAudit's real namespace might be Cbs.Audit.AspNetCore instead — confirm against the package.
+using Cbs.Audit.AspNetCore; // AddHttpContextActor — an extension on CbsAuditBuilder, not part of the base DependencyInjection package
+using Cbs.Audit.DependencyInjection; // AddCbsAudit, CbsAuditBuilder, AddEntityAuditing/AddLabelResolver/ValidateEntityActionsIn
+using Cbs.Audit.Policy; // Mask
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -37,13 +38,11 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Cbs.Audit: replaces this project's own outbox/Kafka audit pipeline (see
-// architecture decision log). UNVERIFIED API SURFACE beyond what the
-// adc6c866-auditing.md doc shows literally — this call shape mirrors that
-// doc's own Program.cs snippet, adapted to read from AuditSettings instead of
+// architecture decision log). Call shape verified against the real Cbs.Audit
+// source (AuditOptions.cs, ServiceCollectionExtensions.cs, CbsAuditBuilder.cs,
+// AspNetCoreAuditExtensions.cs) — reads from AuditSettings instead of
 // builder.Configuration[...] inline, to stay consistent with this project's
-// .env conversion. Confirm every member referenced here (AddCbsAudit's option
-// object shape, AddHttpContextActor, AddEntityAuditing<T>, AddLabelResolver<T>,
-// ValidateEntityActionsIn) against the real package before trusting this builds.
+// .env conversion.
 var auditSettings = AuditSettings.BindFromConfiguration(builder.Configuration);
 
 builder.Services.AddCbsAudit(o =>

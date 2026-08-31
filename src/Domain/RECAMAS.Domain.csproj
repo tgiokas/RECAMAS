@@ -11,17 +11,21 @@
     Domain layer: entities, enums, and repository interfaces only.
     Nothing here depends on Application, Infrastructure, or API.
 
-    Cbs.Audit.Contract is the one exception to "no external package
-    dependencies" (see architecture decision log on adopting Cbs.Audit as a
-    package): [Audited]/[MaskedAudit] must live directly on the entity
+    Cbs.Audit is the one exception to "no external package dependencies" (see
+    architecture decision log on adopting Cbs.Audit as a package): [Audited]/
+    [MaskedAudit] (Cbs.Audit.Policy namespace) must live directly on the entity
     declaration to take effect, the same way ekee_v2's own Member.cs does it,
-    so Domain has to reference whichever package declares those attributes.
-    PLACEHOLDER VERSION — replace with the real published version once this
-    restores against the private feed (blocked from this sandbox's network
-    policy; see chat).
+    so Domain has to reference the package that declares them. It's a single
+    package (Cbs.Audit) despite the doc's earlier description implying six —
+    Contract/Abstractions/EntityFramework/Policy/Recorder/Delivery are all
+    namespaces inside it, confirmed by reading the actual source
+    (cosmos-business-systems/cbs-audit, dotnet/src/Cbs.Audit/*.csproj). Version
+    0.1.8 is this repo's VERSION file at the time it was shared — confirm
+    against what's actually published on the feed, since VERSION can be ahead
+    of the last release.
   -->
   <ItemGroup>
-    <PackageReference Include="Cbs.Audit.Contract" Version="1.0.0" />
+    <PackageReference Include="Cbs.Audit" Version="0.1.8" />
   </ItemGroup>
 
 </Project>

@@ -31,14 +31,14 @@
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
   </ItemGroup>
 
-  <!-- Cbs.Audit.AspNetCore is the one direct reference the auditing doc shows
-       for ekee_v2's own API project (AddCbsAudit/AddHttpContextActor/etc. are
-       presumably exposed here, pulling Cbs.Audit.DependencyInjection and
-       Cbs.Audit.Policy transitively — unconfirmed). PLACEHOLDER VERSION —
-       replace with the real published version once this restores against the
-       private feed (blocked from this sandbox's network policy; see chat). -->
+  <!-- Cbs.Audit.AspNetCore is a real second package (confirmed against the
+       source: dotnet/src/Cbs.Audit.AspNetCore, its own .csproj project-references
+       Cbs.Audit) — adds AddHttpContextActor() (an extension on CbsAuditBuilder,
+       not part of the base package) and opt-in [AuditEndpoint] filtering.
+       AddCbsAudit itself, and everything else Program.cs calls, comes from the
+       plain Cbs.Audit package Infrastructure already references transitively. -->
   <ItemGroup>
-    <PackageReference Include="Cbs.Audit.AspNetCore" Version="1.0.0" />
+    <PackageReference Include="Cbs.Audit.AspNetCore" Version="0.1.8" />
   </ItemGroup>
 
   <ItemGroup>

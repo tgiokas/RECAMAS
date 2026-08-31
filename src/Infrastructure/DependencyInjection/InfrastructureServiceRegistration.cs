@@ -1,3 +1,4 @@
+using Cbs.Audit.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,12 +43,18 @@ public static class InfrastructureServiceRegistration
         var databaseSettings = DatabaseSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(databaseSettings));
 
-        // Cbs.Audit's own SaveChanges interceptor is added by
-        // AddEntityAuditing<ApplicationDbContext>() in Program.cs, not here —
-        // it replaced this project's own EntityChangeAuditInterceptor.
+        // AddCbsAuditInterceptor resolves AuditSaveChangesInterceptor from DI —
+        // registered by AddEntityAuditing<ApplicationDbContext>() in Program.cs.
+        // DI resolves against the fully-built container regardless of C# call
+        // order, so it doesn't matter that Program.cs's AddCbsAudit(...) call
+        // runs "after" AddInfrastructureServices() textually — this lambda only
+        // actually executes the first time a scope resolves ApplicationDbContext,
+        // by which point every registration in Program.cs has already run.
+        // Replaces this project's own removed EntityChangeAuditInterceptor.
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
             options.UseNpgsql(databaseSettings.ConnectionString)
-                .AddInterceptors(sp.GetRequiredService<AuditColumnsInterceptor>()));
+                .AddInterceptors(sp.GetRequiredService<AuditColumnsInterceptor>())
+                .AddCbsAuditInterceptor(sp));
 
         // Lets an Application service call SaveChangesAsync without depending on
         // Infrastructure directly — see IApplicationDbContext remarks.

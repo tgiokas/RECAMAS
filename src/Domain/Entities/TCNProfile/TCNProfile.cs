@@ -1,4 +1,4 @@
-using Cbs.Audit.Contract;
+using Cbs.Audit.Policy;
 using RECAMAS.Domain.Common;
 using RECAMAS.Domain.Enums;
 
@@ -25,13 +25,16 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// would own that table doesn't exist yet. Only value sets that are
 /// structurally fixed by the domain itself (Gender, MdFileRelationship, the
 /// identity-document Source/Type) are modeled as real C# enums.
-/// [Audited]/[MaskedAudit] replace this project's own IAuditable/[NotAudited]
-/// (see architecture decision log on adopting Cbs.Audit) — the SaveChanges
-/// interceptor that watches for these is wired via AddEntityAuditing<ApplicationDbContext>()
-/// in Program.cs, not here. BusinessKey uses Arc even though it's nullable for
-/// undocumented TCNs (no better always-populated natural key exists yet;
-/// DisplayCode is not populated anywhere in the codebase either as of this
-/// commit) — revisit once DisplayCode generation is built.
+/// [Audited]/[MaskedAudit] (Cbs.Audit.Policy — verified against the real package
+/// source) replace this project's own IAuditable/[NotAudited] (see architecture
+/// decision log on adopting Cbs.Audit) — the SaveChanges interceptor that
+/// watches for these is wired via AddEntityAuditing<ApplicationDbContext>() in
+/// Program.cs, not here. Type="TCNProfile" makes the auto-generated action
+/// codes TCNPROFILE.CREATED/UPDATED/DELETED (AuditedAttribute.ActionPrefix
+/// defaults to Type upper-cased) — matches actions.yaml. BusinessKey uses Arc
+/// even though it's nullable for undocumented TCNs (no better always-populated
+/// natural key exists yet; DisplayCode is not populated anywhere in the
+/// codebase either as of this commit) — revisit once DisplayCode generation is built.
 [Audited(Type = "TCNProfile", BusinessKey = nameof(Arc))]
 public class TCNProfile : BaseEntity
 {
@@ -76,11 +79,10 @@ public class TCNProfile : BaseEntity
     /// is masked in the audit trail; contact fields are not, on the view
     /// that "the address changed" is itself audit-relevant here.
     ///
-    /// Mask.Full is the closest equivalent to this project's old [NotAudited]
-    /// (which omitted the value but still recorded that the field changed) —
-    /// unconfirmed against the real package whether Mask.Full behaves exactly
-    /// that way or redacts to a fixed placeholder some other way; check before
-    /// relying on it for a biometric identifier specifically.
+    /// MaskedAudit(Mask.Full), not Cbs.Audit's own [NotAudited] — verified against
+    /// the real source: NotAuditedAttribute's own doc comment says it's "for bulky
+    /// or meaningless columns, not... sensitive ones which should be masked instead
+    /// so that the fact of a change is still recorded", which is exactly this case.
     ///
     [MaskedAudit(Mask.Full)]
     public string? EurodacNumber { get; set; }

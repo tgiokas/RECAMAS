@@ -1,10 +1,12 @@
-using Cbs.Audit.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
 using Polly;
 using Polly.Extensions.Http;
+
+using Cbs.Audit.DependencyInjection;
 using RECAMAS.Application.Configuration;
 using RECAMAS.Application.Errors;
 using RECAMAS.Application.Interfaces;

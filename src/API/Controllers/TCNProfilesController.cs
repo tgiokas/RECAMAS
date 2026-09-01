@@ -5,9 +5,6 @@ using RECAMAS.Application.Interfaces;
 
 namespace RECAMAS.Api.Controllers;
 
-/// TODO: add [Authorize] once the role/policy model is decided (see Program.cs's
-/// own RBAC note) — left open for now so this reference flow is testable without
-/// a Keycloak token in hand.
 [ApiController]
 [Route("api/[controller]")]
 public class TCNProfilesController : ControllerBase

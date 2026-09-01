@@ -5,7 +5,7 @@ namespace RECAMAS.Application.Dtos.TCNProfile;
 /// Overview-tab core fields only (Study Table 3) — enough to prove the
 /// Controller -> Service -> Repository -> Postgres -> flow
 /// end to end. Identity documents, nationalities, and the other 10 child
-/// collections are a separate "add detail" flow, not part of this first slice.
+/// collections are a separate "add detail" flow
 public class CreateTCNProfileRequest
 {
     public string? Arc { get; init; }

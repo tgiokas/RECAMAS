@@ -5,13 +5,12 @@ using RECAMAS.Infrastructure.Helpers.Redaction;
 
 namespace RECAMAS.Infrastructure.ApiClients;
 
-/// Shared base for every outbound API client (reused platform services and the
-/// external government systems alike). Ported from CivilianPortal's
+/// Shared base for every outbound API client 
 /// Infrastructure.ApiClients.ApiClientBase — ADR: every concrete client calls
 /// <see cref="SendRequestAsync"/> instead of _httpClient.SendAsync directly, so
 /// request/response logging, redaction, and transport-failure handling live in
 /// exactly one place rather than being reimplemented per client.
-///
+
 /// Polly retry (transient-fault) is configured separately at HttpClient
 /// registration time in InfrastructureServiceRegistration — this class is the
 /// last thing in the pipeline, closest to the actual send.

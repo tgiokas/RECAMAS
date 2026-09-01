@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RECAMAS.Domain.Interfaces;
-using RECAMAS.Infrastructure.Persistence;
+using RECAMAS.Infrastructure.Database;
 using TCNProfileEntity = RECAMAS.Domain.Entities.TCNProfile.TCNProfile;
 
 namespace RECAMAS.Infrastructure.Repositories;

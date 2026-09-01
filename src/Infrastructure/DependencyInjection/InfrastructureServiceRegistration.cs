@@ -12,8 +12,8 @@ using RECAMAS.Application.Errors;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Interfaces;
 using RECAMAS.Infrastructure.ExternalClients;
-using RECAMAS.Infrastructure.Persistence;
-using RECAMAS.Infrastructure.Persistence.Interceptors;
+using RECAMAS.Infrastructure.Database;
+using RECAMAS.Infrastructure.Database.Interceptors;
 using RECAMAS.Infrastructure.Repositories;
 
 namespace RECAMAS.Infrastructure.DependencyInjection;

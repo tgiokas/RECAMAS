@@ -11,7 +11,7 @@ using RECAMAS.Application.Configuration;
 using RECAMAS.Application.DependencyInjection;
 using RECAMAS.Infrastructure.Audit;
 using RECAMAS.Infrastructure.DependencyInjection;
-using RECAMAS.Infrastructure.Persistence;
+using RECAMAS.Infrastructure.Database;
 using System.Text.Json.Serialization;
 
 Env.TraversePath().Load();
@@ -72,13 +72,10 @@ builder.Services.AddCbsAudit(o =>
 .AddLabelResolver<TCNProfileLabelResolver>()
 .ValidateEntityActionsIn(typeof(RECAMAS.Domain.Entities.TCNProfile.TCNProfile).Assembly);
 
-//var keycloakSettings = KeycloakSettings.BindFromConfiguration(builder.Configuration);
-
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Serialize enums (e.g. ApplicationStatus) as their string names so the SPA can
-        // index lookup tables by `"Submitted" | "Registered" | ...` instead of numeric values.
+        // Serialize enums as their string names instead of numeric values.
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
@@ -87,7 +84,6 @@ if (shouldEnableSwagger)
 {
     builder.Services.AddSwaggerGen();
 }
-//var databaseSettings = DatabaseSettings.BindFromConfiguration(builder.Configuration);
 
 var app = builder.Build();
 
@@ -104,11 +100,6 @@ dbContext.Database.Migrate();
 Log.Information("Database migrations applied (if any).");
     
 app.UseMiddleware<ErrorHandlingMiddleware>();
-//app.UseSerilogRequestLogging();
-//app.UseHttpsRedirection();
-//app.UseAuthentication();
-//app.UseAuthorization();
-
 app.MapControllers();
 app.MapHealthChecks("/health");
 

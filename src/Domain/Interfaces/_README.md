@@ -1,7 +1,7 @@
 # Repository interfaces
 
   - Repository interfaces live here (e.g. `ICaseRepository`, `ITCNProfileRepository`),
-    implemented in `Infrastructure/Persistence`.
+    implemented in `Infrastructure/Database`.
   - The Rule Engine's `IRuleEvaluator` also lives here — it's an in-process module,
     consumed by Case Management and Detention through an interface rather than a
     direct class reference, same as every other repository/evaluator contract.

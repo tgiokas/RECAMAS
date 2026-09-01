@@ -1,0 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using RECAMAS.Domain.Entities.Case;
+
+namespace RECAMAS.Infrastructure.Database.Configurations.Case;
+
+public class AvrCaseDetailConfiguration : IEntityTypeConfiguration<AvrCaseDetail>
+{
+    public void Configure(EntityTypeBuilder<AvrCaseDetail> builder)
+    {
+        builder.ToTable("avr_case_details", schema: "case");
+        builder.HasKey(e => e.Id);
+        builder.HasIndex(e => e.CaseId).IsUnique();
+    }
+}

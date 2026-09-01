@@ -2,7 +2,6 @@ namespace RECAMAS.Domain.Common;
 
 /// Base type for every entity across every module/schema.
 ///
-/// Key conventions (locked in during architecture design):
 ///  - Internal primary key is a bigint identity (Id) — cheap joins, small indexes.
 ///  - PublicId (Guid) is only populated for entities exposed outside the service
 ///    (e.g. across an HTTP boundary to the SPA or another microservice). Not every

@@ -1,9 +1,11 @@
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+
+using FluentValidation;
+
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Application.Services;
 
-namespace RECAMAS.Application.DependencyInjection;
+namespace RECAMAS.Application;
 
 /// Registers every Application-layer service, across every module, in one place.
 /// Called once from API/Program.cs as services.AddApplicationServices().

@@ -5,8 +5,8 @@ using Microsoft.Extensions.Options;
 
 using Polly;
 using Polly.Extensions.Http;
-
 using Cbs.Audit.DependencyInjection;
+
 using RECAMAS.Application.Configuration;
 using RECAMAS.Application.Errors;
 using RECAMAS.Application.Interfaces;
@@ -16,7 +16,7 @@ using RECAMAS.Infrastructure.Database;
 using RECAMAS.Infrastructure.Database.Interceptors;
 using RECAMAS.Infrastructure.Repositories;
 
-namespace RECAMAS.Infrastructure.DependencyInjection;
+namespace RECAMAS.Infrastructure;
 
 /// Registers everything Infrastructure owns: EF Core + Postgres, typed HTTP
 /// clients (both the reused Storage microservice and the external government
@@ -85,7 +85,7 @@ public static class InfrastructureServiceRegistration
             {
                 client.BaseAddress = new Uri(storageSettings.BaseUrl);
             })
-            .AddPolicyHandler(GetRetryPolicy()); 
+            .AddPolicyHandler(GetRetryPolicy());
 
         // --- External government systems ---
         // ARS and CASS share the CY Connect gateway (Specs 12.3.3) — same BaseUrl, different relative paths.

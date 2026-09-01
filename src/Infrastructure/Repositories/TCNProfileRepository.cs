@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using RECAMAS.Domain.Entities.TCNProfile;
 using RECAMAS.Domain.Interfaces;
 using RECAMAS.Infrastructure.Database;
-using TCNProfileEntity = RECAMAS.Domain.Entities.TCNProfile.TCNProfile;
 
 namespace RECAMAS.Infrastructure.Repositories;
 
@@ -14,32 +14,32 @@ public class TCNProfileRepository : ITCNProfileRepository
         _dbContext = dbContext;
     }
 
-    public async Task<TCNProfileEntity?> GetByIdWithDetailsAsync(long id, CancellationToken ct = default)
+    public async Task<TCNProfile?> GetByIdWithDetailsAsync(long id, CancellationToken ct = default)
     {
         return await FullGraph(_dbContext.TCNProfiles.AsNoTracking())
             .FirstOrDefaultAsync(p => p.Id == id, ct);
     }
 
-    public async Task<TCNProfileEntity?> GetByPublicIdWithDetailsAsync(Guid publicId, CancellationToken ct = default)
+    public async Task<TCNProfile?> GetByPublicIdWithDetailsAsync(Guid publicId, CancellationToken ct = default)
     {
         return await FullGraph(_dbContext.TCNProfiles.AsNoTracking())
             .FirstOrDefaultAsync(p => p.PublicId == publicId, ct);
     }
 
-    public async Task<TCNProfileEntity?> GetByIdForUpdateAsync(long id, CancellationToken ct = default)
+    public async Task<TCNProfile?> GetByIdForUpdateAsync(long id, CancellationToken ct = default)
     {
         return await FullGraph(_dbContext.TCNProfiles)
             .FirstOrDefaultAsync(p => p.Id == id, ct);
     }
 
-    public async Task<TCNProfileEntity?> GetByArcAsync(string arc, CancellationToken ct = default)
+    public async Task<TCNProfile?> GetByArcAsync(string arc, CancellationToken ct = default)
     {
         return await _dbContext.TCNProfiles
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Arc == arc, ct);
     }
 
-    public async Task<IReadOnlyList<TCNProfileEntity>> SearchForDuplicatesAsync(
+    public async Task<IReadOnlyList<TCNProfile>> SearchForDuplicatesAsync(
         string? arc, string? passportNumber, string? firstName, string? lastName, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(arc) && string.IsNullOrWhiteSpace(passportNumber)
@@ -64,7 +64,7 @@ public class TCNProfileRepository : ITCNProfileRepository
         return await query.ToListAsync(ct);
     }
 
-    public async Task<(IReadOnlyList<TCNProfileEntity> Items, int TotalCount)> GetPagedAsync(
+    public async Task<(IReadOnlyList<TCNProfile> Items, int TotalCount)> GetPagedAsync(
         int page, int pageSize, string? quickSearchTerm, CancellationToken ct = default)
     {
         var query = _dbContext.TCNProfiles.AsNoTracking().AsQueryable();
@@ -90,21 +90,20 @@ public class TCNProfileRepository : ITCNProfileRepository
     }
 
     // No SaveChanges, caller commits the transaction (outbox pattern).
-    public async Task AddWithoutSaveAsync(TCNProfileEntity profile, CancellationToken ct = default)
+    public async Task AddWithoutSaveAsync(TCNProfile profile, CancellationToken ct = default)
     {
         await _dbContext.TCNProfiles.AddAsync(profile, ct);
     }
 
-    public async Task UpdateAsync(TCNProfileEntity profile, CancellationToken ct = default)
+    public async Task UpdateAsync(TCNProfile profile, CancellationToken ct = default)
     {
         await _dbContext.SaveChangesAsync(ct);
     }
 
-    private static IQueryable<TCNProfileEntity> FullGraph(IQueryable<TCNProfileEntity> query)
+    private static IQueryable<TCNProfile> FullGraph(IQueryable<TCNProfile> query)
     {
         // AsSplitQuery is mandatory here: 12 sibling collections in a single-query
-        // JOIN would cartesian-product against each other (EF Core's own
-        // MultipleCollectionIncludeWarning, confirmed at runtime while testing this).
+        // JOIN would cartesian-product against each other (EF Core's own MultipleCollectionIncludeWarning).
         return query
             .AsSplitQuery()
             .Include(p => p.Nationalities)

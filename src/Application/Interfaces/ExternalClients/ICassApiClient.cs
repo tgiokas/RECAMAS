@@ -7,7 +7,7 @@ namespace RECAMAS.Application.Interfaces;
 /// gateway. The interface stays request/response DTOs in, DTOs out — the
 /// concrete client is responsible for building/parsing the actual SOAP
 /// envelope, so callers never see SOAP vs. the ARS/REST shape underneath.
-public interface ICassClient
+public interface ICassApiClient
 {
     Task<CassSearchResult?> SearchAsync(CassSearchRequest request, CancellationToken ct = default);
 }

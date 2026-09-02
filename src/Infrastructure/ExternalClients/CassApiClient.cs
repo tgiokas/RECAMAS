@@ -15,12 +15,12 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// determined during system design"). Real work needed once the WSDL exists:
 /// generate/hand-write the actual envelope shape, correct SOAPAction header,
 /// and a real response parser in place of the not-implemented one below.
-public class CassClient : ApiClientBase, ICassClient
+public class CassApiClient : ApiClientBase, ICassApiClient
 {
     // TODO: confirm real CY Connect route + SOAPAction for CASS once the WSDL is available.
     private const string SearchEndpoint = "/cass/ws/tcn-search";
 
-    public CassClient(HttpClient httpClient, ILogger<CassClient> logger)
+    public CassApiClient(HttpClient httpClient, ILogger<CassApiClient> logger)
         : base(httpClient, logger)
     {
     }
@@ -70,7 +70,7 @@ public class CassClient : ApiClientBase, ICassClient
     private CassSearchResult? ParseSearchResponse(string xml)
     {
         // TODO: real SOAP response parsing once CASS's WSDL/response schema exists.
-        _logger.LogWarning("CassClient.ParseSearchResponse is not yet implemented (no WSDL available)");
+        _logger.LogWarning("CassApiClient.ParseSearchResponse is not yet implemented (no WSDL available)");
         return null;
     }
 }

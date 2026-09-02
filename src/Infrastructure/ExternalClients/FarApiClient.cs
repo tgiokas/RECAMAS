@@ -6,6 +6,6 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// the module list / DI registration reflects "the FAR hook exists" the same
 /// way INotificationClient does for Kafka-only Notifications, without
 /// pretending there's a real endpoint to call yet.
-public class FarClient : IFarClient
+public class FarApiClient : IFarApiClient
 {
 }

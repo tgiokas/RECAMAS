@@ -14,10 +14,10 @@ namespace RECAMAS.Application.Interfaces;
 /// This interface is written transport-agnostic on purpose (SearchAsync
 /// returns a result regardless of how it was obtained) so calling code
 /// doesn't have to change if the concrete implementation is later swapped
-/// from an HTTP client (ArrivalsDeparturesClient, current placeholder) to a
+/// from an HTTP client (ArrivalsDeparturesApiClient, current placeholder) to a
 /// file-import-backed repository query. Needs a decision from the director
 /// before this is built for real — see session log Section 3.
-public interface IArrivalsDeparturesClient
+public interface IArrivalsDeparturesApiClient
 {
     Task<IReadOnlyList<ArrivalsDeparturesRecord>?> SearchAsync(ArrivalsDeparturesSearchRequest request, CancellationToken ct = default);
 }

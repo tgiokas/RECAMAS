@@ -52,7 +52,7 @@ public class TCNProfileService : ITCNProfileService
             return _errors.Fail<TCNProfileDto>(ErrorCodes.TCNProfile.DuplicateProfileDetected);
         }
 
-        var profile = new TCNProfileEntity
+        var profile = new TCNProfile
         {
             PublicId = Guid.NewGuid(),
             Arc = request.Arc,

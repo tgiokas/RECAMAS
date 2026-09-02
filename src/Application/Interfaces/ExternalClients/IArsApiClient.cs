@@ -7,7 +7,7 @@ namespace RECAMAS.Application.Interfaces;
 /// provider, RECAMAS as consumer — exact endpoint TBD during system design.
 /// Automatic refresh triggers (profile/case opened, daily) are Application-
 /// layer scheduling concerns, not part of this client's contract.
-public interface IArsClient
+public interface IArsApiClient
 {
     Task<ArsSearchResult?> SearchAsync(ArsSearchRequest request, CancellationToken ct = default);
 }

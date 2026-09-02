@@ -6,14 +6,14 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// PROVISIONAL implementation of IStoplistClient as a live HTTP call,
+/// PROVISIONAL implementation of IStoplistApiClient as a live HTTP call,
 /// matching Specs 9.5's field tables. Same live-API-vs-batch-file caveat as
-/// ArrivalsDeparturesClient (Specs 12.3.7) applies — see IStoplistClient remarks.
-public class StoplistClient : ApiClientBase, IStoplistClient
+/// ArrivalsDeparturesApiClient (Specs 12.3.7) applies — see IStoplistApiClient remarks.
+public class StoplistApiClient : ApiClientBase, IStoplistApiClient
 {
     private const string CheckEndpoint = "/stoplist/api/v1/check";
 
-    public StoplistClient(HttpClient httpClient, ILogger<StoplistClient> logger)
+    public StoplistApiClient(HttpClient httpClient, ILogger<StoplistApiClient> logger)
         : base(httpClient, logger)
     {
     }

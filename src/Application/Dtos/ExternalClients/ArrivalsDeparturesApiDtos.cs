@@ -10,7 +10,7 @@ public sealed record ArrivalsDeparturesSearchRequest(
     DateOnly? DateOfBirth);
 
 /// Specs Table 165 (Arrivals/Departures Response Fields) — one record per
-/// crossing; a search can return several. See IArrivalsDeparturesClient
+/// crossing; a search can return several. See IArrivalsDeparturesApiClient
 public sealed record ArrivalsDeparturesRecord(
     ArrivalOrDeparture Direction,
     DateOnly Date,

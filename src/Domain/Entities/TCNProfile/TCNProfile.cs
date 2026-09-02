@@ -12,12 +12,6 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// part of that tab, Table 15, is a read view into the Case module's own
 /// Case/CaseTcnProfile entities, not modeled here).
 ///
-/// Deliberately excluded from this pass: Photograph and Fingerprints (Table 3).
-/// Both are optional (Req.=No) file attachments; fingerprints in particular
-/// belong to the broader ANSI/NIST-ITL biometric capability (Specs 12.1.1),
-/// which needs its own design pass and is tracked as a separate open item —
-/// not modeled here at all.
-///
 /// Fields the Specs types as "Enum" but which are really admin-configurable
 /// reference data (Nationality, PlaceOfBirth, IssuingCountry, IssuingAuthority,
 /// etc.) are stored as plain string codes for now, not as a foreign key to a

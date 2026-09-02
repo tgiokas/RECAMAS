@@ -6,13 +6,13 @@ using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// PROVISIONAL implementation of IArrivalsDeparturesClient as a live HTTP
+/// PROVISIONAL implementation of IArrivalsDeparturesApiClient as a live HTTP
 /// call, matching Specs 9.4's field tables. See the interface's remarks:
-public class ArrivalsDeparturesClient : ApiClientBase, IArrivalsDeparturesClient
+public class ArrivalsDeparturesApiClient : ApiClientBase, IArrivalsDeparturesApiClient
 {
     private const string SearchEndpoint = "/arrivals-departures/api/v1/search";
 
-    public ArrivalsDeparturesClient(HttpClient httpClient, ILogger<ArrivalsDeparturesClient> logger)
+    public ArrivalsDeparturesApiClient(HttpClient httpClient, ILogger<ArrivalsDeparturesApiClient> logger)
         : base(httpClient, logger)
     {
     }

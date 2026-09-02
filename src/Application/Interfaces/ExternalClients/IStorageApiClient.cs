@@ -15,12 +15,12 @@ namespace RECAMAS.Application.Interfaces;
 /// Lives here rather than Domain/Interfaces — this is an application-layer
 /// port to an external system, not a domain concept; Domain shouldn't know
 /// HTTP exists.
-public interface IStorageClient
+public interface IStorageApiClient
 {
     Task<StorageUploadResult?> UploadFileAsync(string bucket, string key,
          Stream fileStream, string fileName, string contentType,
          CancellationToken cancellationToken = default);
-    Task<ResolvedAttachment> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default);    
+    Task<ResolvedAttachment?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default);    
     Task<bool> DeleteFileAsync(string bucket, string key, CancellationToken cancellationToken = default);
 }
 

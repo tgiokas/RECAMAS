@@ -81,7 +81,7 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton(Options.Create(jccSettings));
 
         // --- Reused microservice HTTP client (Storage) ---
-        services.AddHttpClient<IStorageClient, StorageClient>(client =>
+        services.AddHttpClient<IStorageApiClient, StorageApiClient>(client =>
             {
                 client.BaseAddress = new Uri(storageSettings.BaseUrl);
             })
@@ -89,40 +89,40 @@ public static class InfrastructureServiceRegistration
 
         // --- External government systems ---
         // ARS and CASS share the CY Connect gateway (Specs 12.3.3) — same BaseUrl, different relative paths.
-        services.AddHttpClient<IArsClient, ArsClient>(client =>
+        services.AddHttpClient<IArsApiClient, ArsApiClient>(client =>
             {
                 client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
             })
             .AddPolicyHandler(GetRetryPolicy());
 
-        services.AddHttpClient<ICassClient, CassClient>(client =>
+        services.AddHttpClient<ICassApiClient, CassApiClient>(client =>
             {
                 client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
             })
             .AddPolicyHandler(GetRetryPolicy());
 
-        // PROVISIONAL — see IArrivalsDeparturesClient/IStoplistClient remarks on the
+        // PROVISIONAL — see IArrivalsDeparturesApiClient/IStoplistApiClient remarks on the
         // live-API-vs-batch-file contradiction (Specs 9.4/9.5 vs 12.3.6/12.3.7).
-        services.AddHttpClient<IArrivalsDeparturesClient, ArrivalsDeparturesClient>(client =>
+        services.AddHttpClient<IArrivalsDeparturesApiClient, ArrivalsDeparturesApiClient>(client =>
             {
                 client.BaseAddress = new Uri(arrivalsDeparturesSettings.BaseUrl);
             })
             .AddPolicyHandler(GetRetryPolicy());
 
-        services.AddHttpClient<IStoplistClient, StoplistClient>(client =>
+        services.AddHttpClient<IStoplistApiClient, StoplistApiClient>(client =>
             {
                 client.BaseAddress = new Uri(stoplistSettings.BaseUrl);
             })
             .AddPolicyHandler(GetRetryPolicy());
 
-        services.AddHttpClient<IJccSigningClient, JccSigningClient>(client =>
+        services.AddHttpClient<IJccSigningApiClient, JccSigningApiClient>(client =>
             {
                 client.BaseAddress = new Uri(jccSettings.BaseUrl);
             })
             .AddPolicyHandler(GetRetryPolicy());
 
         // FAR: no endpoint exists yet — plain registration, no HttpClient. See IFarClient/FarClient remarks.
-        services.AddSingleton<IFarClient, FarClient>();
+        services.AddSingleton<IFarApiClient, FarApiClient>();
 
         // --- Error catalog, loaded once from errors.json at startup (fail fast if missing) ---
         var errorsJsonPath = Path.Combine(AppContext.BaseDirectory, "errors.json");

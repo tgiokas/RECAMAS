@@ -7,7 +7,7 @@ namespace RECAMAS.Application.Interfaces;
 /// token, create a signing package for a document (returns an iframe URL
 /// embedded directly in RECAMAS so the signer never leaves the app), then
 /// retrieve the signed document once JCC's callback reports completion.
-public interface IJccSigningClient
+public interface IJccSigningApiClient
 {
     Task<JccAccessTokenResult?> GetApplicationTokenAsync(CancellationToken ct = default);
 

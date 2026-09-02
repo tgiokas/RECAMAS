@@ -11,7 +11,7 @@ using RECAMAS.Infrastructure.ApiClients;
 namespace RECAMAS.Infrastructure.ExternalClients;
 
 /// HttpClient for the reused Storage service. 
-public class StorageClient : ApiClientBase, IStorageClient
+public class StorageApiClient : ApiClientBase, IStorageApiClient
 {
     private const string storageUploadEndpoint = $"/Documents/upload";
     private const string downloadEndpoint = "/Documents/download";
@@ -19,7 +19,7 @@ public class StorageClient : ApiClientBase, IStorageClient
 
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-    public StorageClient(HttpClient httpClient, ILogger<StorageClient> logger)
+    public StorageApiClient(HttpClient httpClient, ILogger<StorageApiClient> logger)
         : base(httpClient, logger)
     {
     }
@@ -62,7 +62,7 @@ public class StorageClient : ApiClientBase, IStorageClient
             result.Data.Size);
     }
 
-    public async Task<ResolvedAttachment> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default)
+    public async Task<ResolvedAttachment?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default)
     {
         var url = $"{downloadEndpoint}?bucket={Uri.EscapeDataString(bucket)}&key={Uri.EscapeDataString(key)}";
 
@@ -72,7 +72,7 @@ public class StorageClient : ApiClientBase, IStorageClient
         if (response.StatusCode != HttpStatusCode.OK)
         {
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
-            throw new AttachmentUnavailableException(bucket, key, (int)response.StatusCode, body);
+            return null;
         }
 
         var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";

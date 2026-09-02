@@ -11,12 +11,12 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// during system design" per the Specs itself.
 /// HttpClient.BaseAddress is CyConnectSettings.BaseUrl (see
 /// InfrastructureServiceRegistration), so this only needs the relative path.
-public class ArsClient : ApiClientBase, IArsClient
+public class ArsApiClient : ApiClientBase, IArsApiClient
 {
     // TODO: confirm real CY Connect route for ARS search once available.
     private const string SearchEndpoint = "/ars/api/v1/tcn/search";
 
-    public ArsClient(HttpClient httpClient, ILogger<ArsClient> logger)
+    public ArsApiClient(HttpClient httpClient, ILogger<ArsApiClient> logger)
         : base(httpClient, logger)
     {
     }

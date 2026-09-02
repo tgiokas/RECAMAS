@@ -1,50 +1,116 @@
+using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
+
+using RECAMAS.Application.Dtos;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Infrastructure.ApiClients;
 
 namespace RECAMAS.Infrastructure.ExternalClients;
 
-/// Typed HttpClient for the reused Storage service. Stub only —
-/// real upload/download endpoint contracts to be confirmed against
-/// Storage's actual API before this is used for real case documents.
+/// HttpClient for the reused Storage service. 
 public class StorageClient : ApiClientBase, IStorageClient
 {
+    private const string storageUploadEndpoint = $"/Documents/upload";
+    private const string downloadEndpoint = "/Documents/download";
+    private const string storageDeleteEndpoint = $"/Documents/delete";
+
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
     public StorageClient(HttpClient httpClient, ILogger<StorageClient> logger)
         : base(httpClient, logger)
     {
     }
 
-    public async Task<string> UploadAsync(string bucketKey, Stream content, string contentType, CancellationToken ct = default)
+    public async Task<StorageUploadResult?> UploadFileAsync(
+        string bucket, string key,
+        Stream fileStream, string fileName, string contentType,
+        CancellationToken cancellationToken = default)
     {
-        using var streamContent = new StreamContent(content);
+        using var content = new MultipartFormDataContent();
+        var streamContent = new StreamContent(fileStream);
         streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        content.Add(streamContent, "file", fileName);
+        content.Add(new StringContent(bucket), "bucket");
+        content.Add(new StringContent(key), "key");
 
-        // TODO: confirm actual Storage upload endpoint + response shape.
-        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/storage/{Uri.EscapeDataString(bucketKey)}")
+        var request = new HttpRequestMessage(HttpMethod.Post, storageUploadEndpoint)
         {
-            Content = streamContent,
+            Content = content
         };
 
-        var response = await SendRequestAsync(request, ct);
-        response.EnsureSuccessStatusCode();
-        return bucketKey;
+        var response = await SendRequestAsync(request, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+        var result = JsonSerializer.Deserialize<StorageApiResponse>(json, JsonOptions);
+
+        if (result is null || !result.Success || result.Data is null)
+        {
+            _logger.LogError("DMS.Storage returned unsuccessful response for {Bucket}/{Key}", bucket, key);
+            return null;
+        }
+
+        return new StorageUploadResult(
+            result.Data.Bucket,
+            result.Data.Key,
+            fileName,
+            result.Data.Size);
     }
 
-    public async Task<Stream> DownloadAsync(string bucketKey, CancellationToken ct = default)
+    public async Task<ResolvedAttachment> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default)
     {
-        // TODO: confirm actual Storage download endpoint.
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/storage/{Uri.EscapeDataString(bucketKey)}");
-        var response = await SendRequestAsync(request, ct);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStreamAsync(ct);
+        var url = $"{downloadEndpoint}?bucket={Uri.EscapeDataString(bucket)}&key={Uri.EscapeDataString(key)}";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        using var response = await SendRequestAsync(request, cancellationToken);
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            throw new AttachmentUnavailableException(bucket, key, (int)response.StatusCode, body);
+        }
+
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+
+        static string? Blank(string? s) => string.IsNullOrWhiteSpace(s) ? null : s;
+
+        var fileName = Blank(response.Content.Headers.ContentDisposition?.FileNameStar)
+                       ?? Blank(response.Content.Headers.ContentDisposition?.FileName?.Trim('"'))
+                       ?? Blank(key.TrimEnd('/').Split('/').LastOrDefault())
+                       ?? "attachment";
+
+        var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+
+        return new ResolvedAttachment
+        {
+            Content = new MemoryStream(bytes, 0, bytes.Length, writable: false, publiclyVisible: true),
+            FileName = fileName,
+            ContentType = contentType,
+            Size = bytes.LongLength
+        };
     }
 
-    public async Task DeleteAsync(string bucketKey, CancellationToken ct = default)
+    public async Task<bool> DeleteFileAsync(string bucket, string key, CancellationToken cancellationToken = default)
     {
-        // TODO: confirm actual Storage delete endpoint.
-        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/storage/{Uri.EscapeDataString(bucketKey)}");
-        var response = await SendRequestAsync(request, ct);
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, storageDeleteEndpoint)
+            {
+                Content = JsonContent.Create(new { bucket, key })
+            };
+
+            var response = await SendRequestAsync(request, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to delete orphaned file {Bucket}/{Key} from DMS.Storage", bucket, key);
+            return false;
+        }
     }
 }

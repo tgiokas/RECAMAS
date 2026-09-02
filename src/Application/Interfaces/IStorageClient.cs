@@ -1,3 +1,5 @@
+using RECAMAS.Application.Dtos;
+
 namespace RECAMAS.Application.Interfaces;
 
 /// Contract for the reused Storage microservice — every RECAMAS document
@@ -15,7 +17,21 @@ namespace RECAMAS.Application.Interfaces;
 /// HTTP exists.
 public interface IStorageClient
 {
-    Task<string> UploadAsync(string bucketKey, Stream content, string contentType, CancellationToken ct = default);
-    Task<Stream> DownloadAsync(string bucketKey, CancellationToken ct = default);
-    Task DeleteAsync(string bucketKey, CancellationToken ct = default);
+    Task<StorageUploadResult?> UploadFileAsync(string bucket, string key,
+         Stream fileStream, string fileName, string contentType,
+         CancellationToken cancellationToken = default);
+    Task<ResolvedAttachment> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default);    
+    Task<bool> DeleteFileAsync(string bucket, string key, CancellationToken cancellationToken = default);
+}
+
+/// A downloaded attachment ready to be attached to an email.
+/// Owns the underlying stream — dispose when done.
+public sealed class ResolvedAttachment : IDisposable
+{
+    public required Stream Content { get; init; }
+    public required string FileName { get; init; }
+    public required string ContentType { get; init; }
+    public long Size { get; init; }
+
+    public void Dispose() => Content.Dispose();
 }

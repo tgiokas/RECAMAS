@@ -15,6 +15,6 @@ public interface IStorageApiClient
     Task<StorageUploadResult?> UploadFileAsync(string bucket, string key,
          Stream fileStream, string fileName, string contentType,
          CancellationToken cancellationToken = default);
-    Task<ResolvedFile?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default);    
+    Task<StorageDownloadResult?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default);    
     Task<bool> DeleteFileAsync(string bucket, string key, CancellationToken cancellationToken = default);
 }

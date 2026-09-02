@@ -1,5 +1,5 @@
 using Cbs.Audit.Abstractions;
-using TCNProfileEntity = RECAMAS.Domain.Entities.TCNProfile.TCNProfile;
+using RECAMAS.Domain.Entities.TCNProfile;
 
 namespace RECAMAS.Infrastructure.Audit;
 
@@ -13,7 +13,7 @@ public class TCNProfileLabelResolver : IAuditLabelResolver
 
     public string? ResolveTargetLabel(object entity)
     {
-        if (entity is not TCNProfileEntity profile)
+        if (entity is not TCNProfile profile)
         {
             return null;
         }

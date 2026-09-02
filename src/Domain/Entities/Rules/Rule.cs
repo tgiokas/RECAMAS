@@ -6,7 +6,6 @@ namespace RECAMAS.Domain.Entities.Rules;
 /// <see cref="RuleVersion"/> — "update" closes the old version and inserts a
 /// new one, never mutates a version in place, so the audit trail stays intact.
 /// Field-eligibility and IF/THEN syntax are specified in Specs 8.4.2/8.4.3.
-
 public class Rule : BaseEntity
 {
     public required string Name { get; set; }

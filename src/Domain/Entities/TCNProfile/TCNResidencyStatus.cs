@@ -4,9 +4,7 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 
 /// Specs Table 5 (Residency Status). Not explicitly a repeating list in the
 /// Specs, unlike Residency Applications — but modeled as history here anyway
-/// (soft-delete + insert-new-on-update, never overwrite in place), matching
-/// the audit-trail principle used everywhere else in this codebase. "Current"
-/// status = the latest non-deleted row for the profile, ordered by CreatedAt.
+/// (soft-delete + insert-new-on-update, never overwrite in place)
 public class TCNResidencyStatus : BaseEntity
 {
     public long TCNProfileId { get; set; }

@@ -65,18 +65,13 @@ public class TCNProfile : BaseEntity
     public string? MdAddress { get; set; }
     public string? MdPhone { get; set; }
 
-    ///
-    /// TODO: this is a conservative starting set, not a reviewed PII policy —
+    /// TODO: this is a conservative starting set,
     /// the team should decide the real list against Specs 12.5.7 before
     /// treating it as complete. EurodacNumber (a biometric-linked identifier)
     /// is masked in the audit trail; contact fields are not, on the view
     /// that "the address changed" is itself audit-relevant here.
-    ///
-    /// MaskedAudit(Mask.Full), not Cbs.Audit's own [NotAudited] — verified against
-    /// the real source: NotAuditedAttribute's own doc comment says it's "for bulky
-    /// or meaningless columns, not... sensitive ones which should be masked instead
-    /// so that the fact of a change is still recorded", which is exactly this case.
-    ///
+
+    /// MaskedAudit(Mask.Full), sensitive ones which should be masked instead   
     [MaskedAudit(Mask.Full)]
     public string? EurodacNumber { get; set; }
 

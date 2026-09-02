@@ -3,15 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 
 using RECAMAS.Application.Interfaces;
-using RECAMAS.Application.Services;
+using RECAMAS.Application.Modules;
 
 namespace RECAMAS.Application;
 
 /// Registers every Application-layer service, across every module, in one place.
 /// Called once from API/Program.cs as services.AddApplicationServices().
-/// As each module gets built, add its service registrations here —
-/// e.g. services.AddScoped&lt;ICaseService, CaseService&gt();
-/// Do NOT hand-wire these directly in Program.cs.
 public static class ApplicationServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)

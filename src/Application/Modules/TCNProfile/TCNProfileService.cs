@@ -7,7 +7,7 @@ using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Interfaces;
 using RECAMAS.Domain.Entities.TCNProfile;
 
-namespace RECAMAS.Application.Services;
+namespace RECAMAS.Application.Modules;
 
 /// Reference implementation for the full Controller -> Service -> Repository ->
 /// Postgres -> Cbs.Audit flow. Creating the profile is all this method does —

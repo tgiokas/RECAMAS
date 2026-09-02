@@ -7,9 +7,7 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// itself). Note VoluntaryReturnDeadline is typed "Date" here, but the ARS/
 /// CASS interface DTOs (ArsReturnDecision/CassReturnDecision) type the same
 /// concept as "Number" (a day count) — a real inconsistency in the source
-/// document between the profile view and the interface response, not a
-/// modeling choice made here. Kept as a date at this layer since that's what
-/// this table specifies; reconciling the two is Application-layer mapping work.
+/// document between the profile view and the interface response.
 public class TCNReturnDecision : BaseEntity
 {
     public long TCNProfileId { get; set; }

@@ -5,5 +5,5 @@ namespace RECAMAS.Application.Interfaces;
 
 public interface ITCNProfileService
 {
-    Task<Result<TCNProfileDto>> CreateAsync(CreateTCNProfileRequest request, CancellationToken ct = default);
+    Task<Result<TCNProfileDto>> CreateAsync(TCNProfileCreateRequest request, CancellationToken ct = default);
 }

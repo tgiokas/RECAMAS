@@ -6,7 +6,7 @@ namespace RECAMAS.Application.Dtos.TCNProfile;
 /// Controller -> Service -> Repository -> Postgres -> flow
 /// end to end. Identity documents, nationalities, and the other 10 child
 /// collections are a separate "add detail" flow
-public class CreateTCNProfileRequest
+public class TCNProfileCreateRequest
 {
     public string? Arc { get; init; }
     public string? FirstNameEl { get; init; }

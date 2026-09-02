@@ -3,7 +3,7 @@ using RECAMAS.Application.Dtos.TCNProfile;
 
 namespace RECAMAS.Application.Validators.TCNProfile;
 
-public class CreateTCNProfileRequestValidator : AbstractValidator<CreateTCNProfileRequest>
+public class CreateTCNProfileRequestValidator : AbstractValidator<TCNProfileCreateRequest>
 {
     public CreateTCNProfileRequestValidator()
     {

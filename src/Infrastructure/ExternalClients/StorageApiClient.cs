@@ -62,7 +62,7 @@ public class StorageApiClient : ApiClientBase, IStorageApiClient
             result.Data.Size);
     }
 
-    public async Task<ResolvedAttachment?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default)
+    public async Task<ResolvedFile?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default)
     {
         var url = $"{DownloadEndpoint}?bucket={Uri.EscapeDataString(bucket)}&key={Uri.EscapeDataString(key)}";
 
@@ -86,7 +86,7 @@ public class StorageApiClient : ApiClientBase, IStorageApiClient
 
         var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
-        return new ResolvedAttachment
+        return new ResolvedFile
         {
             Content = new MemoryStream(bytes, 0, bytes.Length, writable: false, publiclyVisible: true),
             FileName = fileName,

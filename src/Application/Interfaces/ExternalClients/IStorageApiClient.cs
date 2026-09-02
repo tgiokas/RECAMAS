@@ -5,28 +5,22 @@ namespace RECAMAS.Application.Interfaces;
 /// Contract for the reused Storage microservice — every RECAMAS document
 /// (uploaded evidence, generated Return Decision/Detention Order templates,
 /// JCC-signed PDFs) goes through this, never a local file system.
-///
-/// Key convention (open item, needs confirming against Storage's actual
+
 /// bucket/key rules): use a versioned key per document, e.g.
 ///   "{caseId}/{documentType}/v{n}.pdf"
 /// so re-issued/re-signed documents don't collide with Storage's
-/// duplicate-key rejection on upload.
-///
-/// Lives here rather than Domain/Interfaces — this is an application-layer
-/// port to an external system, not a domain concept; Domain shouldn't know
-/// HTTP exists.
+/// duplicate-key rejection on upload./
 public interface IStorageApiClient
 {
     Task<StorageUploadResult?> UploadFileAsync(string bucket, string key,
          Stream fileStream, string fileName, string contentType,
          CancellationToken cancellationToken = default);
-    Task<ResolvedAttachment?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default);    
+    Task<ResolvedFile?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default);    
     Task<bool> DeleteFileAsync(string bucket, string key, CancellationToken cancellationToken = default);
 }
 
-/// A downloaded attachment ready to be attached to an email.
 /// Owns the underlying stream — dispose when done.
-public sealed class ResolvedAttachment : IDisposable
+public sealed class ResolvedFile : IDisposable
 {
     public required Stream Content { get; init; }
     public required string FileName { get; init; }

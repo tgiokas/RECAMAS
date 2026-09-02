@@ -6,8 +6,7 @@ namespace RECAMAS.Application.Configuration;
 /// for an application-level token, then a user-scoped token for the signer.
 /// "The detailed integration mechanism (API credentials, package/workflow
 /// configuration, field placement, callback handling) shall be defined in
-/// cooperation with JCC during implementation" — so this is a placeholder
-/// shape, not a confirmed contract.
+/// cooperation with JCC during implementation" 
 public class JccApiClientSettings
 {
     public required string BaseUrl { get; init; }

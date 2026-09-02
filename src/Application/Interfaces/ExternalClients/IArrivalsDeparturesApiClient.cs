@@ -2,8 +2,7 @@ using RECAMAS.Application.Dtos.ExternalClients;
 
 namespace RECAMAS.Application.Interfaces;
 
-/// Specs 9.4 describes a live, synchronous Request/Response interface
-/// (field tables given, Table 164/165) 
+/// Specs 9.4  (Table 164/165) 
 
 public interface IArrivalsDeparturesApiClient
 {

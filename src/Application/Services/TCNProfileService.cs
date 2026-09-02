@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Logging;
+
 using RECAMAS.Application.Common;
 using RECAMAS.Application.Dtos.TCNProfile;
 using RECAMAS.Application.Errors;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Interfaces;
-using TCNProfileEntity = RECAMAS.Domain.Entities.TCNProfile.TCNProfile;
+using RECAMAS.Domain.Entities.TCNProfile;
 
 namespace RECAMAS.Application.Services;
 
@@ -38,7 +39,7 @@ public class TCNProfileService : ITCNProfileService
         _logger = logger;
     }
 
-    public async Task<Result<TCNProfileDto>> CreateAsync(CreateTCNProfileRequest request, CancellationToken ct = default)
+    public async Task<Result<TCNProfileDto>> CreateAsync(TCNProfileCreateRequest request, CancellationToken ct = default)
     {
         var duplicates = await _tcnProfileRepository.SearchForDuplicatesAsync(
             request.Arc, passportNumber: null, request.FirstNameEn, request.LastNameEn, ct);
@@ -74,7 +75,7 @@ public class TCNProfileService : ITCNProfileService
         return Result<TCNProfileDto>.Ok(MapToDto(profile), "TCN Profile created successfully.");
     }
 
-    private static TCNProfileDto MapToDto(TCNProfileEntity profile) => new()
+    private static TCNProfileDto MapToDto(TCNProfile profile) => new()
     {
         PublicId = profile.PublicId!.Value,
         DisplayCode = profile.DisplayCode,

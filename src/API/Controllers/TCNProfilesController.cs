@@ -11,16 +11,16 @@ namespace RECAMAS.Api.Controllers;
 public class TCNProfilesController : ControllerBase
 {
     private readonly ITCNProfileService _tcnProfileService;
-    private readonly IValidator<CreateTCNProfileRequest> _createValidator;
+    private readonly IValidator<TCNProfileCreateRequest> _createValidator;
 
-    public TCNProfilesController(ITCNProfileService tcnProfileService, IValidator<CreateTCNProfileRequest> createValidator)
+    public TCNProfilesController(ITCNProfileService tcnProfileService, IValidator<TCNProfileCreateRequest> createValidator)
     {
         _tcnProfileService = tcnProfileService;
         _createValidator = createValidator;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTCNProfileRequest request, CancellationToken ct)
+    public async Task<IActionResult> Create([FromBody] TCNProfileCreateRequest request, CancellationToken ct)
     {
         var validation = await _createValidator.ValidateAsync(request, ct);
         if (!validation.IsValid)

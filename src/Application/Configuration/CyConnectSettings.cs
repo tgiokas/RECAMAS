@@ -5,11 +5,6 @@ namespace RECAMAS.Application.Configuration;
 /// Specs 12.3.3: ARS and CASS are both consumed through the single CY Connect
 /// API gateway, not point-to-point — so one BaseUrl/credential set here backs
 /// both ArsApiClient and CassApiClient, each hitting a different relative path.
-///
-/// Auth mechanism is genuinely unconfirmed: 12.3.2 allows "OAuth 2.0 and mutual
-/// TLS" for the platform's OpenAPI capability in general, but doesn't say which
-/// one CY Connect itself requires. ClientId/ClientSecret below assumes OAuth2
-/// client-credentials as the default guess — flagged, not confirmed.
 public class CyConnectSettings
 {
     public required string BaseUrl { get; init; }

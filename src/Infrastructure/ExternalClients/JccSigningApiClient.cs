@@ -17,9 +17,9 @@ public class JccSigningApiClient : ApiClientBase, IJccSigningApiClient
     private const string TokenEndpoint = "/oauth/token";
     private const string PackagesEndpoint = "/api/packages";
 
-    private readonly JccClientSettings _settings;
+    private readonly JccApiClientSettings _settings;
 
-    public JccSigningApiClient(HttpClient httpClient, ILogger<JccSigningApiClient> logger, IOptions<JccClientSettings> settings)
+    public JccSigningApiClient(HttpClient httpClient, ILogger<JccSigningApiClient> logger, IOptions<JccApiClientSettings> settings)
         : base(httpClient, logger)
     {
         _settings = settings.Value;

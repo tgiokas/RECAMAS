@@ -65,19 +65,19 @@ public static class InfrastructureServiceRegistration
         var keycloakSettings = KeycloakSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(keycloakSettings));
 
-        var storageSettings = StorageClientSettings.BindFromConfiguration(configuration);
+        var storageSettings = StorageApiClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(storageSettings));
 
         var cyConnectSettings = CyConnectSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(cyConnectSettings));
 
-        var arrivalsDeparturesSettings = ArrivalsDeparturesClientSettings.BindFromConfiguration(configuration);
+        var arrivalsDeparturesSettings = ArrivalsDeparturesApiClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(arrivalsDeparturesSettings));
 
-        var stoplistSettings = StoplistClientSettings.BindFromConfiguration(configuration);
+        var stoplistSettings = StoplistApiClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(stoplistSettings));
 
-        var jccSettings = JccClientSettings.BindFromConfiguration(configuration);
+        var jccSettings = JccApiClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(jccSettings));
 
         // --- Reused microservice HTTP client (Storage) ---

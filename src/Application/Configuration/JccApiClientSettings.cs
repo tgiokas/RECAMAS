@@ -8,16 +8,16 @@ namespace RECAMAS.Application.Configuration;
 /// configuration, field placement, callback handling) shall be defined in
 /// cooperation with JCC during implementation" — so this is a placeholder
 /// shape, not a confirmed contract.
-public class JccClientSettings
+public class JccApiClientSettings
 {
     public required string BaseUrl { get; init; }
     public string? ClientId { get; init; }
     public string? ClientSecret { get; init; }
     public string? CallbackUrl { get; init; }
 
-    public static JccClientSettings BindFromConfiguration(IConfiguration configuration)
+    public static JccApiClientSettings BindFromConfiguration(IConfiguration configuration)
     {
-        return new JccClientSettings
+        return new JccApiClientSettings
         {
             BaseUrl = configuration["JCC_BASE_URL"]
                 ?? throw new InvalidOperationException("JCC_BASE_URL is not configured."),

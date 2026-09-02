@@ -2,10 +2,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace RECAMAS.Application.Configuration;
 
-/// Backs the AddCbsAudit(...) call in Program.cs. Flat env keys, same
-/// convention as every other *Settings class here — RECAMAS_/CIVILIANPORTAL_-style
-/// inline builder.Configuration[...] reads (the doc's own example) were
-/// deliberately not copied, to stay consistent with this project's .env conversion.
+/// Backs the AddCbsAudit(...) call in Program.cs. Flat env keys
 public class AuditSettings
 {
     public string ElasticsearchUri { get; init; } = "http://elasticsearch:9200";

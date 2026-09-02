@@ -2,13 +2,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace RECAMAS.Application.Configuration;
 
-public class StorageClientSettings
+public class StorageApiClientSettings
 {
     public required string BaseUrl { get; init; }
 
-    public static StorageClientSettings BindFromConfiguration(IConfiguration configuration)
+    public static StorageApiClientSettings BindFromConfiguration(IConfiguration configuration)
     {
-        return new StorageClientSettings
+        return new StorageApiClientSettings
         {
             BaseUrl = configuration["STORAGE_BASE_URL"]
                 ?? throw new InvalidOperationException("STORAGE_BASE_URL is not configured."),

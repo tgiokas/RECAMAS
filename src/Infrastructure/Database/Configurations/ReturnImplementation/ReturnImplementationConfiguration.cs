@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using CaseEntity = RECAMAS.Domain.Entities.Case.Case;
 using ReturnImplementationEntity = RECAMAS.Domain.Entities.ReturnImplementation.ReturnImplementation;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.ReturnImplementation;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class ReturnImplementationConfiguration : IEntityTypeConfiguration<ReturnImplementationEntity>
 {

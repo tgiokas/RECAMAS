@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-using RECAMAS.Application.Dtos;
+using RECAMAS.Application.Dtos.ExternalClients;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Infrastructure.ApiClients;
 
@@ -13,9 +13,9 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// HttpClient for the reused Storage service. 
 public class StorageApiClient : ApiClientBase, IStorageApiClient
 {
-    private const string storageUploadEndpoint = $"/Documents/upload";
-    private const string downloadEndpoint = "/Documents/download";
-    private const string storageDeleteEndpoint = $"/Documents/delete";
+    private const string UploadEndpoint = $"/Documents/upload";
+    private const string DownloadEndpoint = "/Documents/download";
+    private const string DeleteEndpoint = $"/Documents/delete";
 
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
@@ -36,7 +36,7 @@ public class StorageApiClient : ApiClientBase, IStorageApiClient
         content.Add(new StringContent(bucket), "bucket");
         content.Add(new StringContent(key), "key");
 
-        var request = new HttpRequestMessage(HttpMethod.Post, storageUploadEndpoint)
+        var request = new HttpRequestMessage(HttpMethod.Post, UploadEndpoint)
         {
             Content = content
         };
@@ -64,7 +64,7 @@ public class StorageApiClient : ApiClientBase, IStorageApiClient
 
     public async Task<ResolvedAttachment?> DownloadAsync(string bucket, string key, CancellationToken cancellationToken = default)
     {
-        var url = $"{downloadEndpoint}?bucket={Uri.EscapeDataString(bucket)}&key={Uri.EscapeDataString(key)}";
+        var url = $"{DownloadEndpoint}?bucket={Uri.EscapeDataString(bucket)}&key={Uri.EscapeDataString(key)}";
 
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         using var response = await SendRequestAsync(request, cancellationToken);
@@ -99,7 +99,7 @@ public class StorageApiClient : ApiClientBase, IStorageApiClient
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, storageDeleteEndpoint)
+            var request = new HttpRequestMessage(HttpMethod.Post, DeleteEndpoint)
             {
                 Content = JsonContent.Create(new { bucket, key })
             };

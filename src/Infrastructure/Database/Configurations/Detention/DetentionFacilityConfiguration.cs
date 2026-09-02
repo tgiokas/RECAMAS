@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RECAMAS.Domain.Entities.Detention;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.Detention;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class DetentionFacilityConfiguration : IEntityTypeConfiguration<DetentionFacility>
 {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RECAMAS.Domain.Entities.Detention;
 using CaseEntity = RECAMAS.Domain.Entities.Case.Case;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.Detention;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class DetentionOrderConfiguration : IEntityTypeConfiguration<DetentionOrder>
 {

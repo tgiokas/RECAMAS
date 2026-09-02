@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RECAMAS.Domain.Entities.Reports;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.Reports;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class DocumentTemplateConfiguration : IEntityTypeConfiguration<DocumentTemplate>
 {

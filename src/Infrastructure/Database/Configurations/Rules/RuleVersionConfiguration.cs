@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RECAMAS.Domain.Entities.Rules;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.Rules;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class RuleVersionConfiguration : IEntityTypeConfiguration<RuleVersion>
 {

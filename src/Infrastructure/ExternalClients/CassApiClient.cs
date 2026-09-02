@@ -11,10 +11,7 @@ namespace RECAMAS.Infrastructure.ExternalClients;
 /// 12.3.4) — the one external system here that isn't plain JSON/REST.
 ///
 /// The envelope built below is a structural placeholder, not a real CASS
-/// contract: there is no WSDL available yet ("the precise API ... shall be
-/// determined during system design"). Real work needed once the WSDL exists:
-/// generate/hand-write the actual envelope shape, correct SOAPAction header,
-/// and a real response parser in place of the not-implemented one below.
+/// contract: there is no WSDL available yet 
 public class CassApiClient : ApiClientBase, ICassApiClient
 {
     // TODO: confirm real CY Connect route + SOAPAction for CASS once the WSDL is available.

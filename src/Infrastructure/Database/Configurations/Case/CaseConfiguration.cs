@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using CaseEntity = RECAMAS.Domain.Entities.Case.Case;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.Case;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class CaseConfiguration : IEntityTypeConfiguration<CaseEntity>
 {

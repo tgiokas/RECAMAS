@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RECAMAS.Domain.Entities.Case;
 using TCNProfileEntity = RECAMAS.Domain.Entities.TCNProfile.TCNProfile;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.Case;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class CaseTcnProfileConfiguration : IEntityTypeConfiguration<CaseTcnProfile>
 {

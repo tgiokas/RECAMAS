@@ -1,4 +1,4 @@
-﻿namespace RECAMAS.Application.Dtos;
+﻿namespace RECAMAS.Application.Dtos.ExternalClients;
 
 public class StorageApiResponse
 {

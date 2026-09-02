@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RECAMAS.Domain.Entities.TCNProfile;
 
-namespace RECAMAS.Infrastructure.Database.Configurations.TCNProfile;
+namespace RECAMAS.Infrastructure.Database.Configurations;
 
 public class TCNReturnDecisionConfiguration : IEntityTypeConfiguration<TCNReturnDecision>
 {

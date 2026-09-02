@@ -1,4 +1,4 @@
-using RECAMAS.Application.Dtos;
+using RECAMAS.Application.Dtos.ExternalClients;
 
 namespace RECAMAS.Application.Interfaces;
 

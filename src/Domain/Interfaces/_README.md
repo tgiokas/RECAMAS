@@ -11,5 +11,3 @@ External-service API client interfaces (`IStorageClient`, `INotificationClient`,
 here — Domain shouldn't need to know HTTP exists. They're implemented in
 `Infrastructure/ExternalClients`.
 
-Rule: define the contract in Domain/Application first, implement in Infrastructure.
-Never let a Controller or Application service `new()` up an Infrastructure class directly.

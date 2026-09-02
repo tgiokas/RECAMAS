@@ -12,6 +12,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RECAMAS.Api", "src\API\RECA
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1FD0D033-D780-4E23-A5E3-DF9A3E40E565}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9BB91E0A-0E36-487C-B56C-A4064B1C4AB8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\auditing.md = docs\auditing.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,19 +1,18 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
+using DotNetEnv;
+using Serilog;
 using Cbs.Audit.AspNetCore;
 using Cbs.Audit.DependencyInjection;
 using Cbs.Audit.Policy;
-using DotNetEnv;
-using Serilog;
 
 using RECAMAS.Api.Middleware;
+using RECAMAS.Application;
 using RECAMAS.Application.Configuration;
-using RECAMAS.Application.DependencyInjection;
 using RECAMAS.Infrastructure;
 using RECAMAS.Infrastructure.Audit;
 using RECAMAS.Infrastructure.Database;
-using System.Text.Json.Serialization;
-
 
 Env.TraversePath().Load();
 

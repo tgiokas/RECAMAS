@@ -27,17 +27,17 @@ namespace RECAMAS.Infrastructure;
 /// Program.cs instead of here, matching the auditing doc's own placement.
 ///
 /// Every HTTP client here is registered the same way: bind its typed settings,
-/// AddHttpClient&lt;TInterface, TImplementation&gt; with that BaseUrl, then
-/// AddPolicyHandler(GetRetryPolicy()) for transient-fault retry. The
-/// concrete client itself extends ApiClientBase for structured request/
-/// response logging and redaction — the two are complementary, not
-/// alternatives: Polly decides whether to retry, ApiClientBase logs whatever
+/// AddHttpClient,TInterface, TImplementation with that BaseUrl, then
+/// AddPolicyHandler(GetRetryPolicy()) for transient fault retry. The
+/// concrete client itself extends ApiClientBase for structured request
+/// response logging and redaction
+/// Polly decides whether to retry, ApiClientBase logs whatever
 /// actually got sent.
 public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // --- PostgreSQL 18, single instance, schema-per-module ---
+        // --- PostgreSQL , single instance, schema-per-module ---
         // Interceptors resolved from DI
         services.AddHttpContextAccessor();
         services.AddScoped<AuditColumnsInterceptor>();
@@ -58,7 +58,7 @@ public static class InfrastructureServiceRegistration
                 .AddCbsAuditInterceptor(sp));
 
         // Lets an Application service call SaveChangesAsync without depending on
-        // Infrastructure directly — see IApplicationDbContext remarks.
+        // Infrastructure directly
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         // --- Typed settings for every outbound HTTP integration ---

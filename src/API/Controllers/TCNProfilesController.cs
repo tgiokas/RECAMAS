@@ -1,5 +1,6 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
+
 using RECAMAS.Application.Dtos.TCNProfile;
 using RECAMAS.Application.Interfaces;
 

@@ -41,8 +41,7 @@ with backoff — nothing is lost, nothing blocks the request.
    - `[MaskedAudit(Mask.Full)]` (or `Mask.Email`, `Mask.Phone`, etc.) — records
      *that* the field changed, not the value. **Use this for sensitive data.**
    - `[NotAudited]` — the field never appears in a diff at all. Only for
-     bulky/meaningless columns, not sensitive ones (masking is the right tool
-     there, per the package's own guidance).
+     bulky/meaningless columns, not sensitive ones 
 3. Add the entity's action codes to `src/API/audit/actions.yaml`:
    ```yaml
    - code: YOURENTITY.CREATED

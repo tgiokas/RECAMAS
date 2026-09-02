@@ -7,8 +7,7 @@ using RECAMAS.Application.Errors;
 namespace RECAMAS.Api.Middleware;
 
 /// Catches any unhandled exception and returns a generic RECAMAS-000 result
-/// Never rely on this for expected business failures; those should already
-/// be a failed Result returned normally by the service, not an exception.
+/// Never rely on this for expected business failures.
 public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;

@@ -1,11 +1,6 @@
 namespace RECAMAS.Application.Dtos.ExternalClients;
 
-/// Specs 9.6 (JCC Trust Services / SigningHub REST API v8.4). Genuinely
-/// provisional — "the detailed integration mechanism (API credentials,
-/// package/workflow configuration, field placement, callback handling) shall
-/// be defined in cooperation with JCC during implementation." These DTOs
-/// exist so IJccSigningClient has a shape to compile against, not because
-/// the wire contract is confirmed.
+/// Specs 9.6 (JCC Trust Services / SigningHub REST API v8.4). 
 public sealed record JccAccessTokenResult(string AccessToken, int ExpiresInSeconds);
 
 public sealed record JccCreateSigningPackageRequest(

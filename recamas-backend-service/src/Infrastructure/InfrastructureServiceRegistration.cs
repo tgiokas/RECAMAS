@@ -83,7 +83,7 @@ public static class InfrastructureServiceRegistration
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
 
-        // --- External government systems ---
+        // --- External RECAMAS systems ---
         // ARS 
         services.AddHttpClient<IArsApiClient, ArsApiClient>(client =>
             {

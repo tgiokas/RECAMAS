@@ -35,8 +35,4 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Cbs.Audit" Version="0.1.8" />
-  </ItemGroup>
-
 </Project>

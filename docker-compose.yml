@@ -19,7 +19,7 @@ services:
   recamas-api:
     build:
       context: .
-      dockerfile: src/API/Dockerfile
+      dockerfile: recamas-backend-service/src/Api/Dockerfile
       secrets:
         - nuget_token
     container_name: recamas-api
@@ -30,6 +30,8 @@ services:
       - .env
     ports:
       - "5041:8080"
+    volumes:
+      - ./error-codes/errors.json:/app/errors.json:ro
 
   # ==================== Keycloak  ====================   
   # keycloak:

@@ -117,13 +117,13 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IFarApiClient, FarApiClient>();
 
         // --- Error catalog, loaded once from errors.json at startup (fail fast if missing) ---
-        var errorsJsonPath = Path.Combine(AppContext.BaseDirectory, "errors.json");
-        if (!File.Exists(errorsJsonPath))
-        {
-            throw new FileNotFoundException($"errors.json not found at: {errorsJsonPath}");
-        }
+        // Add Error Catalog Path
+        var path = Path.Combine(Environment.CurrentDirectory, "errors.json");
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"errors.json not found at: {path}");
 
-        services.AddSingleton(ErrorCatalog.LoadFromFile(errorsJsonPath));
+        var errorcat = ErrorCatalog.LoadFromFile(path);
+        services.AddSingleton<IErrorCatalog>(errorcat);
 
         // --- Repository implementations, added module by module ---
         services.AddScoped<ITCNProfileRepository, TCNProfileRepository>();

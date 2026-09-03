@@ -42,10 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\errors.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>errors.json</Link>
-    </Content>
     <Content Include="audit\actions.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

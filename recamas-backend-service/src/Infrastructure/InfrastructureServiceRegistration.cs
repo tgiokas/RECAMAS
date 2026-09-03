@@ -26,17 +26,11 @@ namespace RECAMAS.Infrastructure;
 /// registration (AddCbsAudit/AddEntityAuditing/etc.) is wired directly in
 /// Program.cs instead of here, matching the auditing doc's own placement.
 ///
-/// Every HTTP client here is registered the same way: bind its typed settings,
-/// AddHttpClient,TInterface, TImplementation with that BaseUrl and a per-request
-/// Timeout, then AddPolicyHandler(GetRetryPolicy()) for transient-fault retry
-/// followed by AddPolicyHandler(GetCircuitBreakerPolicy()) so a system that's
-/// actually down fails fast instead of being retried on every call — this
-/// matters because Specs section 9 has ARS/CASS/Arrivals-Departures/Stoplist
-/// called in a sequential chain per TCN Search, again on every profile/case/
-/// implementation open, and again in a daily batch across every TCN with an
-/// open case, so a slow or down system left to the 100s BCL default timeout
-/// and bare retry would compound badly across all three call sites.
-/// Polly decides whether to retry/break, ApiClientBase logs whatever actually got sent.
+/// Every HTTP client here is registered the same way: typed settings, a
+/// per-request Timeout, then retry + circuit-breaker policies — so a down
+/// external system (called repeatedly per Specs section 9: TCN Search,
+/// every profile/case/implementation open, and the daily refresh) fails
+/// fast instead of compounding via the 100s default timeout and bare retry.
 public static class InfrastructureServiceRegistration
 {
     // Government interfaces run over CY Connect / the Police Public Zone —
@@ -163,10 +157,8 @@ public static class InfrastructureServiceRegistration
         return services;
     }
 
-    // Exponential backoff (200/400/800ms) plus up to 100ms of jitter, so that
-    // many concurrent callers retrying at once (e.g. the daily refresh batch
-    // hitting the same degraded system for many TCNs) don't all land on the
-    // exact same retry instant and pile onto it together.
+    // Exponential backoff (200/400/800ms) + up to 100ms jitter, so concurrent
+    // callers don't retry in lockstep against the same degraded system.
     private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy() =>
         HttpPolicyExtensions
             .HandleTransientHttpError()
@@ -174,16 +166,10 @@ public static class InfrastructureServiceRegistration
                 TimeSpan.FromMilliseconds(200 * Math.Pow(2, retryAttempt))
                 + TimeSpan.FromMilliseconds(Random.Shared.Next(0, 100)));
 
-    // Must be called once per AddHttpClient<T> registration (as above), never
-    // shared across clients — Polly's circuit-breaker policy is stateful, so a
-    // single shared instance would trip every external system's circuit the
-    // moment any one of them (e.g. CASS) failed 5 times, instead of isolating
-    // the failure to that system. Opens after 5 consecutive transient
-    // failures and stays open 30s before allowing a single probe request
-    // through; while open, calls fail immediately (ApiClientBase's catch-all
-    // turns the resulting BrokenCircuitException into the same synthetic 503
-    // callers already handle) instead of waiting out ExternalSystemTimeout
-    // and retrying 3 more times per call.
+    // Call once per AddHttpClient<T> (never shared/reused) — Polly's circuit
+    // state is stateful, so sharing one instance would trip every system's
+    // circuit off one system's failures. Opens after 5 consecutive failures,
+    // stays open 30s, then allows a single probe through.
     private static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy() =>
         HttpPolicyExtensions
             .HandleTransientHttpError()

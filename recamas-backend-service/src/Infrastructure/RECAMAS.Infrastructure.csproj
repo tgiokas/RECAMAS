@@ -35,19 +35,6 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
   </ItemGroup>
 
-  <!-- Cbs.Audit — see architecture decision log on adopting it as a package,
-       replacing this project's own outbox/Kafka audit pipeline (Confluent.Kafka
-       reference removed above). One package, not the several the auditing doc
-       implied (Contract/Abstractions/EntityFramework/Policy/Recorder/Delivery
-       are namespaces inside it — confirmed against the real source). Domain
-       already references it directly for [Audited]/[MaskedAudit]; this repeats
-       the reference here since Infrastructure uses its own namespaces
-       (Abstractions.IAuditLabelResolver, DependencyInjection.ApplyAuditOutbox/
-       AddCbsAuditInterceptor, EntityFramework's AuditSaveChangesInterceptor).
-       Cbs.Audit itself targets net8.0 and pins EF Core 6.0.36 — runs fine
-       under RECAMAS's net9.0/EF Core 9.0.1 (NuGet resolves to the higher EF
-       Core version across the graph), but worth watching for any EF Core
-       6-vs-9 behavioral difference Cbs.Audit's compiled code might depend on. -->
   <ItemGroup>
     <PackageReference Include="Cbs.Audit" Version="0.1.8" />
   </ItemGroup>

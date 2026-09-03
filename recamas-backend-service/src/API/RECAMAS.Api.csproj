@@ -31,10 +31,6 @@
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
   </ItemGroup>
 
-  <!-- Cbs.Audit.AspNetCore is a real second package (confirmed against the
-       source: dotnet/src/Cbs.Audit.AspNetCore, its own .csproj project-references
-       Cbs.Audit) — adds AddHttpContextActor() (an extension on CbsAuditBuilder,
-       not part of the base package) and opt-in [AuditEndpoint] filtering. -->
   <ItemGroup>
     <PackageReference Include="Cbs.Audit.AspNetCore" Version="0.1.8" />
   </ItemGroup>
@@ -43,10 +39,6 @@
     <Content Include="audit\actions.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

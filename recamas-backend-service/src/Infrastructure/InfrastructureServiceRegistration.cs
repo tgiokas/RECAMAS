@@ -33,15 +33,7 @@ namespace RECAMAS.Infrastructure;
 /// fast instead of compounding via the 100s default timeout and bare retry.
 public static class InfrastructureServiceRegistration
 {
-    // Government interfaces run over CY Connect / the Police Public Zone —
-    // internal-network hops, not the public internet — so a slow response is a
-    // signal something is wrong, not normal latency. Kept short deliberately:
-    // callers (TCN Search, the per-open refresh, the daily batch) all need a
-    // single stuck system to fail fast rather than hold up the whole chain.
     private static readonly TimeSpan ExternalSystemTimeout = TimeSpan.FromSeconds(15);
-
-    // Storage is our own reused microservice, not a government interface, and
-    // handles file uploads — allowed a bit more headroom.
     private static readonly TimeSpan StorageTimeout = TimeSpan.FromSeconds(30);
 
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
@@ -80,8 +72,6 @@ public static class InfrastructureServiceRegistration
                 .AddInterceptors(sp.GetRequiredService<AuditColumnsInterceptor>())
                 .AddCbsAuditInterceptor(sp));
 
-        // Lets an Application service call SaveChangesAsync without depending on
-        // Infrastructure directly
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         // --- Reused microservice HTTP client (Storage) ---
@@ -94,7 +84,7 @@ public static class InfrastructureServiceRegistration
             .AddPolicyHandler(GetCircuitBreakerPolicy());
 
         // --- External government systems ---
-        // ARS and CASS share the CY Connect gateway (Specs 12.3.3) — same BaseUrl, different relative paths.
+        // ARS 
         services.AddHttpClient<IArsApiClient, ArsApiClient>(client =>
             {
                 client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
@@ -102,7 +92,8 @@ public static class InfrastructureServiceRegistration
             })
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
-
+        
+        // CASS
         services.AddHttpClient<ICassApiClient, CassApiClient>(client =>
             {
                 client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
@@ -111,8 +102,7 @@ public static class InfrastructureServiceRegistration
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
 
-        // PROVISIONAL — see IArrivalsDeparturesApiClient/IStoplistApiClient remarks on the
-        // live-API-vs-batch-file contradiction (Specs 9.4/9.5 vs 12.3.6/12.3.7).
+        //Arrivals/Departures
         services.AddHttpClient<IArrivalsDeparturesApiClient, ArrivalsDeparturesApiClient>(client =>
             {
                 client.BaseAddress = new Uri(arrivalsDeparturesSettings.BaseUrl);
@@ -120,7 +110,8 @@ public static class InfrastructureServiceRegistration
             })
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
-
+        
+        // Stoplist
         services.AddHttpClient<IStoplistApiClient, StoplistApiClient>(client =>
             {
                 client.BaseAddress = new Uri(stoplistSettings.BaseUrl);
@@ -128,7 +119,8 @@ public static class InfrastructureServiceRegistration
             })
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
-
+        
+        // JCC Signing
         services.AddHttpClient<IJccSigningApiClient, JccSigningApiClient>(client =>
             {
                 client.BaseAddress = new Uri(jccSettings.BaseUrl);
@@ -137,7 +129,7 @@ public static class InfrastructureServiceRegistration
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
 
-        // FAR: no endpoint exists yet — plain registration, no HttpClient. See IFarClient/FarClient remarks.
+        // FAR: no endpoint exists yet
         services.AddSingleton<IFarApiClient, FarApiClient>();
 
         // --- Error catalog, loaded once from errors.json at startup (fail fast if missing) ---

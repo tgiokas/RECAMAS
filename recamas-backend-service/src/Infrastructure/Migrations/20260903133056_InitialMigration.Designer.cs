@@ -9,11 +9,11 @@ using RECAMAS.Infrastructure.Database;
 
 #nullable disable
 
-namespace RECAMAS.Infrastructure.Database.Migrations
+namespace RECAMAS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260831163430_ReplaceOutboxWithCbsAudit")]
-    partial class ReplaceOutboxWithCbsAudit
+    [Migration("20260903133056_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -2,21 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RECAMAS.Infrastructure.Database;
 
 #nullable disable
 
-namespace RECAMAS.Infrastructure.Database.Migrations
+namespace RECAMAS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260829182035_AddModuleSkeletonsAndExternalClients")]
-    partial class AddModuleSkeletonsAndExternalClients
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,6 +22,48 @@ namespace RECAMAS.Infrastructure.Database.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Cbs.Audit.EntityFramework.AuditOutboxEntry", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status", "NextAttemptAt")
+                        .HasDatabaseName("IX_AUDIT_OUTBOX_PICKUP");
+
+                    b.ToTable("audit_outbox", (string)null);
+                });
 
             modelBuilder.Entity("RECAMAS.Domain.Entities.Case.AvrCaseDetail", b =>
                 {
@@ -650,6 +689,114 @@ namespace RECAMAS.Infrastructure.Database.Migrations
                     b.ToTable("rule_versions", "rules");
                 });
 
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNAppeal", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateOnly?>("AppealDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("AppealNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AppealStatusDecision")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("DecisionDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TypeOfAppeal")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_appeals", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNArrivalDeparture", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Airport")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_arrivals_departures", "tcn_profile");
+                });
+
             modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNIdentityDocument", b =>
                 {
                     b.Property<long>("Id")
@@ -719,6 +866,120 @@ namespace RECAMAS.Infrastructure.Database.Migrations
                     b.HasIndex("TCNProfileId");
 
                     b.ToTable("tcn_identity_documents", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNInternationalProtectionApplication", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("DecisionDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("StatusDecision")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("SubmissionDate")
+                        .HasColumnType("date");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TypeOfApplication")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_international_protection_applications", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNInternationalProtectionStatus", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("DateOfGranting")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("DecisionDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("StatusDecision")
+                        .HasColumnType("text");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TypeOfStatus")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_international_protection_statuses", "tcn_profile");
                 });
 
             modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNNationality", b =>
@@ -842,6 +1103,12 @@ namespace RECAMAS.Infrastructure.Database.Migrations
                     b.Property<string>("MiddleNameEn")
                         .HasColumnType("text");
 
+                    b.Property<bool>("NoCriminalRecordFound")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("NoRestrictiveActivitiesFound")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PlaceOfBirth")
                         .HasColumnType("text");
 
@@ -880,6 +1147,365 @@ namespace RECAMAS.Infrastructure.Database.Migrations
                     NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Arc", "FirstNameEn", "LastNameEn"), new[] { "gin_trgm_ops", "gin_trgm_ops", "gin_trgm_ops" });
 
                     b.ToTable("tcn_profiles", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNProfileLink", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("LinkedProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Relationship")
+                        .HasColumnType("text");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LinkedProfileId");
+
+                    b.HasIndex("TCNProfileId", "LinkedProfileId")
+                        .IsUnique();
+
+                    b.ToTable("tcn_profile_links", "tcn_profile", t =>
+                        {
+                            t.HasCheckConstraint("CK_tcn_profile_links_not_self", "\"TCNProfileId\" <> \"LinkedProfileId\"");
+                        });
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNResidencyApplication", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("DecisionDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PurposeOfResidenceRnd")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResidenceCategory")
+                        .HasColumnType("text");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("SubmissionDate")
+                        .HasColumnType("date");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TypeOfApplication")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TypeOfPermitRequested")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_residency_applications", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNResidencyStatus", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateOnly?>("IssueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("PermitType")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PurposeOfResidenceRnd")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResidenceCategory")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResidencyDocumentNumber")
+                        .HasColumnType("text");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_residency_statuses", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNReturnDecision", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("DecisionDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("DecisionFileDocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DecisionText")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("EntryBanDurationMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("IssuingAuthority")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateOnly?>("TcnReceiptDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("VoluntaryReturnDeadline")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_return_decisions", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNSecurityFinding", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid?>("AttachmentDocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("text");
+
+                    b.Property<int>("FindingType")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.ToTable("tcn_security_findings", "tcn_profile");
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNStoplistEntry", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("EntryBanDurationMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("EntryBanExpirationDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateOnly?>("StoplistEntryDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("StoplistHit")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("StoplistReason")
+                        .HasColumnType("text");
+
+                    b.Property<long>("TCNProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UniqueEntryBanNumber")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TCNProfileId");
+
+                    b.HasIndex("UniqueEntryBanNumber");
+
+                    b.ToTable("tcn_stoplist_entries", "tcn_profile");
                 });
 
             modelBuilder.Entity("RECAMAS.Domain.Entities.Case.CaseTcnProfile", b =>
@@ -938,6 +1564,24 @@ namespace RECAMAS.Infrastructure.Database.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNAppeal", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("Appeals")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNArrivalDeparture", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("ArrivalsDepartures")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNIdentityDocument", b =>
                 {
                     b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
@@ -947,10 +1591,88 @@ namespace RECAMAS.Infrastructure.Database.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNInternationalProtectionApplication", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("InternationalProtectionApplications")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNInternationalProtectionStatus", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("InternationalProtectionStatuses")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNNationality", b =>
                 {
                     b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
                         .WithMany("Nationalities")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNProfileLink", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany()
+                        .HasForeignKey("LinkedProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("Links")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNResidencyApplication", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("ResidencyApplications")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNResidencyStatus", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("ResidencyStatuses")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNReturnDecision", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("ReturnDecisions")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNSecurityFinding", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("SecurityFindings")
+                        .HasForeignKey("TCNProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNStoplistEntry", b =>
+                {
+                    b.HasOne("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", null)
+                        .WithMany("StoplistEntries")
                         .HasForeignKey("TCNProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -968,9 +1690,29 @@ namespace RECAMAS.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("RECAMAS.Domain.Entities.TCNProfile.TCNProfile", b =>
                 {
+                    b.Navigation("Appeals");
+
+                    b.Navigation("ArrivalsDepartures");
+
                     b.Navigation("IdentityDocuments");
 
+                    b.Navigation("InternationalProtectionApplications");
+
+                    b.Navigation("InternationalProtectionStatuses");
+
+                    b.Navigation("Links");
+
                     b.Navigation("Nationalities");
+
+                    b.Navigation("ResidencyApplications");
+
+                    b.Navigation("ResidencyStatuses");
+
+                    b.Navigation("ReturnDecisions");
+
+                    b.Navigation("SecurityFindings");
+
+                    b.Navigation("StoplistEntries");
                 });
 #pragma warning restore 612, 618
         }

@@ -65,7 +65,7 @@ public static class InfrastructureServiceRegistration
         var databaseSettings = DatabaseSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(databaseSettings));
 
-        // AddCbsAuditInterceptor resolves AuditSaveChangesInterceptor from DI —
+        // Add CbsAuditInterceptor resolves AuditSaveChangesInterceptor from DI —
         // registered by AddEntityAuditing<ApplicationDbContext>() in Program.cs.
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
             options.UseNpgsql(databaseSettings.ConnectionString)
@@ -74,7 +74,7 @@ public static class InfrastructureServiceRegistration
 
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
-        // --- Reused microservice HTTP client (Storage) ---
+        // --- CBS microservice HTTP client (Storage) ---
         services.AddHttpClient<IStorageApiClient, StorageApiClient>(client =>
             {
                 client.BaseAddress = new Uri(storageSettings.BaseUrl);

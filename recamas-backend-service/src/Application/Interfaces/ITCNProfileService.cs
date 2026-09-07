@@ -1,4 +1,4 @@
-using RECAMAS.Application.Common;
+using RECAMAS.Application.Dtos.Common;
 using RECAMAS.Application.Dtos.TCNProfile;
 
 namespace RECAMAS.Application.Interfaces;

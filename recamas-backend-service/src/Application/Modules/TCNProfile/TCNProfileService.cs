@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-using RECAMAS.Application.Common;
+using RECAMAS.Application.Dtos.Common;
 using RECAMAS.Application.Dtos.TCNProfile;
 using RECAMAS.Application.Errors;
 using RECAMAS.Application.Interfaces;

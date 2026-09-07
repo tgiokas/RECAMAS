@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-using RECAMAS.Application.Common;
+using RECAMAS.Application.Dtos.Common;
 using RECAMAS.Application.Errors;
 
 namespace RECAMAS.Api.Middleware;

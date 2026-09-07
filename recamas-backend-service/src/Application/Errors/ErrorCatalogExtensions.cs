@@ -1,4 +1,4 @@
-using RECAMAS.Application.Common;
+using RECAMAS.Application.Dtos.Common;
 
 namespace RECAMAS.Application.Errors;
 

@@ -1,4 +1,4 @@
-namespace RECAMAS.Application.Common;
+namespace RECAMAS.Application.Dtos.Common;
 
 /// Standard return type for every Application service method, across every module.
 /// Controllers check Success and map to an HTTP response — never throw raw exceptions

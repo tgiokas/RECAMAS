@@ -1,19 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using RECAMAS.Domain.Entities.TCNProfile;
+using RECAMAS.Domain.Entities.Case;
 using RECAMAS.Domain.Entities.Detention;
+using RECAMAS.Domain.Entities.ReturnImplementation;
+using RECAMAS.Domain.Entities.Admin;
 
 namespace RECAMAS.Infrastructure.Database.Configurations;
 
-public class DetentionReassessmentConfiguration : IEntityTypeConfiguration<DetentionReassessment>
+
+public sealed class DetentionReassessmentConfiguration : IEntityTypeConfiguration<DetentionReassessment>
 {
     public void Configure(EntityTypeBuilder<DetentionReassessment> builder)
     {
         builder.ToTable("detention_reassessments", schema: "detention");
-        builder.HasKey(e => e.Id);
-
-        builder.HasOne<DetentionOrder>()
-            .WithMany()
-            .HasForeignKey(e => e.DetentionOrderId)
-            .OnDelete(DeleteBehavior.Cascade);
+        EntityConfiguration.ConfigureBase(builder);
+        builder.Property(e => e.ReassessmentType).HasComment("Planned | AdHoc");
+        builder.Property(e => e.Status).HasComment("Scheduled | Completed | Overdue");
+        builder.Property(e => e.RelatedIssueId).HasComment("FK → DetentionUpdateIssue");
+        builder.Property(e => e.AssessmentReportPath).HasComment("Storage path");
     }
 }

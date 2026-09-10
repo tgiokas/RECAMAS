@@ -9,8 +9,8 @@ namespace RECAMAS.Infrastructure.Database.Interceptors;
 /// 
 /// Fills the promise BaseEntity's own doc comment already made: "Audit columns
 /// are populated by a SaveChanges interceptor in Infrastructure, not by
-/// callers." Nothing implemented that promise until now — CreatedAt/CreatedBy
-/// are set once on insert, UpdatedAt/UpdatedBy on every subsequent save.
+/// callers." CreatedAt/CreatedByUserId are set once on insert, while
+/// UpdatedAt/UpdatedByUserId are set on every subsequent save.
 /// 
 public sealed class AuditColumnsInterceptor : SaveChangesInterceptor
 {
@@ -41,7 +41,8 @@ public sealed class AuditColumnsInterceptor : SaveChangesInterceptor
             return;
         }
 
-        var currentUser = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var currentUserClaim = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var hasNumericUserId = long.TryParse(currentUserClaim, out var currentUserId);
         var now = DateTimeOffset.UtcNow;
 
         foreach (var entry in db.ChangeTracker.Entries<BaseEntity>())
@@ -49,12 +50,12 @@ public sealed class AuditColumnsInterceptor : SaveChangesInterceptor
             if (entry.State == EntityState.Added)
             {
                 entry.Entity.CreatedAt = now;
-                entry.Entity.CreatedBy = currentUser;
+                entry.Entity.CreatedByUserId = hasNumericUserId ? currentUserId : 0;
             }
             else if (entry.State == EntityState.Modified)
             {
                 entry.Entity.UpdatedAt = now;
-                entry.Entity.UpdatedBy = currentUser;
+                entry.Entity.UpdatedByUserId = hasNumericUserId ? currentUserId : null;
             }
         }
     }

@@ -16,21 +16,14 @@ COPY ["recamas-backend-service/src/Domain/RECAMAS.Domain.csproj", "src/Domain/"]
 
 # Cbs.* packages restore from the private cbs-github feed (see nuget.config),
 # which refuses anonymous reads. The nuget_token secret is a GitHub PAT
-# locally (read:packages, authorized for cosmos-business-systems if SSO is
-# enforced) or the CI runner's own GITHUB_TOKEN — the BuildKit secret mount
-# keeps it out of the final image (this RUN's own layer never ships; only
-# /app/publish, copied in the `final` stage below, does). --store-password-
-# in-clear-text is required here regardless — NuGet's encrypted credential
-# storage is Windows/DPAPI-only, so a plaintext nuget.config inside this
-# intermediate layer is unavoidable on Linux, not a mistake in this approach.
 RUN --mount=type=secret,id=nuget_token \
     dotnet nuget update source cbs-github \
-        --username tgiokas \
+        --username germanisp \
         --password "$(cat /run/secrets/nuget_token)" \
         --store-password-in-clear-text \
         --configfile ./nuget.config && \
     dotnet restore "./src/API/RECAMAS.Api.csproj"
-COPY . .
+COPY recamas-backend-service/ .
 WORKDIR /src/src/API
 RUN dotnet build "./RECAMAS.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

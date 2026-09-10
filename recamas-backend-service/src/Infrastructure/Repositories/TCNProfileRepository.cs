@@ -5,118 +5,76 @@ using RECAMAS.Infrastructure.Database;
 
 namespace RECAMAS.Infrastructure.Repositories;
 
-public class TCNProfileRepository : ITCNProfileRepository
+public sealed class TcnProfileRepository : ITcnProfileRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public TCNProfileRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    public TcnProfileRepository(ApplicationDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<TCNProfile?> GetByIdWithDetailsAsync(long id, CancellationToken ct = default)
-    {
-        return await FullGraph(_dbContext.TCNProfiles.AsNoTracking())
-            .FirstOrDefaultAsync(p => p.Id == id, ct);
-    }
+    public Task<TcnProfile?> GetByIdWithDetailsAsync(long id, CancellationToken cancellationToken = default) =>
+        FullGraph(_dbContext.TcnProfiles.AsNoTracking()).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
-    public async Task<TCNProfile?> GetByPublicIdWithDetailsAsync(Guid publicId, CancellationToken ct = default)
-    {
-        return await FullGraph(_dbContext.TCNProfiles.AsNoTracking())
-            .FirstOrDefaultAsync(p => p.PublicId == publicId, ct);
-    }
+    public Task<TcnProfile?> GetByPublicIdWithDetailsAsync(Guid publicId, CancellationToken cancellationToken = default) =>
+        FullGraph(_dbContext.TcnProfiles.AsNoTracking()).FirstOrDefaultAsync(e => e.PublicId == publicId, cancellationToken);
 
-    public async Task<TCNProfile?> GetByIdForUpdateAsync(long id, CancellationToken ct = default)
-    {
-        return await FullGraph(_dbContext.TCNProfiles)
-            .FirstOrDefaultAsync(p => p.Id == id, ct);
-    }
+    public Task<TcnProfile?> GetByIdForUpdateAsync(long id, CancellationToken cancellationToken = default) =>
+        FullGraph(_dbContext.TcnProfiles).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
-    public async Task<TCNProfile?> GetByArcAsync(string arc, CancellationToken ct = default)
-    {
-        return await _dbContext.TCNProfiles
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Arc == arc, ct);
-    }
+    public Task<TcnProfile?> GetByArcAsync(string arc, CancellationToken cancellationToken = default) =>
+        _dbContext.TcnProfiles.AsNoTracking().FirstOrDefaultAsync(e => e.Arc == arc, cancellationToken);
 
-    public async Task<IReadOnlyList<TCNProfile>> SearchForDuplicatesAsync(
-        string? arc, string? passportNumber, string? firstName, string? lastName, CancellationToken ct = default)
+    public async Task<IReadOnlyList<TcnProfile>> SearchForDuplicatesAsync(
+        string? arc, string? passportNumber, string? firstName, string? lastName,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(arc) && string.IsNullOrWhiteSpace(passportNumber)
             && string.IsNullOrWhiteSpace(firstName) && string.IsNullOrWhiteSpace(lastName))
-        {
             return [];
-        }
 
-        var query = _dbContext.TCNProfiles
-            .AsNoTracking()
-            .Include(p => p.IdentityDocuments)
-            .Include(p => p.Nationalities)
-            .AsSplitQuery()
-            .AsQueryable();
-
-        query = query.Where(p =>
-            (!string.IsNullOrWhiteSpace(arc) && p.Arc == arc) ||
-            (!string.IsNullOrWhiteSpace(passportNumber) && p.IdentityDocuments.Any(d => d.DocumentNumber == passportNumber)) ||
-            (!string.IsNullOrWhiteSpace(firstName) && EF.Functions.TrigramsAreSimilar(p.FirstNameEn ?? "", firstName)) ||
-            (!string.IsNullOrWhiteSpace(lastName) && EF.Functions.TrigramsAreSimilar(p.LastNameEn ?? "", lastName)));
-
-        return await query.ToListAsync(ct);
+        var query = _dbContext.TcnProfiles.AsNoTracking().Include(e => e.IdentityDocuments).AsQueryable();
+        query = query.Where(e =>
+            (!string.IsNullOrWhiteSpace(arc) && e.Arc == arc) ||
+            (!string.IsNullOrWhiteSpace(passportNumber) && e.IdentityDocuments.Any(d => d.DocumentNumber == passportNumber)) ||
+            (!string.IsNullOrWhiteSpace(firstName) && EF.Functions.TrigramsAreSimilar(e.FirstNameEn ?? string.Empty, firstName)) ||
+            (!string.IsNullOrWhiteSpace(lastName) && EF.Functions.TrigramsAreSimilar(e.LastNameEn ?? string.Empty, lastName)));
+        return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<(IReadOnlyList<TCNProfile> Items, int TotalCount)> GetPagedAsync(
-        int page, int pageSize, string? quickSearchTerm, CancellationToken ct = default)
+    public async Task<(IReadOnlyList<TcnProfile> Items, int TotalCount)> GetPagedAsync(
+        int page, int pageSize, string? quickSearchTerm, CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.TCNProfiles.AsNoTracking().AsQueryable();
-
+        var query = _dbContext.TcnProfiles.AsNoTracking().AsQueryable();
         if (!string.IsNullOrWhiteSpace(quickSearchTerm))
-        {
-            query = query.Where(p =>
-                p.Arc == quickSearchTerm ||
-                p.DisplayCode == quickSearchTerm ||
-                EF.Functions.TrigramsAreSimilar(p.FirstNameEn ?? "", quickSearchTerm) ||
-                EF.Functions.TrigramsAreSimilar(p.LastNameEn ?? "", quickSearchTerm));
-        }
+            query = query.Where(e => e.Arc == quickSearchTerm || e.RecamasId == quickSearchTerm ||
+                EF.Functions.TrigramsAreSimilar(e.FirstNameEn ?? string.Empty, quickSearchTerm) ||
+                EF.Functions.TrigramsAreSimilar(e.LastNameEn ?? string.Empty, quickSearchTerm));
 
-        var totalCount = await query.CountAsync(ct);
-
-        var items = await query
-            .OrderByDescending(p => p.CreatedAt)
-            .Skip(Math.Max(0, page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(ct);
-
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query.OrderByDescending(e => e.CreatedAt)
+            .Skip(Math.Max(0, page - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken);
         return (items, totalCount);
     }
 
-    // No SaveChanges, caller commits the transaction (outbox pattern).
-    public async Task AddWithoutSaveAsync(TCNProfile profile, CancellationToken ct = default)
+    public async Task AddAsync(TcnProfile profile, CancellationToken cancellationToken = default)
     {
-        await _dbContext.TCNProfiles.AddAsync(profile, ct);
+        if (profile.PublicId == Guid.Empty)
+            profile.PublicId = Guid.NewGuid();
+
+        await _dbContext.TcnProfiles.AddAsync(profile, cancellationToken);
     }
 
-    public async Task UpdateAsync(TCNProfile profile, CancellationToken ct = default)
-    {
-        await _dbContext.SaveChangesAsync(ct);
-    }
-
-    private static IQueryable<TCNProfile> FullGraph(IQueryable<TCNProfile> query)
-    {
-        // AsSplitQuery is mandatory here: 12 sibling collections in a single-query
-        // JOIN would cartesian-product against each other (EF Core's own MultipleCollectionIncludeWarning).
-        return query
-            .AsSplitQuery()
-            .Include(p => p.Nationalities)
-            .Include(p => p.IdentityDocuments)
-            .Include(p => p.ResidencyStatuses)
-            .Include(p => p.ResidencyApplications)
-            .Include(p => p.InternationalProtectionStatuses)
-            .Include(p => p.InternationalProtectionApplications)
-            .Include(p => p.Appeals)
-            .Include(p => p.ReturnDecisions)
-            .Include(p => p.StoplistEntries)
-            .Include(p => p.ArrivalsDepartures)
-            .Include(p => p.SecurityFindings)
-            .Include(p => p.Links);
-    }
+    private static IQueryable<TcnProfile> FullGraph(IQueryable<TcnProfile> query) => query.AsSplitQuery()
+        .Include(e => e.Nationalities)
+        .Include(e => e.IdentityDocuments)
+        .Include(e => e.ResidencyStatuses)
+        .Include(e => e.ResidencyApplications)
+        .Include(e => e.IpStatuses)
+        .Include(e => e.IpApplications)
+        .Include(e => e.Appeals)
+        .Include(e => e.ReturnDecisions)
+        .Include(e => e.StoplistEntries)
+        .Include(e => e.ArrivalDepartures)
+        .Include(e => e.SecurityDetails).ThenInclude(e => e.Findings)
+        .Include(e => e.LinkedProfilesFrom)
+        .Include(e => e.LinkedProfilesTo);
 }

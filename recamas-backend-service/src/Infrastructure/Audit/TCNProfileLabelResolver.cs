@@ -13,7 +13,7 @@ public class TCNProfileLabelResolver : IAuditLabelResolver
 
     public string? ResolveTargetLabel(object entity)
     {
-        if (entity is not TCNProfile profile)
+        if (entity is not TcnProfile profile)
         {
             return null;
         }

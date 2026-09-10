@@ -13,7 +13,7 @@ public class TCNProfileCreateRequest
     public required string FirstNameEn { get; init; }
     public string? LastNameEl { get; init; }
     public required string LastNameEn { get; init; }
-    public Gender? Gender { get; init; }
+    public GenderType? Gender { get; init; }
     public DateOnly? DateOfBirth { get; init; }
     public string? PlaceOfBirth { get; init; }
 }

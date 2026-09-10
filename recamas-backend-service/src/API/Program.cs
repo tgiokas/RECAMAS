@@ -70,7 +70,7 @@ builder.Services.AddCbsAudit(o =>
 }).AddHttpContextActor()
 .AddEntityAuditing<ApplicationDbContext>()
 .AddLabelResolver<TCNProfileLabelResolver>()
-.ValidateEntityActionsIn(typeof(RECAMAS.Domain.Entities.TCNProfile.TCNProfile).Assembly);
+.ValidateEntityActionsIn(typeof(RECAMAS.Domain.Entities.TCNProfile.TcnProfile).Assembly);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

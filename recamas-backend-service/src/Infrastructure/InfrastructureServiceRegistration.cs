@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
 using Cbs.Audit.DependencyInjection;
+using Pgvector.EntityFrameworkCore;
 
 using RECAMAS.Application.Configuration;
 using RECAMAS.Application.Errors;
@@ -68,7 +69,7 @@ public static class InfrastructureServiceRegistration
         // Add CbsAuditInterceptor resolves AuditSaveChangesInterceptor from DI —
         // registered by AddEntityAuditing<ApplicationDbContext>() in Program.cs.
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
-            options.UseNpgsql(databaseSettings.ConnectionString)
+            options.UseNpgsql(databaseSettings.ConnectionString, npgsql => npgsql.UseVector())
                 .AddInterceptors(sp.GetRequiredService<AuditColumnsInterceptor>())
                 .AddCbsAuditInterceptor(sp));
 
@@ -142,9 +143,7 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IErrorCatalog>(errorcat);
 
         // --- Repository implementations, added module by module ---
-        services.AddScoped<ITCNProfileRepository, TCNProfileRepository>();
-        // services.AddScoped<ICaseRepository, CaseRepository>();
-        // services.AddScoped<IRuleRepository, RuleRepository>();
+        services.AddScoped<ITcnProfileRepository, TcnProfileRepository>();
 
         return services;
     }

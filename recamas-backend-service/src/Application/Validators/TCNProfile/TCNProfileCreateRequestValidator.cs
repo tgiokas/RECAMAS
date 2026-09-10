@@ -9,6 +9,7 @@ public class CreateTCNProfileRequestValidator : AbstractValidator<TCNProfileCrea
     {
         RuleFor(x => x.FirstNameEn).NotEmpty().MaximumLength(200);
         RuleFor(x => x.LastNameEn).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.Gender).NotNull();
 
         RuleFor(x => x.DateOfBirth)
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))

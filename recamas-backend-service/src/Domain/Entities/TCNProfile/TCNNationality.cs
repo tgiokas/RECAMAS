@@ -1,19 +1,20 @@
 using RECAMAS.Domain.Common;
+using RECAMAS.Domain.Enums;
+using RECAMAS.Domain.Entities.TCNProfile;
+using RECAMAS.Domain.Entities.Case;
+using RECAMAS.Domain.Entities.Detention;
+using RECAMAS.Domain.Entities.ReturnImplementation;
+using RECAMAS.Domain.Entities.Admin;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
-/// One declared nationality for a TCN. Table 3 notes a profile can have
-/// "Multiple declared, with identification status" — the exact identification-status
-/// value set isn't given in the Specs, so <see cref="IdentificationStatus"/> is a
-/// free-form code for now (provisional, pending the Master Data list for it).
-public class TCNNationality : BaseEntity
+/// Ένας TCN μπορεί να δηλώσει πολλαπλές εθνικότητες (§3.3.1.1)
+public class TcnNationality : BaseEntity
 {
-    public long TCNProfileId { get; set; }
+    public long TcnProfileId { get; set; }              // FK → TcnProfile
+    public string CountryCode { get; set; } = null!;             // ISO 3166-1 alpha-2 — string γιατί είναι standard κωδικός (πχ. "CY", "GR")
+    public bool IsPrimary { get; set; }                 // Κύρια εθνικότητα για reporting
+    public IdentificationStatus IdentificationStatus { get; set; } // Confirmed | Claimed | Unknown
 
-    /// Master-data country code (see TCNProfile class remarks on "Enum" fields).
-    public required string NationalityCode { get; set; }
-
-    public bool IsPrimary { get; set; }
-
-    public string? IdentificationStatus { get; set; }
+    public TcnProfile TcnProfile { get; set; } = null!;
 }

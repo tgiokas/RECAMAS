@@ -1,20 +1,26 @@
 using RECAMAS.Domain.Common;
+using RECAMAS.Domain.Enums;
+using RECAMAS.Domain.Entities.TCNProfile;
+using RECAMAS.Domain.Entities.Case;
+using RECAMAS.Domain.Entities.Detention;
+using RECAMAS.Domain.Entities.ReturnImplementation;
+using RECAMAS.Domain.Entities.Admin;
 
 namespace RECAMAS.Domain.Entities.Detention;
 
-/// One scheduled re-assessment milestone for a detention order. Specs 1.3.2
-/// names 2, 6, and 18-month milestones. MilestoneMonths is a plain int
-/// rather than an enum so a policy change in the number of months doesn't
-/// need a code change — the scheduling logic that creates these rows is
-/// Application-layer work, not modeled here.
+/// Επανεκτίμηση κράτησης — planned ή ad-hoc (§4.5.2.5.3)
 public class DetentionReassessment : BaseEntity
 {
-    public long DetentionOrderId { get; set; }
+    public long ForcedReturnCaseId { get; set; }
 
-    public int MilestoneMonths { get; set; }
+    public ReassessmentType ReassessmentType { get; set; } // Planned | AdHoc
+    public DateOnly? PlannedDate { get; set; }
+    public ReassessmentStatus Status { get; set; }      // Scheduled | Completed | Overdue
+    public DateOnly? CompletionDate { get; set; }
+    public long? EvaluatorUserId { get; set; }
+    public long? RelatedIssueId { get; set; }           // FK → DetentionUpdateIssue
+    public string? Notes { get; set; }
+    public string? AssessmentReportPath { get; set; }   // Storage path
 
-    public DateOnly ScheduledDate { get; set; }
-    public DateOnly? CompletedDate { get; set; }
-
-    public string? Outcome { get; set; }
+    public ForcedReturnCase ForcedReturnCase { get; set; } = null!;
 }

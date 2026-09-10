@@ -3,107 +3,105 @@ using Cbs.Audit.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Domain.Common;
+using RECAMAS.Domain.Entities.TCNProfile;
+using RECAMAS.Domain.Entities.Case;
+using RECAMAS.Domain.Entities.Detention;
+using RECAMAS.Domain.Entities.ReturnImplementation;
+using RECAMAS.Domain.Entities.Admin;
 
 namespace RECAMAS.Infrastructure.Database;
 
-/// Single PostgreSQL 18 instance, one schema per module:
-///   tcn_profile | case | detention | return_impl | reports | rules
-///
-/// Each module's entity configurations (IEntityTypeConfiguration&lt;T&gt;) go in
-/// a matching subfolder here, e.g. Database/Configurations/Case/CaseConfiguration.cs,
-/// and call builder.ToTable("cases", schema: "case"). Keeping every module's
-/// migrations scoped to its own schema is what keeps EF migrations from
-/// constantly conflicting across developers working in different modules.
-///
-/// Soft delete: a global query filter is applied per-entity below so
-/// IsDeleted=true rows are invisible by default — repositories don't need
-/// to remember to filter them out manually. Use IgnoreQueryFilters() explicitly
-/// on the rare admin/audit query that needs to see deleted rows.
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    public DbSet<Domain.Entities.TCNProfile.TCNProfile> TCNProfiles => Set<Domain.Entities.TCNProfile.TCNProfile>();
-    public DbSet<Domain.Entities.TCNProfile.TCNNationality> TCNNationalities => Set<Domain.Entities.TCNProfile.TCNNationality>();
-    public DbSet<Domain.Entities.TCNProfile.TCNIdentityDocument> TCNIdentityDocuments => Set<Domain.Entities.TCNProfile.TCNIdentityDocument>();
-    public DbSet<Domain.Entities.TCNProfile.TCNResidencyStatus> TCNResidencyStatuses => Set<Domain.Entities.TCNProfile.TCNResidencyStatus>();
-    public DbSet<Domain.Entities.TCNProfile.TCNResidencyApplication> TCNResidencyApplications => Set<Domain.Entities.TCNProfile.TCNResidencyApplication>();
-    public DbSet<Domain.Entities.TCNProfile.TCNInternationalProtectionStatus> TCNInternationalProtectionStatuses => Set<Domain.Entities.TCNProfile.TCNInternationalProtectionStatus>();
-    public DbSet<Domain.Entities.TCNProfile.TCNInternationalProtectionApplication> TCNInternationalProtectionApplications => Set<Domain.Entities.TCNProfile.TCNInternationalProtectionApplication>();
-    public DbSet<Domain.Entities.TCNProfile.TCNAppeal> TCNAppeals => Set<Domain.Entities.TCNProfile.TCNAppeal>();
-    public DbSet<Domain.Entities.TCNProfile.TCNReturnDecision> TCNReturnDecisions => Set<Domain.Entities.TCNProfile.TCNReturnDecision>();
-    public DbSet<Domain.Entities.TCNProfile.TCNStoplistEntry> TCNStoplistEntries => Set<Domain.Entities.TCNProfile.TCNStoplistEntry>();
-    public DbSet<Domain.Entities.TCNProfile.TCNArrivalDeparture> TCNArrivalsDepartures => Set<Domain.Entities.TCNProfile.TCNArrivalDeparture>();
-    public DbSet<Domain.Entities.TCNProfile.TCNSecurityFinding> TCNSecurityFindings => Set<Domain.Entities.TCNProfile.TCNSecurityFinding>();
-    public DbSet<Domain.Entities.TCNProfile.TCNProfileLink> TCNProfileLinks => Set<Domain.Entities.TCNProfile.TCNProfileLink>();
-
-    public DbSet<Domain.Entities.Case.Case> Cases => Set<Domain.Entities.Case.Case>();
-    public DbSet<Domain.Entities.Case.CaseTcnProfile> CaseTcnProfiles => Set<Domain.Entities.Case.CaseTcnProfile>();
-    public DbSet<Domain.Entities.Case.AvrCaseDetail> AvrCaseDetails => Set<Domain.Entities.Case.AvrCaseDetail>();
-    public DbSet<Domain.Entities.Case.ForcedReturnCaseDetail> ForcedReturnCaseDetails => Set<Domain.Entities.Case.ForcedReturnCaseDetail>();
-    public DbSet<Domain.Entities.Case.VoluntaryReturnOwnMeansCaseDetail> VoluntaryReturnOwnMeansCaseDetails => Set<Domain.Entities.Case.VoluntaryReturnOwnMeansCaseDetail>();
-
-    public DbSet<Domain.Entities.Detention.DetentionFacility> DetentionFacilities => Set<Domain.Entities.Detention.DetentionFacility>();
-    public DbSet<Domain.Entities.Detention.DetentionOrder> DetentionOrders => Set<Domain.Entities.Detention.DetentionOrder>();
-    public DbSet<Domain.Entities.Detention.DetentionReassessment> DetentionReassessments => Set<Domain.Entities.Detention.DetentionReassessment>();
-
-    public DbSet<Domain.Entities.ReturnImplementation.ReturnImplementation> ReturnImplementations => Set<Domain.Entities.ReturnImplementation.ReturnImplementation>();
-
-    public DbSet<Domain.Entities.Rules.Rule> Rules => Set<Domain.Entities.Rules.Rule>();
-    public DbSet<Domain.Entities.Rules.RuleVersion> RuleVersions => Set<Domain.Entities.Rules.RuleVersion>();
-
-    public DbSet<Domain.Entities.Reports.DocumentTemplate> DocumentTemplates => Set<Domain.Entities.Reports.DocumentTemplate>();
+    public DbSet<TcnProfile> TcnProfiles => Set<TcnProfile>();
+    public DbSet<TcnNationality> TcnNationalities => Set<TcnNationality>();
+    public DbSet<IdentityDocument> IdentityDocuments => Set<IdentityDocument>();
+    public DbSet<ResidencyStatus> ResidencyStatuses => Set<ResidencyStatus>();
+    public DbSet<ResidencyApplication> ResidencyApplications => Set<ResidencyApplication>();
+    public DbSet<IpStatus> IpStatuses => Set<IpStatus>();
+    public DbSet<IpApplication> IpApplications => Set<IpApplication>();
+    public DbSet<Appeal> Appeals => Set<Appeal>();
+    public DbSet<ReturnDecision> ReturnDecisions => Set<ReturnDecision>();
+    public DbSet<StoplistEntry> StoplistEntries => Set<StoplistEntry>();
+    public DbSet<ArrivalDeparture> ArrivalDepartures => Set<ArrivalDeparture>();
+    public DbSet<SecurityDetail> SecurityDetails => Set<SecurityDetail>();
+    public DbSet<SecurityFinding> SecurityFindings => Set<SecurityFinding>();
+    public DbSet<LinkedProfile> LinkedProfiles => Set<LinkedProfile>();
+    public DbSet<ReturnCase> ReturnCases => Set<ReturnCase>();
+    public DbSet<AvrCase> AvrCases => Set<AvrCase>();
+    public DbSet<ForcedReturnCase> ForcedReturnCases => Set<ForcedReturnCase>();
+    public DbSet<ByOwnCase> ByOwnCases => Set<ByOwnCase>();
+    public DbSet<CaseTcn> CaseTcns => Set<CaseTcn>();
+    public DbSet<CaseTravelDocument> CaseTravelDocuments => Set<CaseTravelDocument>();
+    public DbSet<CaseReturnDecision> CaseReturnDecisions => Set<CaseReturnDecision>();
+    public DbSet<VulnerabilityIssue> VulnerabilityIssues => Set<VulnerabilityIssue>();
+    public DbSet<CounsellingSession> CounsellingSessions => Set<CounsellingSession>();
+    public DbSet<CounsellingChild> CounsellingChildren => Set<CounsellingChild>();
+    public DbSet<CaseAssignment> CaseAssignments => Set<CaseAssignment>();
+    public DbSet<CaseRequest> CaseRequests => Set<CaseRequest>();
+    public DbSet<CaseRequestItem> CaseRequestItems => Set<CaseRequestItem>();
+    public DbSet<CaseHistoryEntry> CaseHistoryEntries => Set<CaseHistoryEntry>();
+    public DbSet<ApprovalItem> ApprovalItems => Set<ApprovalItem>();
+    public DbSet<ReturnDecisionApprovalItem> ReturnDecisionApprovalItems => Set<ReturnDecisionApprovalItem>();
+    public DbSet<ReturnDecisionApprovalTcn> ReturnDecisionApprovalTcns => Set<ReturnDecisionApprovalTcn>();
+    public DbSet<TravelDocIssuanceApprovalItem> TravelDocIssuanceApprovalItems => Set<TravelDocIssuanceApprovalItem>();
+    public DbSet<TravelDocIssuanceApprovalTcn> TravelDocIssuanceApprovalTcns => Set<TravelDocIssuanceApprovalTcn>();
+    public DbSet<EntryBanApprovalItem> EntryBanApprovalItems => Set<EntryBanApprovalItem>();
+    public DbSet<EscortApprovalItem> EscortApprovalItems => Set<EscortApprovalItem>();
+    public DbSet<EscortExpense> EscortExpenses => Set<EscortExpense>();
+    public DbSet<OtherExpenseApprovalItem> OtherExpenseApprovalItems => Set<OtherExpenseApprovalItem>();
+    public DbSet<MonetaryIncentiveApprovalItem> MonetaryIncentiveApprovalItems => Set<MonetaryIncentiveApprovalItem>();
+    public DbSet<MonetaryIncentiveApprovalTcn> MonetaryIncentiveApprovalTcns => Set<MonetaryIncentiveApprovalTcn>();
+    public DbSet<FrcOrderApprovalItem> FrcOrderApprovalItems => Set<FrcOrderApprovalItem>();
+    public DbSet<AlternativeMeasureApprovalItem> AlternativeMeasureApprovalItems => Set<AlternativeMeasureApprovalItem>();
+    public DbSet<AdditionalApprover> AdditionalApprovers => Set<AdditionalApprover>();
+    public DbSet<AdjustmentNote> AdjustmentNotes => Set<AdjustmentNote>();
+    public DbSet<TravelDocumentIssuance> TravelDocumentIssuances => Set<TravelDocumentIssuance>();
+    public DbSet<ByOwnReturnDecisionIssuance> ByOwnReturnDecisionIssuances => Set<ByOwnReturnDecisionIssuance>();
+    public DbSet<ByOwnReturnDecisionTcn> ByOwnReturnDecisionTcns => Set<ByOwnReturnDecisionTcn>();
+    public DbSet<PreReturnChecklist> PreReturnChecklists => Set<PreReturnChecklist>();
+    public DbSet<CaseDocument> CaseDocuments => Set<CaseDocument>();
+    public DbSet<DetentionCenter> DetentionCenters => Set<DetentionCenter>();
+    public DbSet<DetentionWing> DetentionWings => Set<DetentionWing>();
+    public DbSet<DetentionRoom> DetentionRooms => Set<DetentionRoom>();
+    public DbSet<DetentionRecord> DetentionRecords => Set<DetentionRecord>();
+    public DbSet<TemporaryCheckout> TemporaryCheckouts => Set<TemporaryCheckout>();
+    public DbSet<DetentionReassessment> DetentionReassessments => Set<DetentionReassessment>();
+    public DbSet<DetentionCounsellingSession> DetentionCounsellingSessions => Set<DetentionCounsellingSession>();
+    public DbSet<DetentionUpdateIssue> DetentionUpdateIssues => Set<DetentionUpdateIssue>();
+    public DbSet<ReturnImplementation> ReturnImplementations => Set<ReturnImplementation>();
+    public DbSet<ImplementationTcn> ImplementationTcns => Set<ImplementationTcn>();
+    public DbSet<PostArrivalAssistance> PostArrivalAssistances => Set<PostArrivalAssistance>();
+    public DbSet<ImplementationEscortTeamMember> ImplementationEscortTeamMembers => Set<ImplementationEscortTeamMember>();
+    public DbSet<ImplementationEscortExpense> ImplementationEscortExpenses => Set<ImplementationEscortExpense>();
+    public DbSet<ImplementationOtherExpense> ImplementationOtherExpenses => Set<ImplementationOtherExpense>();
+    public DbSet<ImplementationDocument> ImplementationDocuments => Set<ImplementationDocument>();
+    public DbSet<AppSettings> AppSettings => Set<AppSettings>();
+    public DbSet<Codelist> Codelists => Set<Codelist>();
+    public DbSet<CodelistValue> CodelistValues => Set<CodelistValue>();
+    public DbSet<DocumentTemplate> DocumentTemplates => Set<DocumentTemplate>();
+    public DbSet<BusinessRule> BusinessRules => Set<BusinessRule>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<InterfaceSyncLog> InterfaceSyncLogs => Set<InterfaceSyncLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // pg_trgm backs the GIN fuzzy-search indexes used for TCN name/ARC search
-        // (architecture diagram: "+ GIN (TCN name/ARC fuzzy search)"). Trusted
-        // extension since Postgres 13 — installable by the database owner, no
-        // superuser required.
         modelBuilder.HasPostgresExtension("pg_trgm");
-
-        // Applies every IEntityTypeConfiguration<T> found in this assembly —
-        // each module adds its own configuration class instead of editing this file.
+        modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-        // Cbs.Audit's own outbox table. Signature verified against the real
-        // source (Cbs.Audit.DependencyInjection.AuditDbContextExtensions):
-        // ApplyAuditOutbox(this ModelBuilder, string table = "AUDIT_OUTBOX",
-        // string? payloadColumnType = null) — no schema parameter exists, so
-        // unlike every other table here this one lands in the default (public)
-        // schema; "jsonb" for the Payload column is fine since Postgres's
-        // unbounded text/jsonb columns don't have Oracle NVARCHAR2(2000)'s
-        // truncation problem the parameter exists to work around.
         modelBuilder.ApplyAuditOutbox("audit_outbox", payloadColumnType: "jsonb");
 
-        // Soft delete (IsDeleted) and optimistic concurrency (RowVersion -> Postgres'
-        // native "xmin" system column) apply the same way to every entity, so they're
-        // wired once here via reflection instead of being repeated per configuration.
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (!typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
-            {
+            if (!typeof(BaseEntity).IsAssignableFrom(entityType.ClrType) || entityType.BaseType is not null)
                 continue;
-            }
 
             var parameter = Expression.Parameter(entityType.ClrType, "e");
-            var isDeletedProperty = Expression.Call(
-                typeof(EF), nameof(EF.Property), [typeof(bool)],
-                parameter, Expression.Constant(nameof(BaseEntity.IsDeleted)));
-            var notDeleted = Expression.Lambda(Expression.Not(isDeletedProperty), parameter);
-            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(notDeleted);
-
-            modelBuilder.Entity(entityType.ClrType)
-                .Property(nameof(BaseEntity.RowVersion))
-                .HasColumnName("xmin")
-                .HasColumnType("xid")
-                .ValueGeneratedOnAddOrUpdate()
-                .IsRowVersion();
+            var property = Expression.Call(typeof(EF), nameof(EF.Property), [typeof(bool)], parameter, Expression.Constant(nameof(BaseEntity.IsDeleted)));
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(Expression.Lambda(Expression.Not(property), parameter));
         }
     }
 }

@@ -11,8 +11,6 @@ namespace RECAMAS.Domain.Entities.Case;
 /// Base class για approval items (§4.4.2.4)
 public abstract class ApprovalItem : BaseEntity
 {
-    public string? ApprovalItemId { get; set; }          // System-generated human-readable ID — string (e.g. Order ID, Measure ID — Tables 65-69)
-
     public long CaseId { get; set; }
 
     public ApprovalItemType ItemType { get; set; }

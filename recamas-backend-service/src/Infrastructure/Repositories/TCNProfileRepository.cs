@@ -23,20 +23,44 @@ public sealed class TcnProfileRepository : ITcnProfileRepository
     public Task<TcnProfile?> GetByArcAsync(string arc, CancellationToken cancellationToken = default) =>
         _dbContext.TcnProfiles.AsNoTracking().FirstOrDefaultAsync(e => e.Arc == arc, cancellationToken);
 
+
+    /// <summary>
+    /// searches for potential duplicate TCN profiles based on the provided criteria.
+    /// </summary>
+    /// <param name="arc">The ARC (Alien Registration Card) number to search for.</param>
+    /// <param name="passportNumber">The passport number to search for.</param>
+    /// <param name="firstName">The first name to search for.</param>
+    /// <param name="lastName">The last name to search for.</param>
+    /// <param name="dateOfBirth">The date of birth to search for.</param>
+    /// <param name="cancellationToken">A cancellation token for the async operation.</param>
+    /// <returns>A list of TCN profiles that potentially match the provided criteria.</returns>
+    /// <remarks>
+    /// This method performs a search for potential duplicate TCN profiles by matching the provided ARC, passport number,
+    /// and/or full name with date of birth. It uses trigram similarity for name matching to account for minor variations.
+    /// All these data (data from ARS, CASS, Police, etc. and potential duplicates) must be forwarded to the frontend in order to allow user to select 
+    /// the desired TCN profile to act with.
+    /// </remarks>
     public async Task<IReadOnlyList<TcnProfile>> SearchForDuplicatesAsync(
-        string? arc, string? passportNumber, string? firstName, string? lastName,
+        string? arc, string? passportNumber, string? firstName, string? lastName, DateOnly? dateOfBirth,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(arc) && string.IsNullOrWhiteSpace(passportNumber)
             && string.IsNullOrWhiteSpace(firstName) && string.IsNullOrWhiteSpace(lastName))
             return [];
 
+        var normalizedArc = arc?.Trim().ToUpperInvariant();
+        var normalizedPassport = passportNumber?.Trim().ToUpperInvariant();
+        var hasNameMatchCriteria = !string.IsNullOrWhiteSpace(firstName)
+            && !string.IsNullOrWhiteSpace(lastName)
+            && dateOfBirth.HasValue;
         var query = _dbContext.TcnProfiles.AsNoTracking().Include(e => e.IdentityDocuments).AsQueryable();
         query = query.Where(e =>
-            (!string.IsNullOrWhiteSpace(arc) && e.Arc == arc) ||
-            (!string.IsNullOrWhiteSpace(passportNumber) && e.IdentityDocuments.Any(d => d.DocumentNumber == passportNumber)) ||
-            (!string.IsNullOrWhiteSpace(firstName) && EF.Functions.TrigramsAreSimilar(e.FirstNameEn ?? string.Empty, firstName)) ||
-            (!string.IsNullOrWhiteSpace(lastName) && EF.Functions.TrigramsAreSimilar(e.LastNameEn ?? string.Empty, lastName)));
+            (normalizedArc != null && e.Arc != null && e.Arc.Trim().ToUpper() == normalizedArc) ||
+            (normalizedPassport != null && e.IdentityDocuments.Any(d => d.DocumentNumber != null && d.DocumentNumber.Trim().ToUpper() == normalizedPassport)) ||
+            (hasNameMatchCriteria
+                && e.DateOfBirth == dateOfBirth
+                && EF.Functions.TrigramsAreSimilar(e.FirstNameEn ?? string.Empty, firstName!)
+                && EF.Functions.TrigramsAreSimilar(e.LastNameEn ?? string.Empty, lastName!)));
         return await query.ToListAsync(cancellationToken);
     }
 

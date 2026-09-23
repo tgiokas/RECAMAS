@@ -465,6 +465,11 @@ namespace RECAMAS.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Χρόνος δημιουργίας εγγραφής");
@@ -473,16 +478,35 @@ namespace RECAMAS.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasComment("User που δημιούργησε");
 
+                    b.Property<long?>("DurationMilliseconds")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ErrorCode")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<string>("ErrorMessage")
                         .HasColumnType("text")
                         .HasComment("Free text (technical message)");
 
+                    b.Property<string>("ExternalReference")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<int>("ExternalSystem")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("HttpStatusCode")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasComment("Soft delete — δεν διαγράφεται ποτέ hard (§4.3.2)");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("PublicId")
                         .HasColumnType("uuid")
@@ -493,6 +517,14 @@ namespace RECAMAS.Infrastructure.Migrations
 
                     b.Property<long?>("RelatedTcnProfileId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("RequestPayloadHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ResponsePayloadHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int?>("RetryCount")
                         .HasColumnType("integer");
@@ -519,8 +551,14 @@ namespace RECAMAS.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CorrelationId");
+
                     b.HasIndex("PublicId")
                         .IsUnique();
+
+                    b.HasIndex("ExternalSystem", "StartedAt");
+
+                    b.HasIndex("Status", "StartedAt");
 
                     b.ToTable("interface_sync_logs", "admin");
                 });
@@ -3563,6 +3601,15 @@ namespace RECAMAS.Infrastructure.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<long?>("ExternalPersonId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ExternalRecordId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("ExternalStatusCode")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasComment("Soft delete — δεν διαγράφεται ποτέ hard (§4.3.2)");
@@ -3570,13 +3617,29 @@ namespace RECAMAS.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LastSyncedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("LinkedDepartureExternalId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("MovementType")
                         .HasColumnType("integer")
                         .HasComment("Arrival | Departure");
 
+                    b.Property<string>("PassportIssuingCountryCode")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("PassportNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<Guid>("PublicId")
                         .HasColumnType("uuid")
                         .HasComment("Public identifier — UUIDv4 (§12.5.16)");
+
+                    b.Property<int>("Source")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(4);
 
                     b.Property<long>("TcnProfileId")
                         .HasColumnType("bigint");
@@ -3589,12 +3652,20 @@ namespace RECAMAS.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasComment("User που τροποποίησε τελευταίος");
 
+                    b.Property<string>("VisaNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PublicId")
                         .IsUnique();
 
                     b.HasIndex("TcnProfileId");
+
+                    b.HasIndex("Source", "MovementType", "ExternalRecordId")
+                        .IsUnique()
+                        .HasFilter("\"ExternalRecordId\" IS NOT NULL");
 
                     b.ToTable("arrival_departures", "tcn_profile");
                 });
@@ -4210,6 +4281,10 @@ namespace RECAMAS.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTimeOffset?>("CheckedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasComment("Χρόνος εκτέλεσης του Stoplist check");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Χρόνος δημιουργίας εγγραφής");
@@ -4273,7 +4348,7 @@ namespace RECAMAS.Infrastructure.Migrations
                     b.HasIndex("PublicId")
                         .IsUnique();
 
-                    b.HasIndex("TcnProfileId");
+                    b.HasIndex("TcnProfileId", "CheckedAt");
 
                     b.ToTable("stoplist_entries", "tcn_profile");
                 });

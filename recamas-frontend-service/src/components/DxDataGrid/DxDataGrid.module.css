@@ -1,0 +1,106 @@
+.wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 16px;
+}
+
+.table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.header {
+  background: var(--govcy-bg-muted);
+  color: var(--govcy-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.headerCell,
+.cell {
+  padding: 10px 12px;
+  border: 1px solid var(--govcy-border);
+  vertical-align: top;
+}
+
+.headerCell {
+  white-space: nowrap;
+}
+
+.actionsCell {
+  white-space: nowrap;
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+.actionsCell :global(.dx-datagrid-text-content) {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.actionHost,
+.singleAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.singleAction :global(button) {
+  white-space: nowrap;
+}
+
+.action{
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+  border: none;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  background-color: #ffffff;
+  font-size: 16px;
+}
+
+.action:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.search{
+  border: 1px solid black;
+}
+
+.body {
+  color: var(--govcy-text);
+  font-size: 13px;
+}
+
+.row:nth-child(odd) {
+  background: #ffffff;
+}
+
+.row:nth-child(even) {
+  background: var(--govcy-bg);
+}
+
+.row:hover {
+  background: #dce8ee;
+}
+
+.empty {
+  padding: 16px 12px;
+  border: 1px solid var(--govcy-border);
+  color: var(--govcy-text-secondary);
+  text-align: center;
+}

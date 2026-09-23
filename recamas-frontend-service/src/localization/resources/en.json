@@ -1,0 +1,58 @@
+{
+  "app": {
+    "subtitle": "Deputy Ministry of Migration and International Protection"
+  },
+  "navigation": {
+    "ariaLabel": "Main navigation",
+    "recamasProfiles": "Recamas Profiles",
+    "cases": "Cases",
+    "detention": "Detention",
+    "returnImplementation": "Return Implementation",
+    "reports": "Reports",
+    "administration": "Administration",
+    "notifications": "Notifications"
+  },
+  "actions": {
+    "collapseMenu": "Collapse menu",
+    "expandMenu": "Expand menu"
+  },
+  "language": {
+    "switcherLabel": "Select language",
+    "en": "English",
+    "el": "Greek"
+  },
+  "devextremeMessages": {
+    "dxCollectionWidget-noDataText": "No data to display"
+  },
+  "cases": {
+    "Management": {},
+    "Details": {
+      "tabs": {
+        "councelling": {
+      "tabTitle": "Counselling"
+        },
+        "caseDetails": {
+          "tabTitle": "Case Details(TCN Info)"
+        },
+        "approvalItems": {
+          "tabTitle": "Approval Items"
+        },
+        "requests": {
+          "tabTitle": "Requests"
+        },
+        "travelDocuments": {
+          "tabTitle": "Travel Documents"
+        },
+        "preReturn": {
+          "tabTitle": "Pre-Return"
+        },
+        "returnImplementation": {
+          "tabTitle": "Return Implementation"
+        },
+        "caseDocuments": {
+          "tabTitle": "Case Documents"
+        }
+      }
+    }
+  }
+}

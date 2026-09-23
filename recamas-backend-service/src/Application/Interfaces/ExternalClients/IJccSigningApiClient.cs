@@ -1,4 +1,4 @@
-using RECAMAS.Application.Dtos.ExternalClients;
+using RECAMAS.Application.Dtos.Interoperability.JccSigningApiClient;
 
 namespace RECAMAS.Application.Interfaces;
 

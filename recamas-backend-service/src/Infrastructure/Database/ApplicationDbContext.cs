@@ -15,6 +15,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+    // Explicit implementation: DbContext.Set<TEntity>() already returns DbSet<TEntity>, this just
+    // exposes it as IQueryable<TEntity> for the generic Grids framework (Application/Grids).
+    IQueryable<TEntity> IApplicationDbContext.Set<TEntity>() => Set<TEntity>();
+
     public DbSet<TcnProfile> TcnProfiles => Set<TcnProfile>();
     public DbSet<TcnNationality> TcnNationalities => Set<TcnNationality>();
     public DbSet<IdentityDocument> IdentityDocuments => Set<IdentityDocument>();

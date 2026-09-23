@@ -10,6 +10,7 @@ using Cbs.Audit.Policy;
 using RECAMAS.Api.Middleware;
 using RECAMAS.Application;
 using RECAMAS.Application.Configuration;
+using RECAMAS.Application.Grids.Helpers;
 using RECAMAS.Infrastructure;
 using RECAMAS.Infrastructure.Audit;
 using RECAMAS.Infrastructure.Database;
@@ -77,6 +78,8 @@ builder.Services.AddControllers()
     {
         // Serialize enums as their string names instead of numeric values.
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        // Accepts both the internal FilterNode format and DevExtreme's array/object filter formats.
+        options.JsonSerializerOptions.Converters.Add(new FilterNodeJsonConverter());
     });
 
 var shouldEnableSwagger = builder.Environment.IsDevelopment() || builder.Environment.IsStaging();

@@ -1,0 +1,90 @@
+.button {
+  --button-color: var(--govcy-primary);
+  --button-color-hover: var(--govcy-primary-hover);
+  --button-on-color: #ffffff;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--govcy-text);
+  background: transparent;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.icon{
+  font-size: 18px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.primary {
+  --button-color: var(--govcy-primary);
+  --button-color-hover: var(--govcy-primary-hover);
+  --button-on-color: #ffffff;
+}
+
+.secondary {
+  --button-color: var(--govcy-secondary);
+  --button-color-hover: color-mix(in srgb, var(--govcy-secondary) 82%, #000);
+  --button-on-color: var(--govcy-text);
+}
+
+.success {
+  --button-color: var(--govcy-success);
+  --button-color-hover: color-mix(in srgb, var(--govcy-success) 82%, #000);
+  --button-on-color: #ffffff;
+}
+
+.danger {
+  --button-color: var(--govcy-danger);
+  --button-color-hover: var(--govcy-danger-hover);
+  --button-on-color: #ffffff;
+}
+
+.info {
+  --button-color: var(--govcy-info);
+  --button-color-hover: color-mix(in srgb, var(--govcy-info) 82%, #000);
+  --button-on-color: #ffffff;
+}
+
+.link {
+  --button-color: var(--govcy-link);
+  --button-color-hover: var(--govcy-link-hover);
+  --button-on-color: #ffffff;
+}
+
+.text {
+  color: var(--button-color);
+}
+
+.text:hover:not(:disabled) {
+  color: var(--button-color-hover);
+}
+
+.contained {
+  color: var(--button-on-color);
+  background: var(--button-color);
+}
+
+.contained:hover:not(:disabled) {
+  background: var(--button-color-hover);
+}
+
+.outlined {
+  border-color: var(--button-color);
+  color: var(--button-color);
+}
+
+.outlined:hover:not(:disabled) {
+  border-color: var(--button-color-hover);
+  color: var(--button-color-hover);
+  background: var(--govcy-bg-muted);
+}

@@ -1,0 +1,73 @@
+.app-shell {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  grid-template-rows: 64px minmax(0, 1fr);
+  min-height: 100svh;
+  color: var(--govcy-text);
+}
+
+.app-main {
+  min-width: 0;
+  padding: 32px;
+  background: var(--govcy-bg);
+}
+
+.page-content {
+  max-width: 1280px;
+  min-height: 320px;
+  margin: 0 auto;
+  padding: 28px;
+  border: 1px solid var(--govcy-border);
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.page-content--full {
+  max-width: 100%;
+}
+
+.page-eyebrow {
+  margin: 0 0 8px;
+  color: var(--govcy-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.page-content h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.page-content p:last-child {
+  max-width: 620px;
+  margin: 14px 0 0;
+  color: var(--govcy-text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.app-shell--collapsed {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+
+@media (max-width: 700px) {
+  .app-shell,
+  .app-shell--collapsed {
+    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-rows: 56px minmax(0, 1fr);
+  }
+
+  .app-main {
+    padding: 16px;
+  }
+
+  .page-content {
+    min-height: 260px;
+    padding: 22px;
+  }
+
+  .page-content h1 {
+    font-size: 24px;
+  }
+}

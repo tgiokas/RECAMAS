@@ -1,10 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RECAMAS.Domain.Entities.TCNProfile;
-using RECAMAS.Domain.Entities.Case;
-using RECAMAS.Domain.Entities.Detention;
-using RECAMAS.Domain.Entities.ReturnImplementation;
-using RECAMAS.Domain.Entities.Admin;
 using Pgvector;
 
 namespace RECAMAS.Infrastructure.Database.Configurations;
@@ -42,6 +39,11 @@ public sealed class TcnProfileConfiguration : IEntityTypeConfiguration<TcnProfil
             .HasConversion(
                 value => value == null ? null : new Vector(value),
                 value => value == null ? null : value.ToArray())
+            .Metadata.SetValueComparer(new ValueComparer<float[]?>(
+                (a, b) => (a == null && b == null) || (a != null && b != null && a.SequenceEqual(b)),
+                v => v == null ? 0 : v.Aggregate(0, (hash, x) => HashCode.Combine(hash, x)),
+                v => v == null ? null : v.ToArray()));
+        builder.Property(e => e.FingerprintVector)
             .HasColumnType("vector")
             .HasComment("pgvector embedding για biometric search");
         builder.Property(e => e.Status).HasComment("§3.4: AVRApplicationPending, AVRReturnPending, Departed, κλπ");

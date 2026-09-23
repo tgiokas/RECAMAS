@@ -1,7 +1,8 @@
 # TCNProfile module
 
-Search/dedupe/merge TCN identities; owns adapters to ARS, CASS, Stoplist,
-Arrivals/Departures (called from Infrastructure/ExternalClients, orchestrated here).
+Search/dedupe/merge TCN identities. `TcnSearchOrchestrator` invokes the in-process
+Interoperability dispatcher, which owns the adapters to ARS, CASS, Stoplist and
+Arrivals/Departures. This module never calls external transport clients directly.
 
-Planned: TCNProfileService, ProfileSearchDto, ProfileMergeCommand,
-DuplicateCandidateDto. Schema: tcn_profile.
+Implemented: TCNProfileService, external TCN search and duplicate candidates.
+Planned: explicit ProfileMergeCommand. Schema: tcn_profile.

@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-using RECAMAS.Application.Dtos.ExternalClients;
+using RECAMAS.Application.Dtos.Interoperability.StorageApiClient;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Infrastructure.ApiClients;
 

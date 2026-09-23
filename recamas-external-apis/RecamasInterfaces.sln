@@ -1,0 +1,69 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Domain", "src\Shared\Domain\Shared.Domain.csproj", "{A1000001-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Web", "src\Shared\Web\Shared.Web.csproj", "{A1000001-0000-0000-0000-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArsApi.Domain", "src\ArsApi\Domain\ArsApi.Domain.csproj", "{A1000002-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArsApi.Application", "src\ArsApi\Application\ArsApi.Application.csproj", "{A1000002-0000-0000-0000-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArsApi.Infrastructure", "src\ArsApi\Infrastructure\ArsApi.Infrastructure.csproj", "{A1000002-0000-0000-0000-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArsApi.WebApi", "src\ArsApi\WebApi\ArsApi.WebApi.csproj", "{A1000002-0000-0000-0000-000000000004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassApi.Domain", "src\CassApi\Domain\CassApi.Domain.csproj", "{A1000003-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassApi.Application", "src\CassApi\Application\CassApi.Application.csproj", "{A1000003-0000-0000-0000-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassApi.Infrastructure", "src\CassApi\Infrastructure\CassApi.Infrastructure.csproj", "{A1000003-0000-0000-0000-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassApi.WebApi", "src\CassApi\WebApi\CassApi.WebApi.csproj", "{A1000003-0000-0000-0000-000000000004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrivalsApi.Domain", "src\ArrivalsApi\Domain\ArrivalsApi.Domain.csproj", "{A1000004-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrivalsApi.Application", "src\ArrivalsApi\Application\ArrivalsApi.Application.csproj", "{A1000004-0000-0000-0000-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrivalsApi.Infrastructure", "src\ArrivalsApi\Infrastructure\ArrivalsApi.Infrastructure.csproj", "{A1000004-0000-0000-0000-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrivalsApi.WebApi", "src\ArrivalsApi\WebApi\ArrivalsApi.WebApi.csproj", "{A1000004-0000-0000-0000-000000000004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoplistApi.Domain", "src\StoplistApi\Domain\StoplistApi.Domain.csproj", "{A1000005-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoplistApi.Application", "src\StoplistApi\Application\StoplistApi.Application.csproj", "{A1000005-0000-0000-0000-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoplistApi.Infrastructure", "src\StoplistApi\Infrastructure\StoplistApi.Infrastructure.csproj", "{A1000005-0000-0000-0000-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoplistApi.WebApi", "src\StoplistApi\WebApi\StoplistApi.WebApi.csproj", "{A1000005-0000-0000-0000-000000000004}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {A1000001-0000-0000-0000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {A1000001-0000-0000-0000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {A1000001-0000-0000-0000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {A1000001-0000-0000-0000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
+        {A1000002-0000-0000-0000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {A1000002-0000-0000-0000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {A1000002-0000-0000-0000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {A1000002-0000-0000-0000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+        {A1000003-0000-0000-0000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {A1000003-0000-0000-0000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {A1000003-0000-0000-0000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {A1000003-0000-0000-0000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+        {A1000004-0000-0000-0000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {A1000004-0000-0000-0000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {A1000004-0000-0000-0000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {A1000004-0000-0000-0000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+        {A1000005-0000-0000-0000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {A1000005-0000-0000-0000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {A1000005-0000-0000-0000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {A1000005-0000-0000-0000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+EndGlobal

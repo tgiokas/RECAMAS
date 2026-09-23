@@ -41,4 +41,14 @@ public static class ErrorCodes
     {
         public const string ReportDefinitionNotFound = "RECAMAS-501";
     }
+
+    public static class Interoperability
+    {
+        public const string ServiceNotFound = "RECAMAS-601";
+        public const string OperationNotSupported = "RECAMAS-602";
+        public const string InvalidRequest = "RECAMAS-603";
+        public const string Timeout = "RECAMAS-604";
+        public const string Unavailable = "RECAMAS-605";
+        public const string InvalidResponse = "RECAMAS-606";
+    }
 }

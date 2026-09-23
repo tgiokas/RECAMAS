@@ -1,4 +1,10 @@
 {
   "RECAMAS-000": "An unexpected error occurred.",
-  "RECAMAS-001": "A profile with a matching ARC, passport number, or name already exists."
+  "RECAMAS-001": "A profile with a matching ARC, passport number, or name already exists.",
+  "RECAMAS-601": "The requested external service is not registered.",
+  "RECAMAS-602": "The requested external service operation is not supported.",
+  "RECAMAS-603": "The external service request is invalid.",
+  "RECAMAS-604": "The external service request timed out.",
+  "RECAMAS-605": "The external service is unavailable.",
+  "RECAMAS-606": "The external service returned an invalid response."
 }

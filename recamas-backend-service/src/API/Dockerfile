@@ -23,7 +23,7 @@ RUN --mount=type=secret,id=nuget_token \
         --store-password-in-clear-text \
         --configfile ./nuget.config && \
     dotnet restore "./src/API/RECAMAS.Api.csproj"
-COPY recamas-backend-service/ .
+COPY ["recamas-backend-service/.", "."]
 WORKDIR /src/src/API
 RUN dotnet build "./RECAMAS.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

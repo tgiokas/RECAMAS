@@ -1,0 +1,35 @@
+.gridWrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.actionsCell {
+  white-space: nowrap;
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+.actionsCell :global(.dx-datagrid-text-content) {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.flagsColumn {
+  text-align: left !important;
+}
+
+.flagsColumn :global(.dx-datagrid-text-content) {
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+.flagsCell {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  justify-content: flex-start;
+}

@@ -1,0 +1,42 @@
+.tabPanelView {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.content {
+  display: contents;
+}
+
+.tabPanelView :global(.dx-tabs) {
+  background: transparent;
+  border: none;
+}
+
+.tabPanelView :global(.dx-tabs-wrapper) {
+  background: transparent;
+  padding: 0;
+  border-bottom: 1px solid var(--govcy-border);
+}
+
+.tabPanelView :global(.dx-tab) {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--govcy-text-secondary);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 16px;
+  margin: 0;
+}
+
+.tabPanelView :global(.dx-tab.dx-tab-selected) {
+  color: var(--govcy-primary);
+  font-weight: 700;
+  border-bottom-color: var(--govcy-secondary);
+}
+
+.tabPanelView :global(.dx-tab-indicator) {
+  display: none;
+}

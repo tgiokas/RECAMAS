@@ -1,6 +1,8 @@
 services:
   recamas-db:
-   image: postgres:18
+   # PostgreSQL 18 with pgvector preinstalled. The EF migration enables both
+   # vector and pg_trgm via CREATE EXTENSION when the database is created.
+   image: pgvector/pgvector:0.8.6-pg18
    container_name: recamas-db
    environment:
     POSTGRES_DB: recamas-dev
@@ -32,6 +34,21 @@ services:
       - "5041:8080"
     volumes:
       - ./error-codes/errors.json:/app/errors.json:ro
+
+  recamas-frontend:
+    build:
+      context: ./recamas-frontend-service
+      target: development
+      dockerfile: Dockerfile
+    container_name: recamas-frontend
+    environment:
+      BUILD_PROFILE: ${RECAMAS_FRONTEND_BUILD_PROFILE:-dev}
+      VITE_API_BASE_URL: ${RECAMAS_FRONTEND_API_BASE_URL:-http://localhost:5041}
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./recamas-frontend-service:/app
+      - /app/node_modules
 
   # ==================== Keycloak  ====================   
   # keycloak:

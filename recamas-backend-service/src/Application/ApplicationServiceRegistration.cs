@@ -2,8 +2,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 using FluentValidation;
 
+using RECAMAS.Application.Grids.Abstractions;
+using RECAMAS.Application.Grids.Services;
 using RECAMAS.Application.Interfaces;
+using RECAMAS.Application.Interfaces.Interoperability;
 using RECAMAS.Application.Modules;
+using RECAMAS.Application.Modules.Interoperability;
+using RECAMAS.Application.Modules.TCNProfile;
 
 namespace RECAMAS.Application;
 
@@ -15,8 +20,14 @@ public static class ApplicationServiceRegistration
     {
         services.AddValidatorsFromAssemblyContaining(typeof(ApplicationServiceRegistration));
 
+        // --- Generic server-side data grid framework (Application/Grids) ---
+        // Concrete grids are registered as IGridSourceProviderMarker per module as they are built.
+        services.AddScoped<IGridQueryService, GridQueryService>();
+
         // --- TCNProfile module ---
         services.AddScoped<ITCNProfileService, TCNProfileService>();
+        services.AddScoped<ITcnSearchOrchestrator, TcnSearchOrchestrator>();
+        services.AddScoped<IInteroperabilityService, ExternalServiceDispatcher>();
 
         // --- Case module ---
         // services.AddScoped<ICaseService, CaseService>();

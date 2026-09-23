@@ -1,0 +1,56 @@
+:root {
+  --govcy-primary: #31576f;
+  --govcy-primary-hover: #254355;
+  --govcy-secondary: #ffad2d;
+  --govcy-text: #272525;
+  --govcy-text-secondary: #474545;
+  --govcy-hint: #6d6e70;
+  --govcy-link: #1d70b8;
+  --govcy-link-hover: #003078;
+  --govcy-success: #00703c;
+  --govcy-danger: #d4351c;
+  --govcy-danger-hover: #aa1d13;
+  --govcy-info: #487d93;
+  --govcy-focus: #ffdd00;
+  --govcy-bg: #f5f8f9;
+  --govcy-bg-muted: #ebf1f3;
+  --govcy-border: #bbbcbf;
+  --govcy-header: #31576f;
+  --govcy-header-text: #ffffff;
+  --govcy-font: 'Roboto', system-ui, sans-serif;
+
+  --dx-component-color-bg: #ffffff;
+  --dx-color-primary: var(--govcy-primary);
+  --dx-color-success: var(--govcy-success);
+  --dx-color-danger: var(--govcy-danger);
+  --dx-color-warning: var(--govcy-secondary);
+  --dx-color-link: var(--govcy-link);
+  --dx-color-text: var(--govcy-text);
+  --dx-color-main-bg: var(--govcy-bg);
+  --dx-color-border: var(--govcy-border);
+  --dx-color-separator: var(--govcy-border);
+  --dx-texteditor-color-text: var(--govcy-text);
+  --dx-datagrid-row-alternation-bg: var(--govcy-bg);
+
+  font-family: var(--govcy-font);
+  color: var(--govcy-text);
+  background: var(--govcy-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--govcy-bg);
+}

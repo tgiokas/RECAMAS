@@ -6,13 +6,18 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
 using Cbs.Audit.DependencyInjection;
-using Pgvector.EntityFrameworkCore;
 
 using RECAMAS.Application.Configuration;
 using RECAMAS.Application.Errors;
+using RECAMAS.Application.Grids.Abstractions;
+using RECAMAS.Application.Grids.TCNProfiles;
 using RECAMAS.Application.Interfaces;
+using RECAMAS.Application.Interfaces.Interoperability;
 using RECAMAS.Domain.Interfaces;
 using RECAMAS.Infrastructure.ExternalClients;
+using RECAMAS.Infrastructure.Grids.TCNProfiles;
+using RECAMAS.Infrastructure.Interoperability.Adapters;
+//using RECAMAS.Infrastructure.Interoperability.Audit;
 using RECAMAS.Infrastructure.Database;
 using RECAMAS.Infrastructure.Database.Interceptors;
 using RECAMAS.Infrastructure.Repositories;
@@ -46,14 +51,14 @@ public static class InfrastructureServiceRegistration
         var storageSettings = StorageApiClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(storageSettings));
 
-        var cyConnectSettings = CyConnectSettings.BindFromConfiguration(configuration);
-        services.AddSingleton(Options.Create(cyConnectSettings));
+        var arsSettings = ArsInteroperabilitySettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(arsSettings));
 
-        var arrivalsDeparturesSettings = ArrivalsDeparturesApiClientSettings.BindFromConfiguration(configuration);
-        services.AddSingleton(Options.Create(arrivalsDeparturesSettings));
+        var policeSettings = PoliceInteroperabilitySettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(policeSettings));
 
-        var stoplistSettings = StoplistApiClientSettings.BindFromConfiguration(configuration);
-        services.AddSingleton(Options.Create(stoplistSettings));
+        var cassSettings = CassInteroperabilitySettings.BindFromConfiguration(configuration);
+        services.AddSingleton(Options.Create(cassSettings));
 
         var jccSettings = JccApiClientSettings.BindFromConfiguration(configuration);
         services.AddSingleton(Options.Create(jccSettings));
@@ -85,42 +90,23 @@ public static class InfrastructureServiceRegistration
             .AddPolicyHandler(GetCircuitBreakerPolicy());
 
         // --- External RECAMAS systems ---
-        // ARS 
-        services.AddHttpClient<IArsApiClient, ArsApiClient>(client =>
-            {
-                client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
-                client.Timeout = ExternalSystemTimeout;
-            })
-            .AddPolicyHandler(GetRetryPolicy())
-            .AddPolicyHandler(GetCircuitBreakerPolicy());
-        
-        // CASS
-        services.AddHttpClient<ICassApiClient, CassApiClient>(client =>
-            {
-                client.BaseAddress = new Uri(cyConnectSettings.BaseUrl);
-                client.Timeout = ExternalSystemTimeout;
-            })
+        services.AddHttpClient<ArsAdapter>(client => client.Timeout = ExternalSystemTimeout)
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
 
-        //Arrivals/Departures
-        services.AddHttpClient<IArrivalsDeparturesApiClient, ArrivalsDeparturesApiClient>(client =>
-            {
-                client.BaseAddress = new Uri(arrivalsDeparturesSettings.BaseUrl);
-                client.Timeout = ExternalSystemTimeout;
-            })
+        services.AddHttpClient<StoplistAdapter>(client => client.Timeout = ExternalSystemTimeout)
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
-        
-        // Stoplist
-        services.AddHttpClient<IStoplistApiClient, StoplistApiClient>(client =>
-            {
-                client.BaseAddress = new Uri(stoplistSettings.BaseUrl);
-                client.Timeout = ExternalSystemTimeout;
-            })
+
+        services.AddHttpClient<ArrivalsDeparturesAdapter>(client => client.Timeout = ExternalSystemTimeout)
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
-        
+
+        services.AddScoped<IExternalServiceAdapter>(sp => sp.GetRequiredService<ArsAdapter>());
+        services.AddScoped<IExternalServiceAdapter, CassAdapter>();
+        services.AddScoped<IExternalServiceAdapter>(sp => sp.GetRequiredService<StoplistAdapter>());
+        services.AddScoped<IExternalServiceAdapter>(sp => sp.GetRequiredService<ArrivalsDeparturesAdapter>());
+
         // JCC Signing
         services.AddHttpClient<IJccSigningApiClient, JccSigningApiClient>(client =>
             {
@@ -144,6 +130,10 @@ public static class InfrastructureServiceRegistration
 
         // --- Repository implementations, added module by module ---
         services.AddScoped<ITcnProfileRepository, TcnProfileRepository>();
+
+        // --- Generic data grid providers, added module by module ---
+        services.AddSingleton<TCNProfileGridConfiguration>();
+        services.AddSingleton<IGridSourceProviderMarker, TCNProfileGridSourceProvider>();
 
         return services;
     }

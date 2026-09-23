@@ -38,7 +38,7 @@ public class TCNProfileService : ITCNProfileService
     public async Task<Result<TCNProfileDto>> CreateAsync(TCNProfileCreateRequest request, CancellationToken ct = default)
     {
         var duplicates = await _tcnProfileRepository.SearchForDuplicatesAsync(
-            request.Arc, passportNumber: null, request.FirstNameEn, request.LastNameEn, ct);
+            request.Arc, passportNumber: null, request.FirstNameEn, request.LastNameEn, request.DateOfBirth, ct);
 
         if (duplicates.Count > 0)
         {

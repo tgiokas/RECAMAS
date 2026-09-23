@@ -1,0 +1,14 @@
+.eyebrow{
+  margin: 0 0 8px;
+  color: var(--govcy-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.intro {
+  max-width: 720px;
+  margin: 6px 0 18px;
+  color: var(--govcy-text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}

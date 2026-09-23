@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RECAMAS.Application.Configuration;
-using RECAMAS.Application.Dtos.ExternalClients;
+using RECAMAS.Application.Dtos.Interoperability.JccSigningApiClient;
 using RECAMAS.Application.Interfaces;
 using RECAMAS.Infrastructure.ApiClients;
 

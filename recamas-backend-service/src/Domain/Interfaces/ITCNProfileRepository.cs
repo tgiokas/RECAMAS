@@ -13,6 +13,7 @@ public interface ITcnProfileRepository
         string? passportNumber,
         string? firstName,
         string? lastName,
+        DateOnly? dateOfBirth,
         CancellationToken cancellationToken = default);
     Task<(IReadOnlyList<TcnProfile> Items, int TotalCount)> GetPagedAsync(
         int page,

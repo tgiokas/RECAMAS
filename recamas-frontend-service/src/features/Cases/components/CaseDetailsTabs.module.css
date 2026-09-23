@@ -1,0 +1,77 @@
+:global(.dx-checkbox.dx-state-readonly) {
+  opacity: 1;
+}
+
+:global(.dx-checkbox.dx-state-readonly.dx-checkbox-checked .dx-checkbox-icon) {
+  background-color: #22c55e;
+  border-color: #22c55e;
+  color: #fff;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.headerRowTight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.headerRowStart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.mt8 {
+  margin-top: 8px;
+}
+
+.mt12 {
+  margin-top: 12px;
+}
+
+.mt16 {
+  margin-top: 16px;
+}
+
+.mb12 {
+  margin-bottom: 12px;
+}
+
+.h4Reset {
+  margin: 0;
+}
+
+.attachmentLink {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.label {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

@@ -1,0 +1,92 @@
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--govcy-primary, #31576f);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  user-select: none;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bottomBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.bottomBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  background: var(--govcy-bg-muted, #ebf1f3);
+  color: var(--govcy-text-secondary, #474545);
+  border: 1px solid var(--govcy-border, #bbbcbf);
+}
+
+.bottomBadgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.bottomBadge--primary {
+  background: var(--govcy-bg-muted, #ebf1f3);
+  color: var(--govcy-primary, #31576f);
+  border-color: var(--govcy-primary, #31576f);
+}
+
+.bottomBadge--success {
+  background: #eaf6ee;
+  color: var(--govcy-success, #00703c);
+  border-color: var(--govcy-success, #00703c);
+}
+
+.bottomBadge--info {
+  background: #ebf3f7;
+  color: var(--govcy-info, #487d93);
+  border-color: var(--govcy-info, #487d93);
+}
+
+.bottomBadge--warning {
+  background: #fff8eb;
+  color: var(--govcy-secondary, #ffad2d);
+  border-color: var(--govcy-secondary, #ffad2d);
+}
+
+.bottomBadge--danger {
+  background: #fbeae8;
+  color: var(--govcy-danger, #d4351c);
+  border-color: var(--govcy-danger, #d4351c);
+}
+
+.bottomBadge--default {
+  background: var(--govcy-bg-muted, #ebf1f3);
+  color: var(--govcy-text-secondary, #474545);
+  border-color: var(--govcy-border, #bbbcbf);
+}

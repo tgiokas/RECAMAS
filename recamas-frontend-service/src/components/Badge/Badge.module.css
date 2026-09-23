@@ -1,0 +1,104 @@
+.badgeNavy,
+.badgeOutline,
+.badgeGreen,
+.badgeRed,
+.badgeBlue,
+.badgeOrange,
+.badgeGray,
+.badgeMaroon {
+  display: inline-block;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.badgeNavy {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badgeOutline {
+  border: 1px solid #f59e0b;
+  color: #b45309;
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.badgeGreen {
+  background: #dcfce7;
+  color: #15803d;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badgeRed {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badgeBlue {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badgeOrange {
+  background: #fef3c7;
+  color: #b45309;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badgeGray {
+  background: #e5e7eb;
+  color: #374151;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badgeMaroon {
+  background: #991b1b;
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusText {
+  font-weight: 600;
+  color: #111827;
+}

@@ -1,10 +1,6 @@
 using RECAMAS.Domain.Common;
 using RECAMAS.Domain.Enums;
-using RECAMAS.Domain.Entities.TCNProfile;
 using RECAMAS.Domain.Entities.Case;
-using RECAMAS.Domain.Entities.Detention;
-using RECAMAS.Domain.Entities.ReturnImplementation;
-using RECAMAS.Domain.Entities.Admin;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
@@ -12,7 +8,7 @@ namespace RECAMAS.Domain.Entities.TCNProfile;
 /// §3.1 — "The TCN profile is the central entity holding all information about a TCN"
 public class TcnProfile : BaseEntity
 {
-    public string RecamasId { get; set; } = null!;               // Μοναδικό system-generated ID (πχ. TCN-2026-00001)
+    public string RecamasId { get; set; } = null!;      // Μοναδικό system-generated ID (πχ. TCN-2026-00001)
     public string? Arc { get; set; }                    // Alien Registration Card number — από ARS interface
     public string? EurodacNumber { get; set; }          // EURODAC biometric reference — από CASS
 
@@ -33,8 +29,8 @@ public class TcnProfile : BaseEntity
     // --- Αναφορές σε εξωτερικά συστήματα ---
     public string? MdFileNo { get; set; }               // Migration Department file number — από ARS
     public string? ArsFolderId { get; set; }             // [ΠΡΟΣΤΕΘΗΚΕ] Βάση για πρόταση linked-profile — έλειπε, βλ. tcn_profile.ars_folder_id
-                                                           // PDF ref: §2.2.4 "Linked Profile Suggestion" — "Based on the ARS Folder Number, RECAMAS
-                                                           // performs an interface call to ARS and retrieves any TCN Profiles that have the same ARS Folder Number"
+                                                         // PDF ref: §2.2.4 "Linked Profile Suggestion" — "Based on the ARS Folder Number, RECAMAS
+                                                         // performs an interface call to ARS and retrieves any TCN Profiles that have the same ARS Folder Number"
     public MdFileRelationship? MdFileRelationship { get; set; } // Ρόλος στο MD file: Principal / MainDependant / Dependant
     public string? CassFileNo { get; set; }             // Cyprus Asylum Service file number — από CASS
     public string? CassAddress { get; set; }            // Διεύθυνση από CASS (read-only, free text)

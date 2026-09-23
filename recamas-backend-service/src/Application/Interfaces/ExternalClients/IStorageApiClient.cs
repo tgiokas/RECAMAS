@@ -1,4 +1,4 @@
-using RECAMAS.Application.Dtos.ExternalClients;
+using RECAMAS.Application.Dtos.Interoperability.StorageApiClient;
 
 namespace RECAMAS.Application.Interfaces;
 

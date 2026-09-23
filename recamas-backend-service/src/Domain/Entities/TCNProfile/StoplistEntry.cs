@@ -1,10 +1,5 @@
 using RECAMAS.Domain.Common;
 using RECAMAS.Domain.Enums;
-using RECAMAS.Domain.Entities.TCNProfile;
-using RECAMAS.Domain.Entities.Case;
-using RECAMAS.Domain.Entities.Detention;
-using RECAMAS.Domain.Entities.ReturnImplementation;
-using RECAMAS.Domain.Entities.Admin;
 
 namespace RECAMAS.Domain.Entities.TCNProfile;
 
@@ -20,6 +15,7 @@ public class StoplistEntry : BaseEntity
     public int? EntryBanDurationMonths { get; set; }    // Από Case
     public DateOnly? EntryBanExpirationDate { get; set; } // Υπολογίζεται από Implementation
     public DateTimeOffset? LastSyncedAt { get; set; }   // Τελευταίος συγχρονισμός από Police DB
+    public DateTimeOffset? CheckedAt { get; set; }
     public DataSourceType Source { get; set; }           // [ΠΡΟΣΤΕΘΗΚΕ] default POLICE_DB — έλειπε, βλ. tcn_stoplist_entry.source
                                                            // PDF ref: §9.5 "Stoplist" — Stoplist is a system maintained in the Police Database (§9.5, §9.5.1 Interface execution)
 
